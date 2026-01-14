@@ -1,18 +1,18 @@
 import { User } from "@/type/prisma";
 import { UserSignInType } from "@/type/user";
 import { envValues } from "@/util/envValues";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 
 interface UserSliceType {
-    items : User[]
+    item : User | null
 }
 
 const initialState : UserSliceType = {
-    items : []
+    item : null
 }
 
-const userSignIn = createAsyncThunk("userSlice/userSignIn" , async( data : UserSignInType , thunkApi ) => {
+export const userSignIn = createAsyncThunk("userSlice/userSignIn" , async( data : UserSignInType , thunkApi ) => {
     const { email , fail , success } = data;
     try {
         const response = await fetch(`${envValues.apiUrl}/user` , {
@@ -22,8 +22,11 @@ const userSignIn = createAsyncThunk("userSlice/userSignIn" , async( data : UserS
             },
             body : JSON.stringify({ email })
         });
-        const {} = await response.json();
-
+        const { createdUser } = await response.json();
+        thunkApi.dispatch(setUser(createdUser));
+        if(success) {
+            success();
+        }
     } catch(err) {
         console.log(err)
     }
@@ -33,10 +36,12 @@ const userSlice = createSlice({
     name : "user slice",
     initialState  , 
     reducers : {
-
+        setUser : ( state , action : PayloadAction<User> ) => {
+            state.item = action.payload;
+        }
     }
 })
 
-export const {  } = userSlice.actions;
+export const { setUser } = userSlice.actions;
 
 export default userSlice.reducer;

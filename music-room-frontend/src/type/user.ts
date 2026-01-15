@@ -1,6 +1,6 @@
 export interface IsSuccessOrFailType {
-    success ?: ( value ?: unknown ) => void
-    fail ?: ( value ?: unknown ) => void
+    onSuccess ?: ( value ?: unknown ) => void
+    onFail ?: ( value ?: unknown ) => void
 }
 
 export interface UserSignInType extends IsSuccessOrFailType {

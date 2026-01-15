@@ -13,7 +13,7 @@ const initialState : UserSliceType = {
 }
 
 export const userSignIn = createAsyncThunk("userSlice/userSignIn" , async( data : UserSignInType , thunkApi ) => {
-    const { email , fail , success } = data;
+    const { email , onFail , onSuccess } = data;
     try {
         const response = await fetch(`${envValues.apiUrl}/user` , {
             method : "POST",
@@ -24,8 +24,8 @@ export const userSignIn = createAsyncThunk("userSlice/userSignIn" , async( data 
         });
         const { createdUser } = await response.json();
         thunkApi.dispatch(setUser(createdUser));
-        if(success) {
-            success();
+        if(onSuccess) {
+            onSuccess();
         }
     } catch(err) {
         console.log(err)

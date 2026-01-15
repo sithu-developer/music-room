@@ -1,5 +1,7 @@
 "use client"
 import { store } from "@/store";
+import { theme } from "@/util/theme";
+import { ThemeProvider } from "@mui/material/styles";
 import { SessionProvider } from "next-auth/react";
 import { Provider } from "react-redux";
 
@@ -10,9 +12,11 @@ interface Props {
 const AllProviders = ({ children } : Props) => {
     return (
         <Provider store={store} >
-        <SessionProvider>
-            {children}
-        </SessionProvider>
+            <SessionProvider>
+                <ThemeProvider theme={theme} >
+                {children}
+                </ThemeProvider>
+            </SessionProvider>
         </Provider>
     )
 }

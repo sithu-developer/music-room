@@ -13,8 +13,83 @@ datasource db {
   provider = "postgresql"
 }
 
+model Admin {
+  id             Int            @id @default(autoincrement())
+  email          String         @unique
+  name           String
+  RoomCategories RoomCategory[]
+  RoomImages     RoomImage[]
+  Musics         Music[]
+  Users          User[]
+}
+
+model RoomCategory {
+  id      Int    @id @default(autoincrement())
+  name    String
+  iconUrl String
+  adminId Int
+  Admin   Admin  @relation(fields: [adminId], references: [id])
+}
+
+model RoomImage {
+  id          Int         @id @default(autoincrement())
+  vite        String
+  bgImageUrl  String
+  gitImageUrl String? // git image like campfire / think where to place like x axis and y axis
+  adminId     Int?
+  userId      Int?
+  Admin       Admin?      @relation(fields: [adminId], references: [id])
+  User        User?       @relation(fields: [userId], references: [id])
+  Rooms       Room[]
+  Roommates   Roommates[]
+}
+
+model Music {
+  id        Int         @id @default(autoincrement())
+  name      String
+  musicUrl  String
+  adminId   Int?
+  userId    Int?
+  Admin     Admin?      @relation(fields: [adminId], references: [id])
+  User      User?       @relation(fields: [userId], references: [id])
+  Rooms     Room[]
+  Roommates Roommates[]
+}
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
+  id         Int         @id @default(autoincrement())
+  email      String      @unique
+  name       String
+  adminId    Int
+  Admin      Admin       @relation(fields: [adminId], references: [id])
+  Rooms      Room[]
+  Musics     Music[]
+  RoomImages RoomImage[]
+  Roommates  Roommates[]
+}
+
+model Room {
+  id                 Int         @id @default(autoincrement())
+  name               String
+  roomPassword       String?
+  roommateQty        Int
+  currentRoomImageId Int
+  playingMusicId     Int
+  ownerUserId        Int
+  RoomImage          RoomImage   @relation(fields: [currentRoomImageId], references: [id])
+  Music              Music       @relation(fields: [playingMusicId], references: [id])
+  User               User        @relation(fields: [ownerUserId], references: [id])
+  Roommates          Roommates[]
+}
+
+model Roommates {
+  id                 Int        @id @default(autoincrement())
+  roomId             Int
+  userId             Int        @unique
+  requestMusicId     Int?
+  requestRoomImageId Int?
+  Room               Room       @relation(fields: [roomId], references: [id])
+  User               User       @relation(fields: [userId], references: [id])
+  Music              Music?     @relation(fields: [requestMusicId], references: [id])
+  RoomImage          RoomImage? @relation(fields: [requestRoomImageId], references: [id])
 }

@@ -1,7 +1,7 @@
 "use client"
 import AdminSideBar from "@/components/AdminSideBar";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { userSignIn } from "@/store/slices/userSlice";
+import { adminSignIn } from "@/store/slices/adminSlice";
 import { Box } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
@@ -13,22 +13,22 @@ interface Props {
 
 const AdminLayout = ( { children } : Props) => {
     const { data } = useSession();
-    const user = useAppSelector(store => store.user.item);
+    const admin = useAppSelector(store => store.admin.item);
     const dispatch = useAppDispatch();
     const path = usePathname();
     const router = useRouter();
     
     useEffect(() => {
-        if(data && data.user && data.user.email && !user) {
-            dispatch(userSignIn({ email : data.user.email , onSuccess : () => {
+        if(data && data.user && data.user.email && !admin) {
+            dispatch(adminSignIn({ email : data.user.email , onSuccess : () => {
                 if(path === "/admin") {
-                    router.push("/admin/modification");
+                    router.push("/admin/category");
                 }
             } }))
         }
     } , [ data ]);
 
-    if(!user) return null;
+    if(!admin) return null;
     return (
         <Box>
             <AdminSideBar />

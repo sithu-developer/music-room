@@ -8,5 +8,10 @@ export const theme = createTheme({
         secondary : {
             main : "#912998dd"
         }
+    },
+    typography : {
+        body1 : {
+            color : "white"
+        }
     }
 })

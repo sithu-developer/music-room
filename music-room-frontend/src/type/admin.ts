@@ -3,6 +3,6 @@ export interface IsSuccessOrFailType {
     onFail ?: ( value ?: unknown ) => void
 }
 
-export interface UserSignInType extends IsSuccessOrFailType {
+export interface AdminSignInType extends IsSuccessOrFailType {
     email : string;
 }

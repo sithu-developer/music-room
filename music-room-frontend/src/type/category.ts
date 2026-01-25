@@ -5,3 +5,7 @@ export interface NewCategory extends IsSuccessOrFailType {
     iconUrl : string;
     adminId : number
 }
+
+export interface DeleteCategory extends IsSuccessOrFailType {
+    id : number;
+}

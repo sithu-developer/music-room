@@ -28,10 +28,10 @@ const AdminLayout = ( { children } : Props) => {
         }
     } , [ data ]);
 
-    if(!admin) return null;
+    
     return (
         <Box>
-            <AdminSideBar />
+            {path !== "/admin" && <AdminSideBar />}
             <Box>
                 {children}
             </Box>

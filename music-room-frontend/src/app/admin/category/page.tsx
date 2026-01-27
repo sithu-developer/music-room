@@ -7,10 +7,14 @@ import { useAppSelector } from "@/store/hooks";
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import WarnningDialog from "@/components/Warnning";
 import { WarnningItemType } from "@/type/warnning";
+import UpdateCategory from "@/components/UpdateCategory";
+import { RoomCategory } from "@/type/prisma";
 
 const ModificationPage = () => {
     const [ openNewCategory , setOpenNewCategory ] = useState(false);
+    const [ openUpdateCategory , setOpenUpdateCategory ] = useState(false);
     const [ warnningItem , setWarnningItem ] = useState<WarnningItemType>({ open : false });
+    const [ categoryToUpdate , setCategoryToUpdate ] = useState<RoomCategory>();
     const categories = useAppSelector(store => store.category.items);
     
     return (
@@ -31,12 +35,16 @@ const ModificationPage = () => {
                                 <DeleteOutlineRoundedIcon sx={{ color : "whitesmoke"}} />
                             </IconButton>
                         </Box>
-                        <Button variant="contained" sx={{ width : "100%"}} >Update</Button>
+                        <Button variant="contained" sx={{ width : "100%"}} onClick={() => {
+                            setOpenUpdateCategory(true)
+                            setCategoryToUpdate(item)
+                        }} >Update</Button>
                     </Box>
                 )) }
             </Box>
             <NewCategory openNewCategory={openNewCategory} setOpenNewCatgory={setOpenNewCategory} />
             <WarnningDialog warnningItem={warnningItem} setWarnningItem={setWarnningItem} />
+            {categoryToUpdate && <UpdateCategory openUpdateCategory={openUpdateCategory} setOpenUpdateCategory={setOpenUpdateCategory} categoryToUpdate={categoryToUpdate} setCategoryToUpdate={setCategoryToUpdate} />}
         </Box>
     )
 }

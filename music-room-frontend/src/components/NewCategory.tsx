@@ -33,9 +33,9 @@ const NewCategory = ( { openNewCategory , setOpenNewCatgory } : Props ) => {
         }} >
             <DialogContent sx={{ background : "linear-gradient(135deg, #28d17f , #1a8162 , #1ecc78 , #20eebe)" , display : "flex" , flexDirection : "column" , gap : "20px"  }}>
                 <Typography sx={{ fontSize : "20px"}} >New Category</Typography>
-                <TextField color="primary" variant="outlined" label="Name" onChange={(e) => setNewCategory({...newCategory , name : e.target.value }) } />
+                <TextField color="secondary" sx={{ input : { color : "white" }}} variant="outlined" label="Name" onChange={(e) => setNewCategory({...newCategory , name : e.target.value }) } />
                 <Button variant="outlined" sx={{ color : "white" , borderColor : "lightgray" , textTransform : "none" , py : "12px"}} >Drop here...</Button>
-                <Box sx={{ display : "flex" , justifyContent : "flex-end" , gap : "10px"}} >
+                <Box sx={{ display : "flex" , justifyContent : "space-between"}} >
                     <Button variant="outlined" sx={{ color : "white" , borderColor : "lightgray"}} onClick={() => {
                         setOpenNewCatgory(false);
                         setNewCategory(defaultNewCategory)

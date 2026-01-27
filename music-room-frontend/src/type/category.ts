@@ -9,3 +9,9 @@ export interface NewCategory extends IsSuccessOrFailType {
 export interface DeleteCategory extends IsSuccessOrFailType {
     id : number;
 }
+
+export interface UpdateCategory extends IsSuccessOrFailType {
+    id : number;
+    name : string;
+    iconUrl : string;
+}

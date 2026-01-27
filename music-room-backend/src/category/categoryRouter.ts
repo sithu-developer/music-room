@@ -26,5 +26,16 @@ categoryRouter.delete("/" , (req : Request , res : Response , next ) => {
     res.status(200).json({ deletedCategory })
 })
 
+categoryRouter.put("/" , (req , res , next) => {
+    const { id , name , iconUrl } = req.body;
+    const isValid = id && name && iconUrl;
+    if(!isValid) return res.status(400).send("Bad request");
+    next();
+} , async( req , res ) => {
+    const { id , name , iconUrl } = req.body;
+    const updatedCategory = await prisma.roomCategory.update({ where : { id } , data : { name , iconUrl }});
+    res.status(200).json({ updatedCategory });
+})
+
 
 export default categoryRouter;

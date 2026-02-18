@@ -35,7 +35,7 @@ model RoomImage {
   id          Int         @id @default(autoincrement())
   vite        String
   bgImageUrl  String
-  gitImageUrl String? // git image like campfire / think where to place like x axis and y axis
+  gifImageUrl String? // gif image like campfire / think where to place like x axis and y axis
   adminId     Int?
   userId      Int?
   Admin       Admin?      @relation(fields: [adminId], references: [id])

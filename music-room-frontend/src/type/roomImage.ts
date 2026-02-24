@@ -9,7 +9,15 @@ interface NewRoomImage {
 export interface DefaultNewRoomImageType {
     vite : string;
     bgImage ?: File;
-    gifImage ?: File;
     adminId ?: number;
     userId ?: number;
+}
+
+export interface DefaultNewExtraImageType {
+    tempId : string
+    extraImage : File
+    x : number,
+    y : number,
+    h : string
+    w : string
 }

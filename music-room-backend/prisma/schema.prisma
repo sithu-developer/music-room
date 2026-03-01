@@ -48,6 +48,10 @@ model ExtraImage {
   id          Int       @id @default(autoincrement())
   imageUrl    String
   roomImageId Int
+  height      String
+  width       String
+  x           Int
+  y           Int
   RoomImage   RoomImage @relation(fields: [roomImageId], references: [id])
 }
 

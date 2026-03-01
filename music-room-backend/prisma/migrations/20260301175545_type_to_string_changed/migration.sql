@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "ExtraImage" ALTER COLUMN "height" SET DATA TYPE TEXT,
+ALTER COLUMN "width" SET DATA TYPE TEXT;

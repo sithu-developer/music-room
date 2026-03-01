@@ -1,3 +1,5 @@
+import { IsSuccessOrFailType } from "./admin";
+
 interface NewRoomImage {
     vite : string;
     bgImageUrl : string;
@@ -20,4 +22,20 @@ export interface DefaultNewExtraImageType {
     y : number,
     h : string
     w : string
+}
+
+export interface NewRoomImageItems extends IsSuccessOrFailType {
+    vite : string
+    bgImageUrl : string
+    adminId ?: number
+    userId ?: number
+    extraImages : NewExtraImage[]
+}
+
+export interface NewExtraImage {
+    imageUrl    : string
+    height      : string
+    width       : string
+    x           : number
+    y           : number 
 }

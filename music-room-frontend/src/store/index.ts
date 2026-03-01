@@ -1,11 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit'
 import adminReducer from "./slices/adminSlice"
 import categoryReducer from "./slices/categorySlice"
+import roomImageReducer from "./slices/roomImageSlice"
+import extraImageReducer from "./slices/extraImagesSlice"
 
 export const store = configureStore({
   reducer: {
     admin : adminReducer,
     category : categoryReducer,
+    roomImage : roomImageReducer,
+    extraImage : extraImageReducer,
     
   },
 })

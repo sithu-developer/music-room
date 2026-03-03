@@ -1,5 +1,5 @@
 import { RoomImage } from "@/type/prisma";
-import { NewRoomImageItems, UpdateRoomImageParaType } from "@/type/roomImage";
+import { DeleteRoomImageParaType, NewRoomImageItems, UpdateRoomImageParaType } from "@/type/roomImage";
 import { envValues } from "@/util/envValues";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { addExtraImages, removeAllExtraImagesUnderOneRoomImage } from "./extraImagesSlice";
@@ -57,6 +57,23 @@ export const updateRoomImage = createAsyncThunk("updateRoomImage/RoomImageSlice"
     }
 })
 
+export const deleteRoomImage = createAsyncThunk("deleteRoomImage/RoomImageSlice" , async( para : DeleteRoomImageParaType , thunkApi ) => {
+    const { id , onFail , onSuccess } = para;
+    try {
+        const response = await fetch(`${envValues.apiUrl}/room-image?id=${id}` , {
+            method : "DELETE"
+        });
+        const { deletedId } = await response.json();
+        thunkApi.dispatch(removeAllExtraImagesUnderOneRoomImage(deletedId))
+        thunkApi.dispatch(removeRoomImage(deletedId))
+        if(onSuccess) {
+            onSuccess();
+        }
+    } catch(err) {
+        console.log(err)
+    }
+})
+
 const roomImageSlice = createSlice({
     name : "RoomImage Slice",
     initialState , 
@@ -69,10 +86,13 @@ const roomImageSlice = createSlice({
         },
         replaceRoomImage : ( state , action : PayloadAction<RoomImage> ) => {
             state.items = state.items.map(item => item.id === action.payload.id ? action.payload : item )
+        },
+        removeRoomImage : ( state , action : PayloadAction<number> ) => {
+            state.items = state.items.filter(item => item.id !== action.payload)
         }
     }
 })
 
-export const { addRoomImage , setRoomImages , replaceRoomImage } = roomImageSlice.actions;
+export const { addRoomImage , setRoomImages , replaceRoomImage , removeRoomImage } = roomImageSlice.actions;
 
 export default roomImageSlice.reducer;

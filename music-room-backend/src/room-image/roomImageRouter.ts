@@ -27,6 +27,8 @@ roomImageRouter.put("/" , (req : Request , res : Response , next) => {
     next();
 } ,async( req : Request , res : Response ) => {
     const { id , bgImageUrl , vite , adminId , userId , extraImages } = req.body;
+    const isExit = await prisma.roomImage.findUnique({ where : { id }});
+    if(!isExit) return res.status(400).send("Bad request");
     const updatedRoomImage = await prisma.roomImage.update({ where : { id } , data : { vite , bgImageUrl , adminId , userId }});
     const extraImagesToUpdate = (extraImages as ExtraImage[]).filter(item => item.id);
     const extraImagesToCreate = (extraImages as ExtraImage[]).filter(item => !item.id);
@@ -43,6 +45,19 @@ roomImageRouter.put("/" , (req : Request , res : Response , next) => {
     )
     
     return res.status(200).json({ updatedRoomImage , finalExtraImages : [...updatedExtraImages , ...createdExtraImages] });
+})
+
+roomImageRouter.delete("/" , ( req : Request , res : Response , next ) => {
+    const id = Number(req.query.id);
+    if(!id) return res.status(400).send("Bad request");
+    next();
+} , async( req : Request , res : Response ) => {
+    const id = Number(req.query.id);
+    const isExit = await prisma.roomImage.findUnique({ where : { id }});
+    if(!isExit) return res.status(400).send("Bad request");
+    await prisma.extraImage.deleteMany({ where : { roomImageId : id }});
+    await prisma.roomImage.delete({ where : { id }});
+    return res.status(200).json({ deletedId : id })
 })
 
 export default roomImageRouter;

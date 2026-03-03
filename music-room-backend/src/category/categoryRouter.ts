@@ -22,6 +22,8 @@ categoryRouter.delete("/" , (req : Request , res : Response , next ) => {
     next();
 } , async( req : Request , res : Response ) => {
     const id = Number(req.query.id);
+    const isExit = await prisma.roomCategory.findUnique({ where : { id } });
+    if(!isExit) return res.status(400).send("Bad request")
     const deletedCategory = await prisma.roomCategory.delete({ where : { id } });
     res.status(200).json({ deletedCategory })
 })
@@ -33,6 +35,8 @@ categoryRouter.put("/" , (req , res , next) => {
     next();
 } , async( req , res ) => {
     const { id , name , iconUrl } = req.body;
+    const isExit = await prisma.roomCategory.findUnique({ where : { id } });
+    if(!isExit) return res.status(400).send("Bad request")
     const updatedCategory = await prisma.roomCategory.update({ where : { id } , data : { name , iconUrl }});
     res.status(200).json({ updatedCategory });
 })

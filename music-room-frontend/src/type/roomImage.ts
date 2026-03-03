@@ -58,3 +58,7 @@ export interface ExtraImagesToUpdateType extends ExtraImage {
 export interface UpdateRoomImageParaType extends RoomImage,IsSuccessOrFailType {
     extraImages : ExtraImage[]
 }
+
+export interface DeleteRoomImageParaType extends IsSuccessOrFailType {
+    id : number;
+}

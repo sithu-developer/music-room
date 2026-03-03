@@ -41,9 +41,11 @@ const UpdateRoomImageDialog = ({ setUpdateRoomImageItems , updateRoomImageItems 
             alert("Please select an image file");
             return;
         }
-        if(!roomImageToUpdate) return null;
         
-        setRoomImageToUpdate({ ...roomImageToUpdate , bgImage }) 
+        setRoomImageToUpdate((prev) => {
+            if(!prev) return prev;
+            return {...prev , bgImage}
+        }) 
     }, [])
 
     const onDropExtraImages = useCallback((extraImages : File[]) => {

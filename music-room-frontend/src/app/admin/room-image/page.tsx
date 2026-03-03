@@ -9,11 +9,14 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import { UpdateRoomImageItemsType } from '@/type/roomImage';
 import UpdateRoomImageDialog from '@/components/UpdateRoomImage';
+import WarnningDialog from '@/components/Warnning';
+import { WarnningItemType } from '@/type/warnning';
 
 const RoomImagePage = () => {
     const [ openNewRoomImageDialog , setOpenNewRoomImageDialog ] = useState<boolean>(false);
     const [ updateRoomImageItems , setUpdateRoomImageItems ] = useState<UpdateRoomImageItemsType>({ open : false });
     const roomImages = useAppSelector(store => store.roomImage.items);
+    const [ warnningItem , setWarnningItem ] = useState<WarnningItemType>({ open : false });
 
     return (
         <Box sx={{ bgcolor : "primary.light" , width : "100vw" , height : "100vh" , p : "10px"}} >
@@ -38,7 +41,7 @@ const RoomImagePage = () => {
                                 <EditOutlinedIcon sx={{ color : "#dedcdc"}} />
                             </IconButton>
                             <Divider orientation='vertical' flexItem />
-                            <IconButton sx={{ borderRadius : "0px 20px 20px 0px" }}>
+                            <IconButton sx={{ borderRadius : "0px 20px 20px 0px" }} onClick={() => setWarnningItem({ open : true , roomImageToDelete : item })}>
                                 <DeleteOutlineRoundedIcon sx={{ color : "#e62f2f"}} />
                             </IconButton>
                         </Box>                                              
@@ -47,6 +50,7 @@ const RoomImagePage = () => {
             </Box>
             <NewRoomImage openNewRoomImageDialog={openNewRoomImageDialog} setOpenNewRoomImageDialog={setOpenNewRoomImageDialog} />
             <UpdateRoomImageDialog setUpdateRoomImageItems={setUpdateRoomImageItems} updateRoomImageItems={updateRoomImageItems}  />
+            <WarnningDialog warnningItem={warnningItem} setWarnningItem={setWarnningItem} />
         </Box>
     )
 }

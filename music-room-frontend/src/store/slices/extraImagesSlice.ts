@@ -14,11 +14,17 @@ const extraImagesSlice = createSlice({
     initialState,
     reducers : {
         addExtraImages : (state , action : PayloadAction<ExtraImage[]>) => {
-            state.items = [...state.items , ...action.payload]
-        }
+            state.items = [...state.items , ...action.payload].sort((a,b) => a.id - b.id)
+        },
+        setExtraImages : ( state , action : PayloadAction<ExtraImage[]> ) => {
+            state.items = action.payload;
+        },
+        removeAllExtraImagesUnderOneRoomImage : ( state , action : PayloadAction<number>) => {
+            state.items = state.items.filter(item => item.roomImageId !== action.payload)
+        },
     }
 })
 
-export const { addExtraImages } = extraImagesSlice.actions;
+export const { addExtraImages , setExtraImages , removeAllExtraImagesUnderOneRoomImage } = extraImagesSlice.actions;
 
 export default extraImagesSlice.reducer;

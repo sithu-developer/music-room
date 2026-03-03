@@ -3,6 +3,8 @@ import { AdminSignInType } from "@/type/admin";
 import { envValues } from "@/util/envValues";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { setCategories } from "./categorySlice";
+import { setRoomImages } from "./roomImageSlice";
+import { setExtraImages } from "./extraImagesSlice";
 
 
 interface AdminSliceType {
@@ -23,10 +25,11 @@ export const adminSignIn = createAsyncThunk("adminSlice/adminSignIn" , async( da
             },
             body : JSON.stringify({ email })
         });
-        const { createdAdmin , categories } = await response.json();
+        const { createdAdmin , categories , roomImages , extraImages } = await response.json();
         thunkApi.dispatch(setAdmin(createdAdmin));
-        if(categories) thunkApi.dispatch(setCategories(categories))
-            
+        if(categories) thunkApi.dispatch(setCategories(categories));
+        if(roomImages) thunkApi.dispatch(setRoomImages(roomImages));
+        if(extraImages) thunkApi.dispatch(setExtraImages(extraImages));
         if(onSuccess) {
             onSuccess();
         }

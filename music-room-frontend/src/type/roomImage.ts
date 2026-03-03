@@ -1,4 +1,5 @@
 import { IsSuccessOrFailType } from "./admin";
+import { ExtraImage, RoomImage } from "./prisma";
 
 interface NewRoomImage {
     vite : string;
@@ -38,4 +39,22 @@ export interface NewExtraImage {
     width       : string
     x           : number
     y           : number 
+}
+
+export interface UpdateRoomImageItemsType {
+    open : boolean;
+    selectedRoomImage ?: RoomImage;
+}
+
+export interface RoomImageToUpdateType extends RoomImage {
+    bgImage ?: File
+}
+
+export interface ExtraImagesToUpdateType extends ExtraImage {
+    tempId : string
+    extraImage ?: File
+}
+
+export interface UpdateRoomImageParaType extends RoomImage,IsSuccessOrFailType {
+    extraImages : ExtraImage[]
 }

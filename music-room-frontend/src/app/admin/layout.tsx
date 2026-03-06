@@ -2,6 +2,7 @@
 import AdminSideBar from "@/components/AdminSideBar";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { adminSignIn } from "@/store/slices/adminSlice";
+import { changeIsLoading } from "@/store/slices/generalSlice";
 import { Box } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
@@ -20,7 +21,9 @@ const AdminLayout = ( { children } : Props) => {
     
     useEffect(() => {
         if(data && data.user && data.user.email && !admin) {
+            dispatch(changeIsLoading(true))
             dispatch(adminSignIn({ email : data.user.email , onSuccess : () => {
+                dispatch(changeIsLoading(false))
                 if(path === "/admin") {
                     router.push("/admin/category");
                 }

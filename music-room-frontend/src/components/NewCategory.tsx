@@ -3,6 +3,7 @@ import { createNewCatgory } from "@/store/slices/categorySlice";
 import { Box, Button, Dialog, DialogContent, TextField, Typography } from "@mui/material"
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { useState } from "react";
+import { changeIsLoading, changeSnackBarItems } from "@/store/slices/generalSlice";
 
 interface Props {
     openNewCategory : boolean;
@@ -21,9 +22,12 @@ const NewCategory = ( { openNewCategory , setOpenNewCatgory } : Props ) => {
     if(!admin) return null;
 
     const handleCreateNewCategory = () => {
+        dispatch(changeIsLoading(true))
         dispatch(createNewCatgory({ name : newCategory.name , adminId : admin.id , iconUrl : "testUrl" , onSuccess : () => {
             setNewCategory(defaultNewCategory);
-            setOpenNewCatgory(false)
+            setOpenNewCatgory(false);
+            dispatch(changeIsLoading(false));
+            dispatch(changeSnackBarItems({ open : true , message : "New Category is Created !" , severity : "success" }))
         } }))
     }
 

@@ -2,7 +2,7 @@
 import NewRoomImage from '@/components/NewRoomImage';
 import { useAppSelector } from '@/store/hooks';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import { Box, ButtonGroup, Divider, IconButton, Paper, Typography } from "@mui/material";
+import { Box, Divider, IconButton, Paper, Typography } from "@mui/material";
 import Image from 'next/image';
 import { useState } from 'react';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -27,7 +27,7 @@ const RoomImagePage = () => {
                     <AddRoundedIcon sx={{ color : "whitesmoke"}} />
                 </IconButton>
             </Box>
-            <Box sx={{ display : "flex" , gap : "10px" , p : "5px"}}>
+            <Box sx={{ display : "flex" , gap : "10px" , p : "5px" , mt : "10px"}}>
                 {roomImages.map(item => (
                     <Box key={item.id} sx={{ width : "200px" , height : "200px" , display : "flex" , flexDirection : "column" , alignItems : "center" }}>
                         <Box sx={{ bgcolor : "primary.main" , p : "2px 10px" , border : "1px solid #1b383b" , borderBottom : "none" , borderRadius : "15px 15px 0px 0px"}}>

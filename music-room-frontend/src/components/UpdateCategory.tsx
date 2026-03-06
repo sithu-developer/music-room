@@ -1,6 +1,7 @@
 
 import { useAppDispatch } from "@/store/hooks";
 import { updateCategory } from "@/store/slices/categorySlice";
+import { changeIsLoading, changeSnackBarItems } from "@/store/slices/generalSlice";
 import { RoomCategory } from "@/type/prisma";
 import { Box, Button, Dialog, DialogContent, TextField, Typography } from "@mui/material"
 
@@ -15,9 +16,12 @@ const UpdateCategory = ({ openUpdateCategory , setOpenUpdateCategory , categoryT
     const dispatch = useAppDispatch();
 
     const handleUpdateCategory = () => {
+        dispatch(changeIsLoading(true));
         dispatch(updateCategory({...categoryToUpdate , onSuccess : () => {
             setOpenUpdateCategory(false);
             setCategoryToUpdate(undefined)
+            dispatch(changeIsLoading(false));
+            dispatch(changeSnackBarItems({ open : true , message : `Updated To \"${categoryToUpdate.name}\" !` , severity : "success" }))
         }}))
     }
 

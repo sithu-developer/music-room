@@ -9,6 +9,7 @@ import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import ApiRoundedIcon from '@mui/icons-material/ApiRounded';
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { createNewRoomImage } from "@/store/slices/roomImageSlice";
+import { changeIsLoading, changeSnackBarItems } from "@/store/slices/generalSlice";
 
 
 interface Props {
@@ -52,12 +53,15 @@ const NewRoomImage = ({ openNewRoomImageDialog , setOpenNewRoomImageDialog } : P
 
     const handleCreateNewRoomImage = () => {
         if(newRoomImage.bgImage) {
+            dispatch(changeIsLoading(true));
             const extraImages = newExtraImages.map(item => ({ imageUrl : item.extraImage.name , height : item.h , width : item.w , x : item.x , y : item.y }))
             dispatch(createNewRoomImage({ vite : newRoomImage.vite , bgImageUrl : newRoomImage.bgImage.name , adminId : admin.id , extraImages , onSuccess : () => {
                 setOpenNewRoomImageDialog(false)
                 setNewRoomImage({vite : ""});
                 setNewExtraImages([])
                 setIsShown(true)
+                dispatch(changeIsLoading(false));
+                dispatch(changeSnackBarItems({ open : true , message : "New Room Image is Created !" , severity : "success" }))
             }}))
         }
     }

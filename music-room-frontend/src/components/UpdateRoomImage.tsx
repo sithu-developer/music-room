@@ -9,6 +9,7 @@ import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import ApiRoundedIcon from '@mui/icons-material/ApiRounded';
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { updateRoomImage } from "@/store/slices/roomImageSlice";
+import { changeIsLoading, changeSnackBarItems } from "@/store/slices/generalSlice";
 
 
 
@@ -25,7 +26,6 @@ const UpdateRoomImageDialog = ({ setUpdateRoomImageItems , updateRoomImageItems 
     const admin = useAppSelector(store => store.admin.item)
     const extraImages = useAppSelector(store => store.extraImage.items)
 
-    console.log(extraImagesToUpdate)    
     useEffect(() => {
         if(updateRoomImageItems.selectedRoomImage) {
             const relatedExtraImages = extraImages.filter(item => item.roomImageId === updateRoomImageItems.selectedRoomImage?.id).map(item => ({...item , tempId : `${item.id}-${Math.floor(Math.random() * 10000)}` }))
@@ -65,6 +65,7 @@ const UpdateRoomImageDialog = ({ setUpdateRoomImageItems , updateRoomImageItems 
     if(!admin || !roomImageToUpdate ) return null;
 
     const handleUpdateRoomImage = () => {
+        dispatch(changeIsLoading(true));
         if(roomImageToUpdate.bgImage) {
             // upload bgImage
             // upload new extra Images
@@ -74,6 +75,8 @@ const UpdateRoomImageDialog = ({ setUpdateRoomImageItems , updateRoomImageItems 
                 setRoomImageToUpdate(undefined);
                 setExtraImagesToUpdate([])
                 setIsShown(true)
+                dispatch(changeIsLoading(false));
+                dispatch(changeSnackBarItems({ open : true , message : "Room Image is updated !" , severity : "success" }))
             }}))
         } else {
             // upload new extra Images
@@ -83,6 +86,8 @@ const UpdateRoomImageDialog = ({ setUpdateRoomImageItems , updateRoomImageItems 
                 setRoomImageToUpdate(undefined);
                 setExtraImagesToUpdate([])
                 setIsShown(true)
+                dispatch(changeIsLoading(false));
+                dispatch(changeSnackBarItems({ open : true , message : "Room Image is updated !" , severity : "success" }))
             }}))
         }
     }

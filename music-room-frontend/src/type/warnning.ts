@@ -1,7 +1,8 @@
-import { RoomCategory, RoomImage } from "./prisma";
+import { Music, RoomCategory, RoomImage } from "./prisma";
 
 export interface WarnningItemType {
     open : boolean;
     categoryToDelete ?: RoomCategory
     roomImageToDelete ?: RoomImage
+    musicToDelete ?: Music
 }

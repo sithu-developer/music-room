@@ -29,7 +29,7 @@ const ModificationPage = () => {
             <Box sx={{ display : "flex" , flexWrap : "wrap" , gap : "20px" , p : "20px"}} >
                 {categories.map(item => (
                     <Box key={item.id} sx={{ display : "flex" , flexDirection : 'column' , alignItems : "center" , width : "150px" , gap : "10px"}} >
-                        <Box sx={{ position : "relative" , bgcolor : "secondary.main" , width : "100%" , height : "80px"  , borderRadius : "5px" , display : "flex" , justifyContent : "center" , alignItems : "center" }}>
+                        <Box sx={{ position : "relative" , bgcolor : "primary.dark" , width : "100%" , height : "80px"  , borderRadius : "5px" , display : "flex" , justifyContent : "center" , alignItems : "center" }}>
                             <Typography>{item.name}</Typography>
                             <IconButton onClick={() => setWarnningItem({ open : true , categoryToDelete : item })} sx={{ bgcolor : "primary.main" , p : "4px" , position : "absolute" , top : "-10px" , right : "-10px" , border : "3px solid", borderColor : "primary.light" , ":hover" : { bgcolor : "primary.dark" } }}>
                                 <DeleteOutlineRoundedIcon sx={{ color : "whitesmoke"}} />

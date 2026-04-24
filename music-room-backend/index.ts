@@ -4,6 +4,7 @@ import adminRouter from "./src/admin/adminRouter";
 import { envValues } from "./util/envValues";
 import categoryRouter from "./src/category/categoryRouter";
 import roomImageRouter from "./src/room-image/roomImageRouter";
+import musicRouter from "./src/music/musicRouter";
 
 const app = express();
 const port = 5000;
@@ -20,5 +21,6 @@ app.use(express.json())
 app.use("/admin" , adminRouter)
 app.use("/category" , categoryRouter)
 app.use("/room-image" , roomImageRouter )
+app.use("/music" , musicRouter )
 
 app.listen(port , () => console.log(`music-room-server is running on ${port}`))

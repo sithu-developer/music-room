@@ -29,3 +29,11 @@ export interface ExtraImage {
     x           : number
     y           : number
 }
+
+export interface Music {
+    id    : number
+    name : string;
+    musicUrl : string;
+    adminId   ?: number
+    userId    ?: number
+}

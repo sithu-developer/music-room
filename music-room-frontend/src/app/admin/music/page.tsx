@@ -19,7 +19,7 @@ const MusicPage = () => {
 
 
     return (
-        <Box sx={{ bgcolor : "primary.light" , height : "100vh" , p : "10px" }}>
+        <Box sx={{ bgcolor : "primary.light" , width : "calc(100vw - 250px)" , height : "100vh" , p : "10px" }}>
             <Box sx={{ display : "flex" , alignItems : 'center' , justifyContent : "space-between" , px : "10px"}}>
                 <span />
                 <Typography sx={{ textAlign : "center" , fontSize : "30px" }} >Music</Typography>

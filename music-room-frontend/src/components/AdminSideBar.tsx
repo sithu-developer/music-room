@@ -6,31 +6,55 @@ import CategoryIcon from '@mui/icons-material/Category';
 import WallpaperIcon from '@mui/icons-material/Wallpaper';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import Link from "next/link";
+import Image from "next/image";
 
 const AdminSideBar = () => {
     const [ openSideBar , setOpenSideBar ] = useState(false);
 
+
     return (
-        <Box>
-            <IconButton sx={{ position : "absolute" , top : "10px" , left : "10px"}} onClick={() => setOpenSideBar(true)} >
-                <ReorderIcon sx={{ color : "whitesmoke"}} />
-            </IconButton>
-            <Drawer open={openSideBar} onClose={() => setOpenSideBar(false)}>
-                <Box sx={{ bgcolor : "primary.dark", width : "200px" , height : "100%" }}>
-                    {adminSideBarItems.map(item => (
-                        <Link href={item.url}  key={item.id} >
-                            <Box sx={{ borderBottom : "1px solid white"}} >
-                                <ListItemButton sx={{ display : "flex" , alignItems : "center" , gap : "10px" , p : "20px 10px"}} >
-                                    <item.icon sx={{ color : "white"}} />
-                                    <Typography>{item.name}</Typography>
-                                </ListItemButton>
-                            </Box>
-                        </Link>
-                    ))}
+        <Box sx={{ bgcolor : "", width : "250px" , height : "100vh" , p : "5px" }}>
+            <Box sx={{ bgcolor : "primary.dark", width : "100%" , height : "100%" , borderRadius : "7px"  }}>
+                <Box sx={{ display : "flex" , justifyContent : "center" , alignItems : "center" , gap : "5px" , p : "30px 10px"}}>
+                    <Image alt="music logo" src={"/music-logo.jpg"} width={300} height={300} style={{ width : "35px" , height : "auto" , borderRadius : "4px" }} />
+                    <Typography sx={{ fontSize : "22px" , fontWeight : "600" }}>Music Room</Typography>
                 </Box>
-            </Drawer>
+
+                {adminSideBarItems.map(item => (
+                    <Link href={item.url}  key={item.id} >
+                        <Box >
+                            <ListItemButton sx={{ display : "flex" , alignItems : "center" , gap : "10px" , p : "20px 10px"}} >
+                                <item.icon sx={{ color : "white"}} />
+                                <Typography>{item.name}</Typography>
+                            </ListItemButton>
+                        </Box>
+                    </Link>
+                ))}
+            </Box>
         </Box>
     )
+
+    // return (
+    //     <Box>
+    //         <IconButton sx={{ position : "absolute" , top : "10px" , left : "10px"}} onClick={() => setOpenSideBar(true)} >
+    //             <ReorderIcon sx={{ color : "whitesmoke"}} />
+    //         </IconButton>
+    //         <Drawer open={openSideBar} onClose={() => setOpenSideBar(false)}>
+    //             <Box sx={{ bgcolor : "primary.dark", width : "200px" , height : "100%" }}>
+    //                 {adminSideBarItems.map(item => (
+    //                     <Link href={item.url}  key={item.id} >
+    //                         <Box sx={{ borderBottom : "1px solid white"}} >
+    //                             <ListItemButton sx={{ display : "flex" , alignItems : "center" , gap : "10px" , p : "20px 10px"}} >
+    //                                 <item.icon sx={{ color : "white"}} />
+    //                                 <Typography>{item.name}</Typography>
+    //                             </ListItemButton>
+    //                         </Box>
+    //                     </Link>
+    //                 ))}
+    //             </Box>
+    //         </Drawer>
+    //     </Box>
+    // )
 }
 
 export default AdminSideBar;

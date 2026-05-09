@@ -33,11 +33,10 @@ const AdminLayout = ( { children } : Props) => {
 
     
     return (
-        <Box>
+        <Box sx={{ display : "flex" , width : "100vw" }}>
             {path !== "/admin" && <AdminSideBar />}
-            <Box>
-                {children}
-            </Box>
+            {children}
+            
         </Box>
     )
 }

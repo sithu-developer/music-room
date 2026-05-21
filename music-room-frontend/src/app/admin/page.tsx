@@ -10,7 +10,7 @@ const AdminPage = () => {
                 <Typography variant="h5" sx={{ color : "white"}} >Sign Up</Typography>
                 <Button variant="contained" sx={{ borderRadius : "20px"}} onClick={() => signIn("google" , { callbackUrl : "/admin/category" })} >Sign Up With Google</Button>
             </Box>
-            <div style={{ width: '100%', height: '100vh', position: 'relative' }}>
+            <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
                 <FloatingLines
                     enabledWaves={["top","middle","bottom"]}
                     // Array - specify line count per wave; Number - same count for all waves

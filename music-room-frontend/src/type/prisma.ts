@@ -2,7 +2,7 @@
 export interface Admin {
     id: number;
     email: string;
-    name : string;
+    companyName : string;
 }
 
 export interface RoomCategory {

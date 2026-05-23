@@ -6,3 +6,8 @@ export interface IsSuccessOrFailType {
 export interface AdminSignInType extends IsSuccessOrFailType {
     email : string;
 }
+
+export interface NewCompanyName extends IsSuccessOrFailType {
+    id : number;
+    companyName : string;
+}

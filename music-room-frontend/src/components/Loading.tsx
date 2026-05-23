@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useAppSelector } from "@/store/hooks";
 import { Backdrop, CircularProgress } from "@mui/material";
 
 const Loading = () => {
@@ -8,8 +8,8 @@ const Loading = () => {
     return (
         
         <Backdrop
-        sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.tooltip + 1 })}
-        open={isLoading}
+            sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.tooltip + 1 })}
+            open={isLoading}
         >
             <CircularProgress color="inherit" />
         </Backdrop>

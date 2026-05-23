@@ -1,24 +1,24 @@
 "use client"
-import { Box, Divider, ListItemButton, SvgIconProps, Typography } from "@mui/material";
+import { Box, Divider, SvgIconProps, Typography } from "@mui/material";
 import CategoryIcon from '@mui/icons-material/Category';
 import WallpaperIcon from '@mui/icons-material/Wallpaper';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
-import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SideBarItems from "./SideBarItem";
+import { useAppSelector } from "@/store/hooks";
 
 const AdminSideBar = () => {
-    const path = usePathname();
+    const admin = useAppSelector(store => store.admin.item);
 
+    
     return (
         <Box sx={{ width : "250px" , height : "100vh" , p : "5px" }}>
             <Box sx={{ bgcolor : "primary.main", width : "100%" , height : "100%" , borderRadius : "7px"  }}>
                 <Box sx={{ display : "flex" , alignItems : "center" , gap : "20px" , p : "30px 15px"}}>
                     <Image alt="music logo" src={"/music-logo.jpg"} width={300} height={300} style={{ width : "35px" , height : "auto" , borderRadius : "4px" }} />
-                    <Typography sx={{ fontSize : "22px" , fontWeight : "600" }}>Music Room</Typography>
+                    <Typography sx={{ fontSize : "22px" , fontWeight : "600" }}>{admin ? admin.companyName : "Company"}</Typography>
                 </Box>
 
                 <SideBarItems adminSideBarItems={adminSideBarItems.slice(0 , 1)} />

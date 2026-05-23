@@ -14,7 +14,7 @@ const SideBarItems = ({ adminSideBarItems } : Prop) => {
     return (
         <Box>
             {adminSideBarItems.map(item => (
-                <Link href={item.url}  key={item.id} >
+                <Link href={item.url}  key={item.id} style={{ textDecoration : "none"}} >
                     <Box sx={{ bgcolor : (item.url === path ? "primary.light" : "") , mx : "7px" , borderRadius : "5px"  }} >
                         <ListItemButton sx={{ display : "flex" , alignItems : "center" , gap : "10px" , p : "20px 10px"  }} >
                             <item.icon sx={{ color : ( item.url === path ? "black" : "white" )}} />

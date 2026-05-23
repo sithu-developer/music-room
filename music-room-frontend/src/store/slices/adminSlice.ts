@@ -1,5 +1,5 @@
 import { Admin } from "@/type/prisma";
-import { AdminSignInType } from "@/type/admin";
+import { AdminSignInType, NewCompanyName } from "@/type/admin";
 import { envValues } from "@/util/envValues";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { setCategories } from "./categorySlice";
@@ -32,6 +32,26 @@ export const adminSignIn = createAsyncThunk("adminSlice/adminSignIn" , async( da
         if(roomImages) thunkApi.dispatch(setRoomImages(roomImages));
         if(extraImages) thunkApi.dispatch(setExtraImages(extraImages));
         if(musics) thunkApi.dispatch(setMusics(musics))
+        if(onSuccess) {
+            onSuccess();
+        }
+    } catch(err) {
+        console.log(err)
+    }
+})
+
+export const updateCompanyName = createAsyncThunk("Admin slice/UdpateCompanyName" , async( data : NewCompanyName , thunkApi) => {
+    const { id , companyName , onFail , onSuccess } = data;
+    try {
+        const response = await fetch(`${envValues.apiUrl}/admin` , {
+            method : "PUT",
+            headers : {
+                "content-type" : "application/json"
+            },
+            body : JSON.stringify({ id , companyName })
+        });
+        const { updatedAdmin } = await response.json();
+        thunkApi.dispatch(setAdmin(updatedAdmin))
         if(onSuccess) {
             onSuccess();
         }

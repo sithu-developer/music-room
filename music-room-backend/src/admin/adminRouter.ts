@@ -23,5 +23,18 @@ adminRouter.post("/" , (req , res , next) => {
     }
 })
 
+adminRouter.put("/" , (req , res , next) => {
+    const { id , companyName } = req.body;
+    const isValid = id && companyName;
+    if(!isValid) return res.status(400).send("Bad request")
+    next();
+} , async(req , res) => {
+    const { id , companyName } = req.body;
+    const isExit = await prisma.admin.findUnique({ where : { id } });
+    if(!isExit) return res.status(400).send("Bad request");
+    const updatedAdmin = await prisma.admin.update({ where : { id } , data : { companyName }});
+    res.status(200).json({ updatedAdmin })
+} )
+
 
 export default adminRouter;

@@ -3,8 +3,9 @@ import AdminSideBar from "@/components/AdminSideBar";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { adminSignIn } from "@/store/slices/adminSlice";
 import { changeIsLoading } from "@/store/slices/generalSlice";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -31,11 +32,20 @@ const AdminLayout = ( { children } : Props) => {
         }
     } , [ data ]);
 
-    
+    if(!data && !admin && path !== "/admin" ) 
+    return (
+        <Box sx={{ bgcolor : "primary.light" , height : "calc(100vh - 7px)" , p : "30px"}}>
+            <Typography variant="h4" sx={{ textAlign : "center" , color : "white" }} >You are in the wrong danger zone ( friend zone ! )</Typography>
+            <Typography variant="h4" sx={{ textAlign : "center" , color : "white" , mt : "50px" }} >Love You</Typography>
+            {/* <Typography variant="h5" sx={{ textAlign : "center" , color : "white" , mt : "50px" }} >Please, go back to the main page to sign in.</Typography> */}
+            <Link href={"/admin"} ><Typography variant="h5" sx={{ textAlign : "center" , color : "white" , mt : "50px" , fontStyle : "italic" , textDecoration : "underline" }}>Admin Page here!</Typography></Link>
+        </Box>
+    )
+    else
     return (
         <Box sx={{ display : "flex" , width : "100vw" }}>
             {path !== "/admin" && <AdminSideBar />}
-            <Box sx={{ p : "5px 5px 5px 0px"}}>
+            <Box sx={{ p : (path !== "/admin" ?  "5px 5px 5px 0px" : ""), height : "100vh"}}>
                 {children}
             </Box>
         </Box>

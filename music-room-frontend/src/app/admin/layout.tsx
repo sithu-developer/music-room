@@ -19,6 +19,7 @@ const AdminLayout = ( { children } : Props) => {
     const dispatch = useAppDispatch();
     const path = usePathname();
     const router = useRouter();
+    console.log("admin : " , data)
     
     useEffect(() => {
         if(data && data.user && data.user.email && !admin) {
@@ -35,10 +36,10 @@ const AdminLayout = ( { children } : Props) => {
     if(!data && !admin && path !== "/admin" ) 
     return (
         <Box sx={{ bgcolor : "primary.light" , height : "calc(100vh - 7px)" , p : "30px"}}>
-            <Typography variant="h4" sx={{ textAlign : "center" , color : "white" }} >You are in the wrong danger zone ( friend zone ! )</Typography>
-            <Typography variant="h4" sx={{ textAlign : "center" , color : "white" , mt : "50px" }} >Love You</Typography>
-            {/* <Typography variant="h5" sx={{ textAlign : "center" , color : "white" , mt : "50px" }} >Please, go back to the main page to sign in.</Typography> */}
-            <Link href={"/admin"} ><Typography variant="h5" sx={{ textAlign : "center" , color : "white" , mt : "50px" , fontStyle : "italic" , textDecoration : "underline" }}>Admin Page here!</Typography></Link>
+            <Typography variant="h4" sx={{ textAlign : "center" }} >You are in the wrong danger zone ( friend zone ! )</Typography>
+            <Typography variant="h4" sx={{ textAlign : "center" , mt : "50px" }} >Love You</Typography>
+            {/* <Typography variant="h5" sx={{ textAlign : "center" , mt : "50px" }} >Please, go back to the main page to sign in.</Typography> */}
+            <Link href={"/admin"} ><Typography variant="h5" sx={{ textAlign : "center" , mt : "50px" , fontStyle : "italic" , textDecoration : "underline" }}>Admin Page here!</Typography></Link>
         </Box>
     )
     else

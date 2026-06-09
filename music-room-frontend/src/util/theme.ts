@@ -10,8 +10,9 @@ export const theme = createTheme({
         }
     },
     typography : {
-        body1 : {
+        allVariants : {
             color : "white"
-        }
+        },
+        fontFamily : "cursive"
     }
 })

@@ -7,7 +7,7 @@ const AdminPage = () => {
     return (
         <Box sx={{ bgcolor : "black" , height : "100vh" , display : "flex" , justifyContent : 'center' , alignItems : "center"}}>
             <Box sx={{ position : "absolute" , zIndex : 1 , background: "rgba(255,255,255,0.1)", backdropFilter: "blur(10px)" , border: "1px solid rgba(255,255,255,0.2)" , boxShadow: "0 8px 32px rgba(0,0,0,0.25)", p : "15px 20px" , display : "flex" , flexDirection : "column" , alignItems : "center" , gap : "20px" , borderRadius : "10px" }} >
-                <Typography variant="h5" sx={{ color : "white"}} >Sign Up</Typography>
+                <Typography variant="h5" >Sign Up</Typography>
                 <Button variant="contained" sx={{ borderRadius : "20px"}} onClick={() => signIn("google" , { callbackUrl : "/admin/category" })} >Sign Up With Google</Button>
             </Box>
             <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>

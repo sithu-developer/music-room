@@ -17,10 +17,10 @@ model Admin {
   id             Int            @id @default(autoincrement())
   email          String         @unique
   companyName    String         @default("Music Room")
+  companyLogoUrl String?
   RoomCategories RoomCategory[]
   RoomImages     RoomImage[]
   Musics         Music[]
-  Users          User[]
 }
 
 model RoomCategory {
@@ -71,8 +71,7 @@ model User {
   id         Int         @id @default(autoincrement())
   email      String      @unique
   name       String
-  adminId    Int
-  Admin      Admin       @relation(fields: [adminId], references: [id])
+  url        String
   Rooms      Room[]
   Musics     Music[]
   RoomImages RoomImage[]

@@ -19,7 +19,6 @@ const AdminLayout = ( { children } : Props) => {
     const dispatch = useAppDispatch();
     const path = usePathname();
     const router = useRouter();
-    console.log("admin : " , data)
     
     useEffect(() => {
         if(data && data.user && data.user.email && !admin) {

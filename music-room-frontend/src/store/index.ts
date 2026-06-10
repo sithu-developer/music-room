@@ -5,6 +5,7 @@ import roomImageReducer from "./slices/roomImageSlice"
 import extraImageReducer from "./slices/extraImagesSlice"
 import generalReducer from "./slices/generalSlice"
 import musicReducer from "./slices/musicSlice"
+import userReducer from "./slices/userSlice"
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     extraImage : extraImageReducer,
     general : generalReducer,
     music : musicReducer,
+    user : userReducer,
   },
 })
 

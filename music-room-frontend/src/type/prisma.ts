@@ -3,6 +3,7 @@ export interface Admin {
     id: number;
     email: string;
     companyName : string;
+    companyLogoUrl ?: string
 }
 
 export interface RoomCategory {
@@ -36,4 +37,12 @@ export interface Music {
     musicUrl : string;
     adminId   ?: number
     userId    ?: number
+}
+
+
+export interface User {
+    id      : number
+    email   : string    
+    name    : string
+    url     : string
 }

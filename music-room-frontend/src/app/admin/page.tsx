@@ -2,8 +2,16 @@
 import FloatingLines from "@/components/animation/FloatingLines";
 import { Box, Button, Typography } from "@mui/material";
 import { signIn } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 const AdminPage = () => {
+    const [isMounted, setIsMounted] = useState(false);
+    
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    if (!isMounted)  return null;
     return (
         <Box sx={{ bgcolor : "black" , height : "100vh" , display : "flex" , justifyContent : 'center' , alignItems : "center"}}>
             <Box sx={{ position : "absolute" , zIndex : 1 , background: "rgba(255,255,255,0.1)", backdropFilter: "blur(10px)" , border: "1px solid rgba(255,255,255,0.2)" , boxShadow: "0 8px 32px rgba(0,0,0,0.25)", p : "15px 20px" , display : "flex" , flexDirection : "column" , alignItems : "center" , gap : "20px" , borderRadius : "10px" }} >

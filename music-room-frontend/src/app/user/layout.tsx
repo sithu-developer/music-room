@@ -28,7 +28,7 @@ const UserLayout = ({ children } : Props ) => {
         }
     } , [ session ])
 
-    if(!session && !user && path !== "/user" ) 
+    if(!session && !user && path !== "/user" )
     return (
         <Box sx={{ bgcolor : "primary.light" , height : "calc(100vh - 7px)" , p : "30px"}}>
             <Typography variant="h4" sx={{ textAlign : "center" }} >You are in the wrong danger zone ( friend zone ! )</Typography>

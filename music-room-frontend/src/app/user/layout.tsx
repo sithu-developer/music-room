@@ -6,7 +6,7 @@ import { userSignIn } from "@/store/slices/userSlice"
 import { Box, Typography } from "@mui/material"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useEffect } from "react"
 
 interface Props {
@@ -18,12 +18,16 @@ const UserLayout = ({ children } : Props ) => {
     const user = useAppSelector(store => store.user.item);
     const path = usePathname();
     const dispatch = useAppDispatch();
+    const router = useRouter();
     
     useEffect(() => {
         if( session && session.user && session.user.email && session.user.name && !user ) {
             dispatch(changeIsLoading(true))
             dispatch(userSignIn({ email : session.user.email , name : session.user.name , url : (session.user.image ? session.user.image : "") , onSuccess : () => {
                 dispatch(changeIsLoading(false))
+                if(path === "/user") {
+                    router.push("/user/rooms")
+                }
             } }))
         }
     } , [ session ])

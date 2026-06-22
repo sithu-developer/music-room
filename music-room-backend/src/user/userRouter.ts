@@ -6,7 +6,7 @@ const userRouter = express.Router();
 
 userRouter.post("/" , ( req : Request , res : Response , next) => {
     const { email , name , url } = req.body;
-    const isValid = email && name;
+    const isValid = email && name && url !== undefined;
     if(!isValid) return res.status(400).send("Bad request");
     next();
 } , async(req : Request , res : Response) => {

@@ -3,11 +3,16 @@ import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import ApiRoundedIcon from '@mui/icons-material/ApiRounded';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { Box, Button, Chip, Dialog, DialogContent, IconButton, Paper, Slide, TextField, Typography } from "@mui/material";
+import { Box, Button, Chip, Dialog, DialogContent, IconButton, Paper, Slide, Slider, TextField, Typography } from "@mui/material";
 import { useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import Image from 'next/image';
 import { NewRoomType } from '@/type/room';
+import SkipNextIcon from '@mui/icons-material/SkipNext';
+import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
+import PauseIcon from '@mui/icons-material/Pause';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import MusicNoteIcon from '@mui/icons-material/MusicNote';
 
 interface Props {
     openNewRoom : boolean
@@ -15,7 +20,7 @@ interface Props {
 }
 
 const defaultNewRoom : NewRoomType = {
-    name : "" , roomPassword : "" , roommateQty : 1 , currentRoomImageId : 0 , playingMusicId : 0 , ownerUserId : 0
+    name : "" , roomPassword : "" , roommateQty : 1 , currentRoomImage : null , playingMusic : null , ownerUserId : 0
 }
 
 const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
@@ -27,9 +32,9 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
     
     return (
         <Dialog open={openNewRoom} fullScreen sx={{}} >
-            <DialogContent sx={{ bgcolor : "primary.light" }} >
+            <DialogContent sx={{ bgcolor : "primary.light" , background : ( newRoom.currentRoomImage ? `url(${newRoom.currentRoomImage.bgImageUrl})` : "" ) , backgroundSize : "cover" , backgroundPosition : "center" , backgroundRepeat : "no-repeat", overflow : "hidden" }} >
                 <Box sx={{ display : "flex" , justifyContent : "space-between" , alignItems : "center" }}>
-                    <Typography sx={{ textAlign : "center" , fontSize : "27px" , fontWeight : "bold" , background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)" , textShadow : "1px 1px 25px #b5b2b2" , backgroundClip : "text" , WebkitBackgroundClip : "text"  , width : "fit-content" , color : "transparent"  }} >Your Own Room</Typography>
+                    <Typography sx={{ textAlign : "center" , fontSize : "27px" , fontWeight : "bold" , background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)" , textShadow : "1px 1px 25px #b5b2b2" , backgroundClip : "text" , WebkitBackgroundClip : "text"  , width : "fit-content" , color : "transparent"  }} >{newRoom.name ? newRoom.name : "Your Own Room"}</Typography>
                     <Box sx={{ display : "flex" , gap : "20px"}}>
                         <IconButton sx={{  border : "1px solid white"}} onClick={() => {
                             setIsShown(!isShown)
@@ -45,6 +50,23 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
                         </IconButton>
                     </Box>
                 </Box>
+                {newRoom.playingMusic && <Box sx={{ p : "10px" , mt : "10px" , display : "flex" , justifyContent : "center" }}>
+                    <Box sx={{ background : "rgba(101, 106, 106, 0.1)" , backdropFilter : "blur(20px)" , WebkitBackdropFilter : "blur(20px)" , borderRadius : "30px" , width : "250px" , display : "flex" , flexDirection : "column" , alignItems : "center" , p : "5px 15px" , border : "1px dashed black" }}>
+                        <Typography sx={{ fontSize : "19px" , py : "5px" , color : "primary.dark" }} >{newRoom.playingMusic.name}</Typography>
+                        <Slider size="small" aria-label="Small" valueLabelDisplay="auto" sx={{ color : "primary.dark"}} />
+                        <Box sx={{ display : "flex" , gap : "10px"}}>
+                            <IconButton>
+                                <SkipPreviousIcon sx={{ color : "primary.dark"}} />
+                            </IconButton>
+                            <IconButton>
+                                <PauseIcon sx={{ color : "primary.dark"}} />
+                            </IconButton>
+                            <IconButton>
+                                <SkipNextIcon sx={{ color : "primary.dark"}} />
+                            </IconButton>
+                        </Box>
+                    </Box>
+                </Box>}
 
                 <Slide direction="left"  in={isShown} mountOnEnter unmountOnExit >
                     <Paper sx={{ position : "fixed" , right : 20 , top : 80 , bgcolor : "transparent", borderRadius : "10px" }}>
@@ -64,9 +86,9 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
                                 <Typography sx={{ mb : "5px", cursor : "default"}}>Room Images</Typography>
                                 <Box sx={{ display : "flex" , gap : "10px" , width : "100%" , overflowX : "auto" , userSelect : "none"}} >
                                     {roomImages.map(item => (
-                                        <Box key={item.id} sx={{ mb : "5px" , cursor : "pointer" }} onClick={() => setNewRoom({ ...newRoom , currentRoomImageId : item.id})} >
-                                            <Typography sx={{ textAlign : "center" , bgcolor : "primary.dark" , p : "5px", borderRadius : "5px 5px 0 0" , border : (newRoom.currentRoomImageId === item.id ? "1px solid white" : "") , borderBottom : "none" }}>{item.vite}</Typography>
-                                            <Image alt='Room Image' src={item.bgImageUrl} width={400} height={300} style={{ height : "80px" , width : "auto" , minWidth : "100%", borderRadius : "0 0 5px 5px" , border : (newRoom.currentRoomImageId === item.id ? "1px solid white" : "")  }} />
+                                        <Box key={item.id} sx={{ mb : "5px" , cursor : "pointer" }} onClick={() => setNewRoom({ ...newRoom , currentRoomImage : item})} >
+                                            <Typography sx={{ textAlign : "center" , bgcolor : "primary.dark" , p : "5px", borderRadius : "5px 5px 0 0" , border : (newRoom.currentRoomImage && newRoom.currentRoomImage.id === item.id ? "1px solid white" : "") , borderBottom : "none" }}>{item.vite}</Typography>
+                                            <Image alt='Room Image' src={item.bgImageUrl} width={400} height={300} style={{ height : "80px" , width : "auto" , minWidth : "100%", borderRadius : "0 0 5px 5px" , border : (newRoom.currentRoomImage && newRoom.currentRoomImage.id  === item.id ? "1px solid white" : "")  }} />
                                         </Box>
                                     ))}
                                 </Box>
@@ -75,13 +97,13 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
                                 <Typography sx={{ mb : "5px" , cursor : "default"}}>First Music</Typography>
                                 <Box sx={{ display : "flex" , gap : "10px" , width : "100%" , overflowX : "auto" , userSelect : "none" }} >
                                     {musics.map(item => (
-                                        <Chip key={item.id} label={item.name} sx={{ bgcolor : "primary.dark" , color : "white" , border : (newRoom.playingMusicId === item.id ? "1px solid white" : "") }} onClick={() => setNewRoom({ ...newRoom , playingMusicId : item.id })} />
+                                        <Chip key={item.id} label={item.name} sx={{ bgcolor : "primary.dark" , color : "white" , border : (newRoom.playingMusic && newRoom.playingMusic.id === item.id ? "1px solid white" : "") }} onClick={() => setNewRoom({ ...newRoom , playingMusic : item })} />
                                     ))}
                                 </Box>
                             </Box>
                             <Box sx={{ display : "flex" , justifyContent : "space-between" , px : "10px" }}>
                                 <Button variant='outlined' sx={{ color : "white" , borderColor : "white"}} onClick={() => setNewRoom(defaultNewRoom)} >Cancel</Button>
-                                <Button variant='contained' sx={{ color : "white" , borderColor : "white"}} onClick={() => console.log(newRoom)} disabled={(!newRoom.name || !newRoom.roommateQty || !newRoom.currentRoomImageId || !newRoom.playingMusicId)} >Comfirm</Button>
+                                <Button variant='contained' sx={{ color : "white" , borderColor : "white"}} onClick={() => console.log(newRoom)} disabled={(!newRoom.name || !newRoom.roommateQty || !newRoom.currentRoomImage || !newRoom.playingMusic)} >Comfirm</Button>
                             </Box>
                         </Box>
                     </Paper>

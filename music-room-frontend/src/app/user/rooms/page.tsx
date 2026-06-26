@@ -14,7 +14,7 @@ const RoomsPage = () => {
                 <Button variant="outlined" sx={{ borderColor : "white" , textTransform : "none"}} onClick={() => setOpenNewRoom(true)} ><Typography>Create Your Own</Typography></Button>
             </Box>
             <Box sx={{ bgcolor : "gray" , width : "100%" , p : "10px"}}>
-                q
+                Rooms here
             </Box>
             <NewRoom openNewRoom={openNewRoom} setOpenNewRoom={setOpenNewRoom} />
         </Box>

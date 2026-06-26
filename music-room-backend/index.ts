@@ -6,6 +6,7 @@ import categoryRouter from "./src/category/categoryRouter";
 import roomImageRouter from "./src/room-image/roomImageRouter";
 import musicRouter from "./src/music/musicRouter";
 import userRouter from "./src/user/userRouter";
+import roomRouter from "./src/room/roomRouter";
 
 const app = express();
 const port = 5000;
@@ -24,5 +25,6 @@ app.use("/category" , categoryRouter)
 app.use("/room-image" , roomImageRouter )
 app.use("/music" , musicRouter )
 app.use("/user" , userRouter )
+app.use("/room" , roomRouter);
 
 app.listen(port , () => console.log(`music-room-server is running on ${port}`))

@@ -29,6 +29,7 @@ model RoomCategory {
   iconUrl String
   adminId Int
   Admin   Admin  @relation(fields: [adminId], references: [id])
+  rooms   Room[]
 }
 
 model RoomImage {
@@ -79,16 +80,18 @@ model User {
 }
 
 model Room {
-  id                 Int         @id @default(autoincrement())
+  id                 Int          @id @default(autoincrement())
   name               String
   roomPassword       String?
   roommateQty        Int
   currentRoomImageId Int
   playingMusicId     Int
   ownerUserId        Int
-  RoomImage          RoomImage   @relation(fields: [currentRoomImageId], references: [id])
-  Music              Music       @relation(fields: [playingMusicId], references: [id])
-  User               User        @relation(fields: [ownerUserId], references: [id])
+  roomCategoryId     Int
+  RoomCategory       RoomCategory @relation(fields: [roomCategoryId], references: [id])
+  RoomImage          RoomImage    @relation(fields: [currentRoomImageId], references: [id])
+  Music              Music        @relation(fields: [playingMusicId], references: [id])
+  User               User         @relation(fields: [ownerUserId], references: [id])
   Roommates          Roommates[]
 }
 

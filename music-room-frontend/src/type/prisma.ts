@@ -46,3 +46,15 @@ export interface User {
     name    : string
     url     : string
 }
+
+
+export interface Room {
+  id                 : number   
+  name               : string
+  roomPassword      ?: string
+  roommateQty        : number
+  currentRoomImageId : number
+  playingMusicId     : number
+  ownerUserId        : number
+  roomCategoryId     : number
+}

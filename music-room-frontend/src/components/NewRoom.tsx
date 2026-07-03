@@ -45,6 +45,7 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
                 setNewRoom(defaultNewRoom);
                 setIsShown(true);
                 dispatch(changeIsLoading(false))
+                
             }}))
         }
     }

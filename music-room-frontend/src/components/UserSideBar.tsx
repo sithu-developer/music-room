@@ -11,10 +11,9 @@ import SettingsIcon from '@mui/icons-material/Settings';
 const UserSideBar = () => {
 
     const [ isOpenSideBar , setIsOpenSideBar ] = useState<boolean>(false);
-                console.log("1")
 
     return (
-        <Box sx={{ position : "absolute" , zIndex : 1 , transition : "all 1s ease-in-out" , height : (isOpenSideBar ? "500px" : "85px") , bgcolor : "primary.dark" , display : "flex" , flexDirection : "column" , gap : "10px" , justifyContent : "end" , borderRadius : "0 0 30px 10px" , overflow : "hidden" , pb : "2px"}} >
+        <Box sx={{ position : "absolute" , zIndex : 1 , transition : "all 0.6s ease-in-out" , height : (isOpenSideBar ? "450px" : "125px") , bgcolor : "primary.dark" , display : "flex" , flexDirection : "column" , gap : "10px" , justifyContent : "end" , borderRadius : "0 0 30px 10px" , overflow : "hidden" , pb : "2px"}} >
             {isOpenSideBar ? 
             userSideBarItems.map(item => (
                 <Box component={ButtonBase} onClick={(e) => {
@@ -24,7 +23,7 @@ const UserSideBar = () => {
                 </Box>
             ))
              : undefined}
-            <Box component={ButtonBase} onClick={() => setIsOpenSideBar(!isOpenSideBar)}  sx={{ transition : "all 0.3s linear" , height : (isOpenSideBar ? "40px" : "100%") , display : "flex" , alignItems : "end" , p : "8px"}} >
+            <Box component={ButtonBase} onClick={() => setIsOpenSideBar(!isOpenSideBar)}  sx={{ transition : "all 0.1s linear" , height : (isOpenSideBar ? "40px" : "100%") , display : "flex" , alignItems : "end" , p : "8px"}} >
                 {isOpenSideBar ? 
                 <KeyboardArrowUpRoundedIcon sx={{ color : "whitesmoke" , fontSize : "25px" }}  />
                 :<KeyboardArrowDownRoundedIcon sx={{ color : "whitesmoke", fontSize : "25px" }} />}

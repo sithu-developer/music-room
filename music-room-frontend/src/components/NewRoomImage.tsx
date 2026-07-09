@@ -54,8 +54,8 @@ const NewRoomImage = ({ openNewRoomImageDialog , setOpenNewRoomImageDialog } : P
     const handleCreateNewRoomImage = () => {
         if(newRoomImage.bgImage) {
             dispatch(changeIsLoading(true));
-            const extraImages = newExtraImages.map(item => ({ imageUrl : item.extraImage.name , height : item.h , width : item.w , x : item.x , y : item.y }))
-            dispatch(createNewRoomImage({ vite : newRoomImage.vite , bgImageUrl : newRoomImage.bgImage.name , adminId : admin.id , extraImages , onSuccess : () => {
+            const extraImages = newExtraImages.map(item => ({ imageUrl : "/phone.png" /* item.extraImage.name */ , height : item.h , width : item.w , x : item.x , y : item.y }))
+            dispatch(createNewRoomImage({ vite : newRoomImage.vite , bgImageUrl : "/darkBg.jpg" /* newRoomImage.bgImage.name */ , adminId : admin.id , extraImages , onSuccess : () => {
                 setOpenNewRoomImageDialog(false)
                 setNewRoomImage({vite : ""});
                 setNewExtraImages([])

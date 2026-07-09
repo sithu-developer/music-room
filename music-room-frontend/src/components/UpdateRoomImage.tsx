@@ -69,8 +69,8 @@ const UpdateRoomImageDialog = ({ setUpdateRoomImageItems , updateRoomImageItems 
         if(roomImageToUpdate.bgImage) {
             // upload bgImage
             // upload new extra Images
-            const extraImages = extraImagesToUpdate.map(item => ({ id : item.id , imageUrl : item.imageUrl , roomImageId : item.roomImageId , height : item.height , width : item.width , x : item.x , y  : item.y }))
-            dispatch(updateRoomImage({...roomImageToUpdate , bgImageUrl : roomImageToUpdate.bgImageUrl , extraImages , onSuccess : () => {
+            const extraImages = extraImagesToUpdate.map(item => ({ id : item.id , imageUrl : "/phone.png" /* item.imageUrl */ , roomImageId : item.roomImageId , height : item.height , width : item.width , x : item.x , y  : item.y }))
+            dispatch(updateRoomImage({...roomImageToUpdate , bgImageUrl : "/darkBg.jpg"  /* roomImageToUpdate.bgImageUrl */, extraImages , onSuccess : () => {
                 setUpdateRoomImageItems({ open : false })
                 setRoomImageToUpdate(undefined);
                 setExtraImagesToUpdate([])

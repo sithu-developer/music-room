@@ -6,14 +6,18 @@ import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRound
 import WallpaperIcon from '@mui/icons-material/Wallpaper';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import SettingsIcon from '@mui/icons-material/Settings';
+import Image from "next/image";
+import { useAppSelector } from "@/store/hooks";
 
 
 const UserSideBar = () => {
-
+    const user = useAppSelector(store => store.user.item);
     const [ isOpenSideBar , setIsOpenSideBar ] = useState<boolean>(false);
 
+    if(!user) return null;
+
     return (
-        <Box sx={{ position : "absolute" , zIndex : 1 , transition : "all 0.6s ease-in-out" , height : (isOpenSideBar ? "450px" : "125px") , bgcolor : "primary.dark" , display : "flex" , flexDirection : "column" , gap : "10px" , justifyContent : "end" , borderRadius : "0 0 30px 10px" , overflow : "hidden" , pb : "2px"}} >
+        <Box sx={{ position : "absolute" , left : "20px" , zIndex : 1 , transition : "all 0.6s ease-in-out" , height : (isOpenSideBar ? "290px" : "110px") , bgcolor : "primary.dark" , display : "flex" , flexDirection : "column" , gap : "10px" , justifyContent : "end" , alignItems : "center" , borderRadius : "0 0 30px 10px" , pb : "2px" , boxShadow : "3px 10px 25px black"}} >
             {isOpenSideBar ? 
             userSideBarItems.map(item => (
                 <Box component={ButtonBase} onClick={(e) => {
@@ -22,8 +26,11 @@ const UserSideBar = () => {
                     <item.icon sx={{ color : "whitesmoke" , fontSize : "25px" }} />
                 </Box>
             ))
-             : undefined}
-            <Box component={ButtonBase} onClick={() => setIsOpenSideBar(!isOpenSideBar)}  sx={{ transition : "all 0.1s linear" , height : (isOpenSideBar ? "40px" : "100%") , display : "flex" , alignItems : "end" , p : "8px"}} >
+            : undefined}
+            <Box sx={{ position : "absolute" , top : "9px", zIndex : 2 , display : "flex" , justifyContent : "center" , alignItems : "center" , height : "52px" , width : "52px" , borderRadius : "30px" , overflow : "hidden"  , cursor : "pointer" , border : "1px solid #13caeb" , transition : "all 0.2s ease-in-out" , boxShadow : "0 0 10px #13caeb", ":hover" : { scale : 1.1 , boxShadow : "0 0 20px #13caeb" } }}>
+                <Image alt="Profile Photo" src={user.url} width={200} height={200} style={{ height : "auto" , width : "100%" }} />
+            </Box>
+            <Box component={ButtonBase} onClick={() => setIsOpenSideBar(!isOpenSideBar)}  sx={{ transition : "all 0.1s linear" , height : (isOpenSideBar ? "40px" : "100%") , display : "flex" , alignItems : "end" , p : "8px" , borderRadius : "0 0 30px 10px"}} >
                 {isOpenSideBar ? 
                 <KeyboardArrowUpRoundedIcon sx={{ color : "whitesmoke" , fontSize : "25px" }}  />
                 :<KeyboardArrowDownRoundedIcon sx={{ color : "whitesmoke", fontSize : "25px" }} />}

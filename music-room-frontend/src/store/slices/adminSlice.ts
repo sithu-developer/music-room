@@ -17,7 +17,7 @@ const initialState : AdminSliceType = {
 }
 
 export const adminSignIn = createAsyncThunk("adminSlice/adminSignIn" , async( data : AdminSignInType , thunkApi ) => {
-    const { email , onFail , onSuccess } = data;
+    const { email , onFail , onSuccess } = data;    
     try {
         const response = await fetch(`${envValues.apiUrl}/admin` , {
             method : "POST",

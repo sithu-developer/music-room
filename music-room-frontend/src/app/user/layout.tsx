@@ -1,5 +1,6 @@
 "use client"
 
+import UserSideBar from "@/components/UserSideBar"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { changeIsLoading } from "@/store/slices/generalSlice"
 import { userSignIn } from "@/store/slices/userSlice"
@@ -43,6 +44,7 @@ const UserLayout = ({ children } : Props ) => {
     else 
     return (
         <Box >
+            <UserSideBar />
             {children}
         </Box>
     )

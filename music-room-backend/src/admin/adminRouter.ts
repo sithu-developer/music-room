@@ -18,7 +18,7 @@ adminRouter.post("/" , (req , res , next) => {
         const musics = await prisma.music.findMany({ where : { adminId : isExit.id } , orderBy : { id : "asc" }});
         res.status(200).json({ createdAdmin : isExit , categories , roomImages , extraImages , musics });
     } else {
-        const createdAdmin = await prisma.admin.create({ data : { email , name : "Default Name" }});
+        const createdAdmin = await prisma.admin.create({ data : { email , companyName : "Default Name" }});
         res.status(200).json({ createdAdmin });
     }
 })

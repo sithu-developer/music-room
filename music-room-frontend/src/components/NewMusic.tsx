@@ -48,7 +48,7 @@ const NewMusicDialog = ({ open , setOpen } : Prop ) => {
         }}  >
             <DialogContent sx={{ display : "flex" , flexDirection : "column" , gap : "20px"  , bgcolor : "#5182e3" , border : "1px solid #3e648c"}}>
                 <Typography  sx={{ fontSize : "20px"}} >New Music</Typography>
-                <TextField label="Name" onChange={(e) => setNewMusic({...newMusic , name : e.target.value}) }  />
+                <TextField label="Name" sx={{ input : { color : "white" }}} onChange={(e) => setNewMusic({...newMusic , name : e.target.value}) }  />
                 
                 <Box sx={{ display : "flex" , flexDirection :"column" , gap : "5px" , alignItems : "start" }}>
                     <Button {...musicDropItems.getRootProps()}  variant="outlined" sx={{ width : "100%" , borderRadius : "25px" , color : "white" , borderColor : "primary.main" , textTransform : "none" , py : "12px" , display : 'flex' , justifyContent : "space-between"}} >
@@ -56,7 +56,7 @@ const NewMusicDialog = ({ open , setOpen } : Prop ) => {
                         <Typography>{musicDropItems.isDragActive ? "Drag here..." :"Music"} </Typography>
                         <MusicNoteRoundedIcon />
                     </Button>
-                    {newMusic.music && <Chip color="primary" label={newMusic.music.name} onDelete={() => setNewMusic(prev => ({...prev , music : undefined}))} />}
+                    {newMusic.music && <Chip color="primary" sx={{ maxWidth : "250px"}} label={newMusic.music.name} onDelete={() => setNewMusic(prev => ({...prev , music : undefined}))} />}
                 </Box>
                 <Box sx={{ display : "flex" , justifyContent : "space-between"}}>
                     <Button variant="outlined" sx={{ color : "white" , borderColor : "lightgray"}} onClick={() => {

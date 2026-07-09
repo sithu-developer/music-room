@@ -64,7 +64,7 @@ const UpdateMusicDialog = ( { updateMusicDialogItems , setUpdateMusicDialogItems
                         <MusicNoteRoundedIcon />
                     </Button>
                     {musicFileToUpdate? 
-                    <Chip color="primary" label={musicFileToUpdate.name} onDelete={() => setMusicFileToUpdate(null)} />
+                    <Chip color="primary" label={musicFileToUpdate.name} sx={{ maxWidth : "250px"}} onDelete={() => setMusicFileToUpdate(null)} />
                     :<Chip color="primary" label={"Original Music"} icon={<MusicNoteRoundedIcon sx={{ fontSize : "15px" }} />} sx={{ border : "1px solid #1d53a9"}} />}
                 </Box>
                 <Box sx={{ display : "flex" , justifyContent : "space-between"}} >

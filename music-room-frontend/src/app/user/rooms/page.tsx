@@ -6,7 +6,7 @@ import { Box, ButtonBase, Chip, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ChairRoundedIcon from '@mui/icons-material/ChairRounded';
-import UserSideBar from "@/components/UserSideBar";
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 const RoomsPage = () => {
     const [ openNewRoom , setOpenNewRoom ] = useState<boolean>(false);
@@ -23,16 +23,16 @@ const RoomsPage = () => {
 
     return (
         <Box sx={{ height : "100vh" ,  display : "flex" , flexDirection : "column" , alignItems : "center" , bgcolor : "primary.light" }} >
-            <Box sx={{ display : "flex" , justifyContent : "space-between" , alignItems : "center" , width : "100%" , px : "20px" , py : "8px" , bgcolor : "primary.main", borderBottom : "1px solid white" }} >
-                <UserSideBar />
-                <Typography variant="h4" sx={{ ml : "70px"}} >Rooms</Typography>
-                <IconButton onClick={() => setOpenNewRoom(true)} >
+            <Box sx={{ display : "flex" , justifyContent : "space-between" , alignItems : "center" , width : "100%" , px : "20px" , py : "10px" , bgcolor : "primary.main", borderBottom : "1px solid white" , boxShadow : "0 5px 10px #374a5f" }} >
+                <Typography variant="h4" sx={{ ml : "80px" ,textShadow : "5px 3px 10px black" }} >Rooms</Typography>
+                <IconButton onClick={() => setOpenNewRoom(true)} sx={{ position : "relative"}} >
+                    <AddRoundedIcon sx={{ position : "absolute" , top : "0px" , right : "0px" , fontSize : "17px" , color : "whitesmoke"}} />
                     <ChairRoundedIcon sx={{ color : "whitesmoke" , fontSize : "30px"}} />
                 </IconButton>
             </Box>
-            <Box sx={{ display : "flex" , gap : "20px" , width : "100vw" , p : "0 30px 10px 90px" , overflowX : "auto"  , mt : "-0.5px"  }} >
+            <Box sx={{ display : "flex" , gap : "20px" , width : "100vw" , p : "0 30px 20px 105px" , overflowX : "auto"  , mt : "-0.5px"  }} >
                 {categories.map(item => (
-                    <Chip key={item.id} onClick={() => setSelectedCategory(item)} label={item.name} clickable sx={{ color : "white" , borderTopRightRadius : "0" , borderTopLeftRadius : "0" , border : (selectedCategory && item.id === selectedCategory.id ? "1px solid white": "") , borderTop : "none" , bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "")  , ":hover" : { bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "") } }} />
+                    <Chip key={item.id} onClick={() => setSelectedCategory(item)} label={item.name} clickable sx={{ color : "white" , boxShadow : (selectedCategory && item.id === selectedCategory.id ? "5px 5px 15px #374a5f" : "none") , borderTopRightRadius : "0" , borderTopLeftRadius : "0" , border : (selectedCategory && item.id === selectedCategory.id ? "1px solid white": "") , borderTop : "none" , bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "")  , ":hover" : { bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "") } }} />
                 )) }
             </Box>
             <Box sx={{ width : "100%" , p : "10px 20px" , display : "flex" , gap : "20px" , flexWrap : "wrap"}}>

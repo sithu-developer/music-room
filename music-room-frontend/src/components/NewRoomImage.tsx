@@ -23,6 +23,7 @@ const NewRoomImage = ({ openNewRoomImageDialog , setOpenNewRoomImageDialog } : P
     const [ isShown , setIsShown ] = useState<boolean>(true);
     const dispatch = useAppDispatch();
     const admin = useAppSelector(store => store.admin.item)
+    const user = useAppSelector(store => store.user.item)
 
     const onDropBackgroundImage = useCallback((backgroundImages : File[]) => {
         const bgImage = backgroundImages[0];
@@ -55,7 +56,7 @@ const NewRoomImage = ({ openNewRoomImageDialog , setOpenNewRoomImageDialog } : P
         if(newRoomImage.bgImage) {
             dispatch(changeIsLoading(true));
             const extraImages = newExtraImages.map(item => ({ imageUrl : "/phone.png" /* item.extraImage.name */ , height : item.h , width : item.w , x : item.x , y : item.y }))
-            dispatch(createNewRoomImage({ vite : newRoomImage.vite , bgImageUrl : "/darkBg.jpg" /* newRoomImage.bgImage.name */ , adminId : admin.id , extraImages , onSuccess : () => {
+            dispatch(createNewRoomImage({ vite : newRoomImage.vite , bgImageUrl : "/darkBg.jpg" /* newRoomImage.bgImage.name */ , adminId : (admin.id ? admin.id : undefined) , userId : user?.id , extraImages , onSuccess : () => {
                 setOpenNewRoomImageDialog(false)
                 setNewRoomImage({vite : ""});
                 setNewExtraImages([])

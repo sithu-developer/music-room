@@ -16,15 +16,16 @@ userRouter.post("/" , ( req : Request , res : Response , next) => {
     const roomCategories = await prisma.roomCategory.findMany({ where : { adminId : admin?.id } , orderBy : { id : "asc" } })
     const roomCategoryIds = roomCategories.map(item => item.id);
     const rooms = await prisma.room.findMany({ where : { roomCategoryId : { in : roomCategoryIds } } , orderBy : { id : "asc" }})
-    const roomImages = await prisma.roomImage.findMany({ where : { adminId : admin?.id } , orderBy : { id : "asc" }});
+    const roomImages = await prisma.roomImage.findMany({ where : { OR : [ {adminId : admin?.id} , {userId : isExit?.id} ] } , orderBy : { id : "asc" }});
     const roomImageIds = roomImages.map(item => item.id)
     const extraImages = await prisma.extraImage.findMany({ where : { roomImageId : { in : roomImageIds } } , orderBy : { id : "asc" }})
     const musics = await prisma.music.findMany({ where : { adminId : admin?.id } , orderBy : { id : "asc" }})
     if(isExit) {
-        return res.status(200).json({ user : isExit , admin , roomCategories , roomImages , extraImages , musics , rooms })
+
+        return res.status(200).json({ user : isExit , admin : {...admin , email : "" , id : 0} , roomCategories , roomImages , extraImages , musics , rooms })
     } else {
         const newUser = await prisma.user.create({ data : { email , name , url } })
-        res.status(200).json({ user : newUser , admin , roomCategories , roomImages , extraImages , musics , rooms})
+        res.status(200).json({ user : newUser , admin : {...admin , email : "" , id : 0} , roomCategories , roomImages , extraImages , musics , rooms})
     }
 })
 

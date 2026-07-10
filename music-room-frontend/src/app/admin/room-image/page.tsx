@@ -27,14 +27,14 @@ const RoomImagePage = () => {
                     <AddRoundedIcon sx={{ color : "whitesmoke"}} />
                 </IconButton>
             </Box>
-            <Box sx={{ display : "flex" , gap : "10px" , p : "5px" , mt : "10px"}}>
+            <Box sx={{ display : "flex" , gap : "10px" , flexWrap : "wrap" , p : "5px" , mt : "10px"}}>
                 {roomImages.map(item => (
-                    <Box key={item.id} sx={{ width : "200px" , height : "200px" , display : "flex" , flexDirection : "column" , alignItems : "center" }}>
+                    <Box key={item.id} sx={{ height : "200px" , display : "flex" , flexDirection : "column" , alignItems : "center" }}>
                         <Box sx={{ bgcolor : "primary.main" , p : "2px 10px" , border : "1px solid #1b383b" , borderBottom : "none" , borderRadius : "15px 15px 0px 0px"}}>
                             <Typography>{item.vite}</Typography>
                         </Box>
                         <Box sx={{ bgcolor : "primary.main" , border : "3px solid #3e648c" , borderRadius : "8px" , display : "flex" , justifyContent : "center" , alignItems : "center" ,  overflowY : "hidden" }}>
-                            <Image alt="Room Image" src={item.bgImageUrl} width={1000} height={1000} style={{ width : "100%" , height : "auto" , borderRadius : "5px"}} />
+                            <Image alt="Room Image" src={item.bgImageUrl} width={1000} height={1000} style={{ height : "150px" , width : "auto" , borderRadius : "5px"}} />
                         </Box>
                         <Box  sx={{ bgcolor : "primary.main" , border : "1px solid #1b383b" , borderRadius : "20px" , display : "flex" , marginTop : "5px" , justifySelf : "end"}} >
                             <IconButton sx={{ borderRadius : "20px 0px 0px 20px" }} onClick={() => setUpdateRoomImageItems({ open : true , selectedRoomImage : item })}>

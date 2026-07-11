@@ -5,3 +5,11 @@ export interface NewExtraImage {
     x           : number
     y           : number 
 }
+
+export interface RoomMateLayoutType {
+  tempId : number,
+  x      : number,
+  y      : number,
+  h      : string,
+  w      : string,
+}

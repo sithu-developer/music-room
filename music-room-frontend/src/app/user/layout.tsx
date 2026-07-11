@@ -44,7 +44,7 @@ const UserLayout = ({ children } : Props ) => {
     else 
     return (
         <Box >
-            <UserSideBar />
+            {path !== "/user" && <UserSideBar />}
             {children}
         </Box>
     )

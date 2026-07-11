@@ -58,3 +58,16 @@ export interface Room {
   ownerUserId        : number
   roomCategoryId     : number
 }
+
+
+export interface Roommates {
+  id                     : number 
+  roomId                 : number
+  userId                ?: number
+  height                 : string
+  width                  : string
+  x                      : number
+  y                      : number
+  requestMusicId        ?: number
+  requestRoomImageId    ?: number
+}

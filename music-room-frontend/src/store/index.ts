@@ -7,6 +7,8 @@ import generalReducer from "./slices/generalSlice"
 import musicReducer from "./slices/musicSlice"
 import userReducer from "./slices/userSlice"
 import roomReducer from "./slices/roomSlice"
+import roomMateReducer from "./slices/roomMateSlice"
+
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +20,7 @@ export const store = configureStore({
     music : musicReducer,
     user : userReducer,
     room : roomReducer,
+    roomMate : roomMateReducer
     
   },
 })

@@ -2,6 +2,7 @@ import { Room } from "@/type/prisma";
 import { CreateNewRoomParaType } from "@/type/room";
 import { envValues } from "@/util/envValues";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { addRoomMates } from "./roomMateSlice";
 
 
 interface RoomSliceInitialState {
@@ -14,17 +15,18 @@ const initialState : RoomSliceInitialState = {
 
 
 export const createNewRoom = createAsyncThunk("roomSlice/createNewRoom" , async( para : CreateNewRoomParaType , thunkApi ) => {
-    const { name , currentRoomImageId , ownerUserId , playingMusicId , roomCategoryId , roommateQty , roomPassword , onFail , onSuccess } = para;
+    const { roomCategoryId , name , roomPassword, roommateQty, currentRoomImageId, playingMusicId, ownerUserId , roomMateLayouts , onFail , onSuccess } = para;
     try {
         const response = await fetch(`${envValues.apiUrl}/room` , {
             method : "POST",
             headers : {
                 "content-type" : "application/json"
             },
-            body : JSON.stringify({ name , currentRoomImageId , ownerUserId , playingMusicId , roomCategoryId , roommateQty , roomPassword })
+            body : JSON.stringify({ roomCategoryId , name , roomPassword, roommateQty, currentRoomImageId, playingMusicId, ownerUserId , roomMateLayouts })
         });
-        const { newRoom } = await response.json();
+        const { newRoom , newRoomMates } = await response.json();
         thunkApi.dispatch(addNewRoom(newRoom));
+        thunkApi.dispatch(addRoomMates(newRoomMates))
         if(onSuccess) {
             onSuccess();
         }

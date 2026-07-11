@@ -56,7 +56,7 @@ const UpdateMusicDialog = ( { updateMusicDialogItems , setUpdateMusicDialogItems
         }} >
             <DialogContent sx={{ background : "linear-gradient(135deg, #28c3d1 , #1a5381 , #1eb2cc , #2091ee)" , display : "flex" , flexDirection : "column" , gap : "20px" }}>
                 <Typography  sx={{ fontSize : "20px"}} >Update Music</Typography>
-                <TextField color="info" sx={{ input : { color : "white" }}} variant="outlined" label="Name" value={updateMusicDialogItems.selectedMusic.name} onChange={(e) => setUpdateMusicDialogItems({...updateMusicDialogItems , selectedMusic : { ...updateMusicDialogItems.selectedMusic , name : e.target.value } }) }  />
+                <TextField color="secondary" sx={{ input : { color : "white" }}} variant="outlined" label="Name" value={updateMusicDialogItems.selectedMusic.name} onChange={(e) => setUpdateMusicDialogItems({...updateMusicDialogItems , selectedMusic : { ...updateMusicDialogItems.selectedMusic , name : e.target.value } }) }  />
                 <Box sx={{ display : "flex" , flexDirection :"column" , gap : "5px" , alignItems : "start" }}>
                     <Button {...musicDropItems.getRootProps()}  variant="outlined" sx={{ width : "100%" , borderRadius : "25px" , color : "white" , borderColor : "primary.main" , textTransform : "none" , py : "12px" , display : 'flex' , justifyContent : "space-between"}} >
                         <input {...musicDropItems.getInputProps()} accept="audio/*" />

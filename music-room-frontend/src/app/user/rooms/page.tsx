@@ -30,9 +30,9 @@ const RoomsPage = () => {
                     <ChairRoundedIcon sx={{ color : "whitesmoke" , fontSize : "30px"}} />
                 </IconButton>
             </Box>
-            <Box sx={{ display : "flex" , gap : "20px" , width : "100vw" , p : "0 30px 20px 105px" , overflowX : "auto"  , mt : "-0.5px"  }} >
+            <Box sx={{ display : "flex" , gap : "20px" , width : "100vw" , p : "0 30px 20px 105px" , overflowX : "auto"  , mt : "-1px"  }} >
                 {categories.map(item => (
-                    <Chip key={item.id} onClick={() => setSelectedCategory(item)} label={item.name} clickable sx={{ color : "white" , boxShadow : (selectedCategory && item.id === selectedCategory.id ? "5px 5px 15px #374a5f" : "none") , borderTopRightRadius : "0" , borderTopLeftRadius : "0" , border : (selectedCategory && item.id === selectedCategory.id ? "1px solid white": "") , borderTop : "none" , bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "")  , ":hover" : { bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "") } }} />
+                    <Chip key={item.id} onClick={() => setSelectedCategory(item)} label={item.name} clickable sx={{ color : "white" , boxShadow : (selectedCategory && item.id === selectedCategory.id ? "5px 5px 15px #374a5f" : "none") , borderTopRightRadius : "0" , borderTopLeftRadius : "0" , border : (selectedCategory && item.id === selectedCategory.id ? "1px solid white": "") , borderTop : (selectedCategory && item.id === selectedCategory.id ? "1px solid #3e648c": "") , bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "")  , ":hover" : { bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "") } }} />
                 )) }
             </Box>
             <Box sx={{ width : "100%" , p : "10px 20px" , display : "flex" , gap : "20px" , flexWrap : "wrap"}}>
@@ -44,7 +44,7 @@ const RoomsPage = () => {
                             <Box sx={{ position : "absolute" , p : "5px 8px" }}>
                                 <Typography sx={{ background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)", textShadow : "0px 0px 10px #ffffff" , fontWeight : "bold" , backgroundClip : "text" , color : "transparent" }} >{item.name}</Typography>
                             </Box>
-                            <Image alt="room image" src={roomImage.bgImageUrl} width={500} height={500} style={{ height : "100%" , width : "auto"}} />
+                            <Image alt="room image" priority src={roomImage.bgImageUrl} width={500} height={500} style={{ height : "100%" , width : "auto"}} />
                             <Box component={ButtonBase} onClick={() => {}} sx={{ position : "absolute" , bottom : 0 , background : "rgba(255, 255, 255, 0.1)" , backdropFilter : "blur(10px)" , border : "1px solid gray" , borderRadius : "30px 30px 10px 10px" , p : "8px 30px" }}>
                                 <Typography sx={{ textAlign : "center"}}>Join</Typography>
                             </Box>

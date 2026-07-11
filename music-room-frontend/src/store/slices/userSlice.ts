@@ -8,6 +8,7 @@ import { setCategories } from "./categorySlice";
 import { setExtraImages } from "./extraImagesSlice";
 import { setMusics } from "./musicSlice";
 import { setRooms } from "./roomSlice";
+import { setRoomMates } from "./roomMateSlice";
 
 interface UserSliceInitialState {
     item : User | null
@@ -27,7 +28,7 @@ export const userSignIn = createAsyncThunk("userSlice/userSignIn" , async( data 
             },
             body : JSON.stringify({ email , name , url })
         });
-        const { user, admin , roomCategories , roomImages , extraImages , musics , rooms } = await response.json();
+        const { user, admin , roomCategories , roomImages , extraImages , musics , rooms , roomMates } = await response.json();
         thunkApi.dispatch(setUser(user));
         thunkApi.dispatch(setAdmin(admin));
         thunkApi.dispatch(setCategories(roomCategories));
@@ -35,6 +36,7 @@ export const userSignIn = createAsyncThunk("userSlice/userSignIn" , async( data 
         thunkApi.dispatch(setExtraImages(extraImages));
         thunkApi.dispatch(setMusics(musics));
         thunkApi.dispatch(setRooms(rooms))
+        thunkApi.dispatch(setRoomMates(roomMates))
         if(onSuccess) {
             onSuccess();
         }

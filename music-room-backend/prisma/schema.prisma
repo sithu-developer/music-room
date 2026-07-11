@@ -86,7 +86,7 @@ model Room {
   roommateQty        Int
   currentRoomImageId Int
   playingMusicId     Int
-  ownerUserId        Int
+  ownerUserId        Int          @unique
   roomCategoryId     Int
   RoomCategory       RoomCategory @relation(fields: [roomCategoryId], references: [id])
   RoomImage          RoomImage    @relation(fields: [currentRoomImageId], references: [id])
@@ -98,11 +98,15 @@ model Room {
 model Roommates {
   id                 Int        @id @default(autoincrement())
   roomId             Int
-  userId             Int        @unique
+  userId             Int?       @unique
+  height             String
+  width              String
+  x                  Int
+  y                  Int
   requestMusicId     Int?
   requestRoomImageId Int?
   Room               Room       @relation(fields: [roomId], references: [id])
-  User               User       @relation(fields: [userId], references: [id])
+  User               User?       @relation(fields: [userId], references: [id])
   Music              Music?     @relation(fields: [requestMusicId], references: [id])
   RoomImage          RoomImage? @relation(fields: [requestRoomImageId], references: [id])
 }

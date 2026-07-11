@@ -112,7 +112,7 @@ const UpdateRoomImageDialog = ({ setUpdateRoomImageItems , updateRoomImageItems 
                 
                 <Slide direction="right" in={isShown} mountOnEnter unmountOnExit >
                     <Box sx={{ display : 'flex' , flexDirection : "column" , gap : "20px" , width : "300px" , p : "20px" , background : "rgba(75, 110, 113, 0.1)" , backdropFilter : "blur(10px)" , WebkitBackdropFilter : "blur(10px)" , border : "1px solid #3e648c" , borderRadius : "10px" , position : "relative" , zIndex : 10 }}>
-                        <TextField value={roomImageToUpdate.vite} sx={{ input : { color : "white" }}} variant="outlined" label="Vite Name" onChange={(e) => setRoomImageToUpdate({...roomImageToUpdate , vite : e.target.value }) } />
+                        <TextField value={roomImageToUpdate.vite} color="secondary" sx={{ input : { color : "white" }}} variant="outlined" label="Vite Name" onChange={(e) => setRoomImageToUpdate({...roomImageToUpdate , vite : e.target.value }) } />
                         <Box sx={{ display : "flex" , flexDirection :"column" , gap : "5px" , alignItems : "start"}}>
                             <Button {...backgroundImageDropItems.getRootProps()}  variant="outlined" sx={{ width : "100%" , borderRadius : "25px" , color : "white" , borderColor : "primary.main" , textTransform : "none" , py : "12px" , display : 'flex' , justifyContent : "space-between"}} >
                                 <input {...backgroundImageDropItems.getInputProps()}  />

@@ -6,7 +6,7 @@ export const theme = createTheme({
             main : "#3e648c"
         },
         secondary : {
-            main : "#2dea7cdd"
+            main : "#fff"
         }
     },
     typography : {
@@ -14,5 +14,5 @@ export const theme = createTheme({
             color : "white"
         },
         fontFamily : "cursive"
-    }
+    },
 })

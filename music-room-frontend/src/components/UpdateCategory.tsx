@@ -32,7 +32,7 @@ const UpdateCategory = ({ openUpdateCategory , setOpenUpdateCategory , categoryT
         }} >
             <DialogContent sx={{ background : "linear-gradient(135deg, #28c3d1 , #1a5381 , #1eb2cc , #2091ee)" , display : "flex" , flexDirection : "column" , gap : "20px" }}>
                 <Typography  sx={{ fontSize : "20px"}} >Update Category</Typography>
-                <TextField color="info" sx={{ input : { color : "white" }}} variant="outlined" label="Name" value={categoryToUpdate.name} onChange={(e) => setCategoryToUpdate({...categoryToUpdate , name : e.target.value }) }  />
+                <TextField color="secondary"  sx={{ input : { color : "white" }}} variant="outlined" label="Name" value={categoryToUpdate.name} onChange={(e) => setCategoryToUpdate({...categoryToUpdate , name : e.target.value }) }  />
                 <Box sx={{ display : "flex" , flexDirection : "column" , gap : "5px"}}>
                     <Typography sx={{ fontSize : "12px" , ml : "8px"}}>Optional</Typography>
                     <Button variant="outlined" sx={{ color : "white" , borderColor : "lightgray" , textTransform : "none" , py : "12px"}} >Drop here...</Button>

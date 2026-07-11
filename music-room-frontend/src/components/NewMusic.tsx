@@ -16,6 +16,7 @@ const NewMusicDialog = ({ open , setOpen } : Prop ) => {
     const [ newMusic , setNewMusic ] = useState<DefaultNewMusicType>({ name : "" });
     const dispatch = useAppDispatch();
     const admin = useAppSelector(store => store.admin.item)
+    const user = useAppSelector(store => store.user.item)
 
     const onMusicDrop = useCallback((backgroundImages : File[]) => {
         const music = backgroundImages[0];
@@ -33,7 +34,7 @@ const NewMusicDialog = ({ open , setOpen } : Prop ) => {
 
     const handleCreateNewMusic = () => {
         dispatch(changeIsLoading(true))
-        dispatch(createMusic({ name : newMusic.name , musicUrl : "/" , adminId : admin.id , onSuccess : () => {
+        dispatch(createMusic({ name : newMusic.name , musicUrl : "/" , adminId : (admin.id ? admin.id : undefined) , userId : user?.id , onSuccess : () => {
             setOpen(false);
             setNewMusic({ name : "" })
             dispatch(changeIsLoading(false));
@@ -48,7 +49,7 @@ const NewMusicDialog = ({ open , setOpen } : Prop ) => {
         }}  >
             <DialogContent sx={{ display : "flex" , flexDirection : "column" , gap : "20px"  , bgcolor : "#5182e3" , border : "1px solid #3e648c"}}>
                 <Typography  sx={{ fontSize : "20px"}} >New Music</Typography>
-                <TextField label="Name" sx={{ input : { color : "white" }}} onChange={(e) => setNewMusic({...newMusic , name : e.target.value}) }  />
+                <TextField label="Name" color="secondary" sx={{ input : { color : "white" }}} onChange={(e) => setNewMusic({...newMusic , name : e.target.value}) }  />
                 
                 <Box sx={{ display : "flex" , flexDirection :"column" , gap : "5px" , alignItems : "start" }}>
                     <Button {...musicDropItems.getRootProps()}  variant="outlined" sx={{ width : "100%" , borderRadius : "25px" , color : "white" , borderColor : "primary.main" , textTransform : "none" , py : "12px" , display : 'flex' , justifyContent : "space-between"}} >

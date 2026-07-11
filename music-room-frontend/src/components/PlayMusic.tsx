@@ -50,7 +50,7 @@ const PlayMusic = ({ playingMusic, setNewRoom } : Props ) => {
     }
     
     return (
-        <Box sx={{ p : "10px" , mt : "10px" , display : "flex" , justifyContent : "center" , position : "relative" , zIndex : 1 }}>
+        <Box sx={{ p : "10px" , mt : "10px" , display : "flex" , justifyContent : "center" , position : "relative" , zIndex : 3 }}>
             <Box sx={{ background : "rgba(101, 106, 106, 0.1)" , backdropFilter : "blur(20px)" , WebkitBackdropFilter : "blur(20px)" , borderRadius : "30px" , width : "250px" , display : "flex" , flexDirection : "column" , alignItems : "center" , p : "5px 15px" , border : "1px dashed black" }}>
                 <Typography sx={{ fontSize : "19px" , py : "5px" , color : "primary.dark" }} >{playingMusic.name}</Typography>
                 <Slider size="small" valueLabelDisplay="auto" sx={{ color : "primary.dark"}}  />

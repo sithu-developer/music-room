@@ -7,17 +7,27 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import ChairRoundedIcon from '@mui/icons-material/ChairRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import VpnKeyRoundedIcon from '@mui/icons-material/VpnKeyRounded';
+import LockRoundedIcon from '@mui/icons-material/LockRounded';
 
 const RoomsPage = () => {
     const [ openNewRoom , setOpenNewRoom ] = useState<boolean>(false);
     const rooms = useAppSelector(store => store.room.items );
     const roomImages = useAppSelector(store => store.roomImage.items)
+    const roomMates = useAppSelector(store => store.roomMate.items)
     const categories = useAppSelector(store => store.category.items)
     const [ selectedCategory , setSelectedCategory ] = useState<RoomCategory>();
 
     useEffect(() => {
         if(categories.length) {
-            setSelectedCategory(categories[0]);
+            const isExitId = localStorage.getItem("selectedCategoryId");
+            if(isExitId) {
+                const foundCategory = categories.find(item => item.id === Number(isExitId))
+                setSelectedCategory(foundCategory);
+            } else {
+                setSelectedCategory(categories[0]);
+            }
+            
         }
     } , [ categories ])
 
@@ -32,21 +42,28 @@ const RoomsPage = () => {
             </Box>
             <Box sx={{ display : "flex" , gap : "20px" , width : "100vw" , p : "0 30px 20px 105px" , overflowX : "auto"  , mt : "-1px"  }} >
                 {categories.map(item => (
-                    <Chip key={item.id} onClick={() => setSelectedCategory(item)} label={item.name} clickable sx={{ color : "white" , boxShadow : (selectedCategory && item.id === selectedCategory.id ? "5px 5px 15px #374a5f" : "none") , borderTopRightRadius : "0" , borderTopLeftRadius : "0" , border : (selectedCategory && item.id === selectedCategory.id ? "1px solid white": "") , borderTop : (selectedCategory && item.id === selectedCategory.id ? "1px solid #3e648c": "") , bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "")  , ":hover" : { bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "") } }} />
+                    <Chip key={item.id} onClick={() => {
+                        setSelectedCategory(item);
+                        localStorage.setItem("selectedCategoryId" , String(item.id));
+                    }} label={item.name} clickable sx={{ color : "white" , boxShadow : (selectedCategory && item.id === selectedCategory.id ? "5px 5px 15px #374a5f" : "none") , borderTopRightRadius : "0" , borderTopLeftRadius : "0" , border : (selectedCategory && item.id === selectedCategory.id ? "1px solid white": "") , borderTop : (selectedCategory && item.id === selectedCategory.id ? "1px solid #3e648c": "") , bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "")  , ":hover" : { bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "") } }} />
                 )) }
             </Box>
             <Box sx={{ width : "100%" , p : "10px 20px" , display : "flex" , gap : "20px" , flexWrap : "wrap"}}>
                 {selectedCategory && rooms.filter(item => item.roomCategoryId === selectedCategory.id).map(item => {
-                    const roomImage = roomImages.find(roomImg => roomImg.id === item.currentRoomImageId )
+                    const roomImage = roomImages.find(roomImg => roomImg.id === item.currentRoomImageId );
+                    const joinedRoomMates = roomMates.filter(roomMate => roomMate.userId && roomMate.roomId === item.id )
                     if(roomImage)
                     return (
                         <Box key={item.id} sx={{ position : "relative" ,  display : "flex" , flexDirection : "column" , alignItems : "center" , height : "250px" , borderRadius : "10px" , overflow : "hidden" }} >
                             <Box sx={{ position : "absolute" , p : "5px 8px" }}>
                                 <Typography sx={{ background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)", textShadow : "0px 0px 10px #ffffff" , fontWeight : "bold" , backgroundClip : "text" , color : "transparent" }} >{item.name}</Typography>
                             </Box>
+                            <Typography sx={{ position : "absolute" , left : "7px" , top : "7px" , bgcolor : "primary.dark" , p : "1px 6px" , borderRadius : "5px" , fontSize : "14px"}} >{joinedRoomMates.length + "/" + item.roommateQty + " members" }</Typography>
+                            {item.roomPassword && <LockRoundedIcon sx={{ position : "absolute" , right : "7px" , top : "7px" , color : "secondary.dark" , fontSize : "20px"}}  />}
                             <Image alt="room image" priority src={roomImage.bgImageUrl} width={500} height={500} style={{ height : "100%" , width : "auto"}} />
                             <Box component={ButtonBase} onClick={() => {}} sx={{ position : "absolute" , bottom : 0 , background : "rgba(255, 255, 255, 0.1)" , backdropFilter : "blur(10px)" , border : "1px solid gray" , borderRadius : "30px 30px 10px 10px" , p : "8px 30px" }}>
                                 <Typography sx={{ textAlign : "center"}}>Join</Typography>
+                                {item.roomPassword && <VpnKeyRoundedIcon sx={{ position : "absolute" , top : "-12px" , fontSize : "20px" , color : "secondary.main" , rotate : "90deg" }} />}
                             </Box>
                         </Box>
                     )

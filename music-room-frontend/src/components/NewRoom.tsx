@@ -17,6 +17,7 @@ import NewMusicDialog from './NewMusic';
 import { Rnd } from 'react-rnd';
 import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import { useRouter } from 'next/navigation';
 
 
 interface Props {
@@ -43,14 +44,14 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
     const [ openNewMusicDialog , setOpenNewMusicDialog ] = useState(false);
     const [ isMineMusics , setIsMineMusics ] = useState(false);
     const [ roomMateLayouts , setRoomMateLayouts ] = useState<RoomMateLayoutType[]>([ { tempId : 0 , h : "100px" , w : "100px" , x : Math.floor(Math.random() * 300) , y : Math.floor(Math.random() * 300)} ]);
-
+    const router = useRouter();
 
     if(!user) return null;
 
     const handleCreateNewRoom = () => {
         if(newRoom.currentRoomImage && newRoom.playingMusic ) {
             dispatch(changeIsLoading(true))
-            dispatch(createNewRoom({ ...newRoom , currentRoomImageId : newRoom.currentRoomImage.id , ownerUserId : user.id , playingMusicId : newRoom.playingMusic.id , roomMateLayouts , onSuccess : () => {
+            dispatch(createNewRoom({ ...newRoom , currentRoomImageId : newRoom.currentRoomImage.id , ownerUserId : user.id , playingMusicId : newRoom.playingMusic.id , roomMateLayouts , onSuccess : ( id ) => {
                 setOpenNewRoom(false);
                 setNewRoom(defaultNewRoom);
                 setIsShown(true);
@@ -59,6 +60,7 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
                 setIsMineMusics(false)
                 setRoomMateLayouts([ { tempId : 0 , h : "100px" , w : "100px" , x : Math.floor(Math.random() * 300) , y : Math.floor(Math.random() * 300)} ])
                 dispatch(changeIsLoading(false))
+                router.push(`/user/rooms/${id}`)
             }}))
         }
     }

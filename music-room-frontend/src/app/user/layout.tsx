@@ -7,7 +7,7 @@ import { userSignIn } from "@/store/slices/userSlice"
 import { Box, Typography } from "@mui/material"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { useParams, usePathname, useRouter } from "next/navigation"
 import { useEffect } from "react"
 
 interface Props {
@@ -17,10 +17,13 @@ interface Props {
 const UserLayout = ({ children } : Props ) => {
     const { data : session } = useSession();
     const user = useAppSelector(store => store.user.item);
+    const roomMates = useAppSelector(store => store.roomMate.items);
     const path = usePathname();
+    const { id } = useParams();
     const dispatch = useAppDispatch();
     const router = useRouter();
-    
+    const showSideBar = (path !== "/user" && !id )
+
     useEffect(() => {
         if( session && session.user && session.user.email && session.user.name && !user ) {
             dispatch(changeIsLoading(true))
@@ -33,6 +36,15 @@ const UserLayout = ({ children } : Props ) => {
         }
     } , [ session ])
 
+    useEffect(() => {
+        if(roomMates.length && user && !id) {
+            const isAlreadyRoomMate = roomMates.find(item => item.userId === user.id);
+            if(isAlreadyRoomMate) {
+                router.push(`/user/rooms/${isAlreadyRoomMate.roomId}`)
+            }
+        }
+    } , [ roomMates , user ])
+
     if(!session && !user && path !== "/user" )
     return (
         <Box sx={{ bgcolor : "primary.light" , height : "calc(100vh - 7px)" , p : "30px"}}>
@@ -44,7 +56,7 @@ const UserLayout = ({ children } : Props ) => {
     else 
     return (
         <Box >
-            {path !== "/user" && <UserSideBar />}
+            {showSideBar && <UserSideBar />}
             {children}
         </Box>
     )

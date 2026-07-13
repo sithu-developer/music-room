@@ -20,7 +20,7 @@ const UserSignInPage = () => {
                     <Typography variant="h4" sx={{ mt : "80px"}} >Sign Up</Typography>
                     <Button variant="outlined" sx={{ mt : "60px" , color : "white" , borderColor : "white" , textTransform : "none" , fontSize : "18px" }} onClick={() => signIn("google" , { callbackUrl : "/user/rooms" })} >Continue with Google</Button>
                 </Box>
-                <Image alt="Piano photo" src={"/piano.jpg"} width={2000} height={2000} style={{ width : "400px" , height : "auto"}} />
+                <Image priority alt="Piano photo" src={"/piano.jpg"} width={2000} height={2000} style={{ width : "400px" , height : "auto"}} />
             </Box>
         </Box>
     )

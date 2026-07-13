@@ -12,9 +12,10 @@ import { NewRoomType } from "@/type/room";
 interface Props {
     playingMusic : Music;
     setNewRoom ?: Dispatch<SetStateAction<NewRoomType>>
+    setPlayingMusic ?: (value : Music) => void;
 }
 
-const PlayMusic = ({ playingMusic, setNewRoom } : Props ) => {
+const PlayMusic = ({ playingMusic, setNewRoom , setPlayingMusic } : Props ) => {
     const [ isPlayingMusic , setIsPlayingMusic ] = useState<boolean>(false);
     const musics = useAppSelector(store => store.music.items)
 
@@ -26,10 +27,16 @@ const PlayMusic = ({ playingMusic, setNewRoom } : Props ) => {
             if(setNewRoom) {
                 setNewRoom((prev) => { return {...prev , playingMusic : previousMusic}})
             }
+            if(setPlayingMusic) {
+                setPlayingMusic(previousMusic)
+            }
         } else {
             const previousMusic = musics[indexOfCurrentMusic - 1];
             if(setNewRoom) {
                 setNewRoom((prev) => { return {...prev , playingMusic : previousMusic}})
+            }
+            if(setPlayingMusic) {
+                setPlayingMusic(previousMusic)
             }
         }
     }
@@ -41,10 +48,16 @@ const PlayMusic = ({ playingMusic, setNewRoom } : Props ) => {
             if(setNewRoom) {
                 setNewRoom((prev) => { return {...prev , playingMusic : nextMusic}})
             }
+            if(setPlayingMusic) {
+                setPlayingMusic(nextMusic)
+            }
         } else {
             const nextMusic = musics[indexOfCurrentMusic + 1];
             if(setNewRoom) {
                 setNewRoom((prev) => { return {...prev , playingMusic : nextMusic}})
+            }
+            if(setPlayingMusic) {
+                setPlayingMusic(nextMusic)
             }
         }
     }

@@ -28,7 +28,7 @@ export const createNewRoom = createAsyncThunk("roomSlice/createNewRoom" , async(
         thunkApi.dispatch(addNewRoom(newRoom));
         thunkApi.dispatch(addRoomMates(newRoomMates))
         if(onSuccess) {
-            onSuccess();
+            onSuccess(newRoom.id);
         }
 
     } catch (err) {

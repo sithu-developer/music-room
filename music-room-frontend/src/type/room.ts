@@ -28,3 +28,8 @@ export interface RoomMateLayoutType {
   h      : string,
   w      : string,
 }
+
+export interface CheckRoomMateUsersParaType extends IsSuccessOrFailType {
+  roomId : number
+  userId : number
+}

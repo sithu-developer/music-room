@@ -1,5 +1,5 @@
-import { Room } from "@/type/prisma";
-import { CreateNewRoomParaType } from "@/type/room";
+import { Room, User } from "@/type/prisma";
+import { CheckRoomMateUsersParaType, CreateNewRoomParaType } from "@/type/room";
 import { envValues } from "@/util/envValues";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { addRoomMates } from "./roomMateSlice";
@@ -7,10 +7,12 @@ import { addRoomMates } from "./roomMateSlice";
 
 interface RoomSliceInitialState {
     items : Room[]
+    roomMateUsers : User[]
 }
 
 const initialState : RoomSliceInitialState = {
-    items : []
+    items : [],
+    roomMateUsers : []
 }
 
 
@@ -36,6 +38,28 @@ export const createNewRoom = createAsyncThunk("roomSlice/createNewRoom" , async(
     }
 })
 
+export const checkPermissionAndRoomMateUsers = createAsyncThunk("roomSlice/checkRoomMateUsers" , async( para : CheckRoomMateUsersParaType , thunkApi ) => {
+    const { roomId , userId , onFail , onSuccess } = para;
+    try {
+        const response = await fetch(`${envValues.apiUrl}/room?roomId=${roomId}&userId=${userId}`);
+        if(!response.ok) {
+            if(onFail && response.status === 403) {
+                onFail();
+            }
+        } else {
+            const { roomMateUsers } = await response.json();
+            thunkApi.dispatch(setRoomMateUsers(roomMateUsers));
+            if(onSuccess) {
+                onSuccess();
+            }
+        }
+
+    } catch(err) {
+        console.log( err)
+    }
+
+})
+
 const roomSlice = createSlice({
     name : "room slice",
     initialState ,
@@ -45,11 +69,14 @@ const roomSlice = createSlice({
         },
         setRooms : (state , action : PayloadAction<Room[]> ) => {
             state.items = action.payload;
+        },
+        setRoomMateUsers : ( state , action : PayloadAction<User[]>) => {
+            state.roomMateUsers = action.payload;
         }
     }
 });
 
-export const { addNewRoom , setRooms } = roomSlice.actions;
+export const { addNewRoom , setRooms , setRoomMateUsers } = roomSlice.actions;
 
 
 export default roomSlice.reducer;

@@ -71,7 +71,7 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
             <DialogContent sx={{ position : "relative" ,  bgcolor : "primary.light" , background : ( newRoom.currentRoomImage ? `url(${newRoom.currentRoomImage.bgImageUrl})` : "" ) , backgroundSize : "cover" , backgroundPosition : "center" , backgroundRepeat : "no-repeat", overflow : "hidden" }} >
                 <Box sx={{ display : "flex" , justifyContent : "space-between" , alignItems : "center" }}>
                     <Typography sx={{  zIndex : 5 , position : "relative" , userSelect : "none" , textAlign : "center" , fontSize : "27px" , fontWeight : "bold" , background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)" , textShadow : "1px 1px 25px #b5b2b2" , backgroundClip : "text" , WebkitBackgroundClip : "text"  , width : "fit-content" , color : "transparent"  }} >{newRoom.name ? newRoom.name : "Your Own Room"}</Typography>
-                    <Box sx={{ display : "flex" , gap : "20px"}}>
+                    <Box sx={{ zIndex : 5 , display : "flex" , gap : "20px" }}>
                         <IconButton sx={{  border : "1px solid white"}} onClick={() => {
                             setIsShown(!isShown)
                         }}>
@@ -143,9 +143,9 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
 
                 <Slide direction="left" in={isShown} mountOnEnter unmountOnExit >
                     <Paper sx={{ zIndex : 2 , position : "fixed" , right : 20 , top : 80 , bgcolor : "transparent", borderRadius : "10px" }}>
-                        <Box sx={{ position : "relative" , zIndex : 10 , display : 'flex' , flexDirection : "column" , width : "300px" , maxHeight : "70vh" , background : "rgba(75, 110, 113, 0.1)" , backdropFilter : "blur(10px)" , WebkitBackdropFilter : "blur(10px)" , border : "1px solid white" , borderRadius : "10px" , overflowY : "auto" }}>
-                            <Typography sx={{ textAlign : "center" ,  position : "sticky" , top : 0 , background : "linear-gradient( 180deg , #3e648c , #3e648c , #3e648ce4 , #3e648c00)" , p : "10px 0 25px 0"}} variant='h6' >Room Details</Typography>
-                            <Box sx={{ display : 'flex' , flexDirection : "column" , gap : "20px" , p : "20px" }} >
+                        <Box sx={{ position : "relative" , zIndex : 10 , display : 'flex' , flexDirection : "column" , width : "300px" , maxHeight : "70vh" , background : "rgba(75, 110, 113, 0.1)" , backdropFilter : "blur(10px)" , WebkitBackdropFilter : "blur(10px)" , border : "1px solid white" , borderRadius : "10px"  }}>
+                            <Typography sx={{ textAlign : "center" ,  position : "sticky" , top : 0 , p : "10px 0 25px 0"}} variant='h6' >Room Details</Typography>
+                            <Box sx={{ display : 'flex' , flexDirection : "column" , gap : "20px" , p : "20px" , overflowY : "auto" }} >
                                 <Box>
                                     <Typography sx={{ mb : "5px" , cursor : "default"}}>Room Categories</Typography>
                                     <Box sx={{ display : "flex" , gap : "10px" , width : "100%" , overflowX : "auto" , userSelect : "none" , pb : "5px" }} >

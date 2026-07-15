@@ -40,3 +40,10 @@ a {
     color-scheme: dark;
   }
 }
+
+
+/* Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #000000 #f1f1f173; 
+}

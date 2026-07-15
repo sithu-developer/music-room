@@ -1,13 +1,16 @@
 "use client"
 import PlayMusic from "@/components/PlayMusic";
+import RoomImageSlide from "@/components/RoomImageSlide";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { changeIsLoading, changeSnackBarItems } from "@/store/slices/generalSlice";
 import { checkPermissionAndRoomMateUsers } from "@/store/slices/roomSlice";
 import { ExtraImage, Music, Room, RoomImage, Roommates } from "@/type/prisma";
-import { Box, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import ImagesearchRollerRoundedIcon from '@mui/icons-material/ImagesearchRollerRounded';
+import MusicNoteRoundedIcon from '@mui/icons-material/MusicNoteRounded';
 
 const InRoomPage = () => {
     const param = useParams();
@@ -25,11 +28,11 @@ const InRoomPage = () => {
     const [ relatedExtraImages , setRelatedExtraImages ] = useState<ExtraImage[]>([]);
     const [ currentRoomMates , setCurrentRoomMates ] = useState<Roommates[]>([]);
     const [ hasPermission , setHasPermission ] = useState<boolean>(false);
+    const [ updateRoomImageOpen , setUpdateRoomImageOpen ] = useState<boolean>(false);
+    const [ isMineRoomImages , setIsMineRoomImages ] = useState(false);
     const hasFetched = useRef(false);
     const dispatch = useAppDispatch();
     const router = useRouter();
-
-
 
     useEffect(() => {
         if(rooms.length && roomImages.length && roomId) {
@@ -42,13 +45,16 @@ const InRoomPage = () => {
                 setPlayingMusic(foundMusic);
                 const foundRoomMates = roomMates.filter(item => item.roomId === foundRoom.id);
                 setCurrentRoomMates(foundRoomMates);
-                if(foundRoomImage) {
-                    const foundExtraImages = extraImages.filter(item => item.roomImageId === foundRoomImage.id )
-                    setRelatedExtraImages(foundExtraImages)
-                }
             }
         }
-    } , [rooms , roomId , roomImages , musics , extraImages , roomMates])
+    } , [rooms , roomId , roomImages , musics , roomMates])
+
+    useEffect(() => {
+        if(currentRoomImage && extraImages) {
+            const foundExtraImages = extraImages.filter(item => item.roomImageId === currentRoomImage.id )
+            setRelatedExtraImages(foundExtraImages)
+        }
+    } , [ currentRoomImage , extraImages ])
 
     useEffect(() => {
         if(!hasFetched.current && roomId && user ) {
@@ -68,13 +74,28 @@ const InRoomPage = () => {
         }
     } , [ roomId , user ] )
 
-    if(!currentRoom || !currentRoomImage || !playingMusic || !currentRoomMates.length || !hasPermission || !roomMateUsers.length) return null;
+    if(!user || !currentRoom || !currentRoomImage || !playingMusic || !currentRoomMates.length || !hasPermission || !roomMateUsers.length) return null;
 
 
     return (
-        <Box sx={{ height : "100vh" , background : `url(${currentRoomImage.bgImageUrl})` , backgroundSize : "cover" , backgroundRepeat : "no-repeat" , backgroundPosition : "center" , overflow : "hidden" }} >
+        <Box sx={{ position : "relative", height : "100vh" , background : `url(${currentRoomImage.bgImageUrl})` , backgroundSize : "cover" , backgroundPosition : "center" , backgroundRepeat : "no-repeat"  , overflow : "hidden" }} >
             <Typography sx={{ zIndex : 5 , position : "relative" , p : "21px 0 0 24px" , textAlign : "center" , fontSize : "27px" , fontWeight : "bold" , background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)" , textShadow : "1px 1px 25px #b5b2b2" , backgroundClip : "text" , WebkitBackgroundClip : "text"  , width : "fit-content" , color : "transparent"  }} >{currentRoom.name}</Typography>
             <PlayMusic playingMusic={playingMusic} setPlayingMusic={setPlayingMusic} />
+            <Box sx={{ position : "absolute", zIndex : 5 , top : "21px" , right : "24px" , display : "flex" , gap : "20px"}} >
+                <IconButton sx={{  border : "1px solid white"}} 
+                    onClick={() => {
+                        setUpdateRoomImageOpen(prev => (!prev))
+                        const foundRoomImage = roomImages.find(item => item.id === currentRoom.currentRoomImageId);
+                        setCurrentRoomImage(foundRoomImage);
+                        setIsMineRoomImages(false)
+                    }}
+                >
+                    <ImagesearchRollerRoundedIcon color="secondary" />
+                </IconButton>
+                <IconButton sx={{  border : "1px solid white"}}>
+                    <MusicNoteRoundedIcon color="secondary" />
+                </IconButton>
+            </Box>
             {relatedExtraImages.length ? relatedExtraImages.map(item => (
                 <Box key={item.id} sx={{ position : "absolute" , left : item.x , top : item.y}} >
                     <Image alt="Bg image" src={item.imageUrl} width={400} height={400}
@@ -86,8 +107,9 @@ const InRoomPage = () => {
             <Box sx={{ zIndex : 2 , position : "absolute" , top : 0 , left : 0  }} >
                 {currentRoomMates.map(item => {
                     const roomMateUser = roomMateUsers.find(rMUser => rMUser.id === item.userId);
-                    return ( // customize user profile
+                    return ( 
                     <Box key={item.id} sx={{ position : "absolute" , left : item.x , top : item.y}} >
+                        <Typography sx={{ position : "absolute" , top : "-25px" , right : "50%" , zIndex : 10 , transform : "translateX(50%)"  }}>{roomMateUser ? ( roomMateUser.id === user.id ? "You" : roomMateUser.name ) : ""}</Typography>
                         <Image alt="Room Mate" src={roomMateUser ? roomMateUser.url : "/roomMate.jpg"} width={400} height={400}
                             style={{ width : item.width , height : item.height , padding : "5.5px" }}
                         />
@@ -95,6 +117,7 @@ const InRoomPage = () => {
                 )
                 })}
             </Box>
+            <RoomImageSlide currentRoomImage={currentRoomImage} setCurrentRoomImage={setCurrentRoomImage} updateRoomImageOpen={updateRoomImageOpen} setUpdateRoomImageOpen={setUpdateRoomImageOpen} currentRoom={currentRoom} isMineRoomImages={isMineRoomImages} setIsMineRoomImages={setIsMineRoomImages} />
         </Box>
     )
 

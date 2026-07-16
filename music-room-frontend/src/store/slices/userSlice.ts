@@ -12,10 +12,12 @@ import { setRoomMates } from "./roomMateSlice";
 
 interface UserSliceInitialState {
     item : User | null
+    otherUsers : User[]
 }
 
 const initialState : UserSliceInitialState = {
-    item : null
+    item : null,
+    otherUsers : []
 }
 
 export const userSignIn = createAsyncThunk("userSlice/userSignIn" , async( data : UserSignInData , thunkApi ) => {
@@ -28,7 +30,7 @@ export const userSignIn = createAsyncThunk("userSlice/userSignIn" , async( data 
             },
             body : JSON.stringify({ email , name , url })
         });
-        const { user, admin , roomCategories , roomImages , extraImages , musics , rooms , roomMates } = await response.json();
+        const { user, admin , roomCategories , roomImages , extraImages , musics , rooms , roomMates , otherUsers } = await response.json();
         thunkApi.dispatch(setUser(user));
         thunkApi.dispatch(setAdmin(admin));
         thunkApi.dispatch(setCategories(roomCategories));
@@ -37,6 +39,7 @@ export const userSignIn = createAsyncThunk("userSlice/userSignIn" , async( data 
         thunkApi.dispatch(setMusics(musics));
         thunkApi.dispatch(setRooms(rooms))
         thunkApi.dispatch(setRoomMates(roomMates))
+        thunkApi.dispatch(setOtherUsers(otherUsers))
         if(onSuccess) {
             onSuccess();
         }
@@ -52,10 +55,13 @@ const userSlice = createSlice({
     reducers : {
         setUser : ( state , action : PayloadAction<User>) => {
             state.item = action.payload;
+        },
+        setOtherUsers : ( state , action : PayloadAction<User[]>) => {
+            state.otherUsers = action.payload;
         }
     }
 });
 
-const { setUser } = userSlice.actions;
+const { setUser , setOtherUsers } = userSlice.actions;
 
 export default userSlice.reducer;

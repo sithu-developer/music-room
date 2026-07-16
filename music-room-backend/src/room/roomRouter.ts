@@ -21,22 +21,17 @@ roomRouter.post("/" , (req : Request , res : Response , next) => {
     res.status(200).json( { newRoom , newRoomMates } )
 })
 
-roomRouter.get("/" , (req : Request , res : Response , next) => {
-    const { roomId , userId } = req.query;
-    const isValid = roomId && userId;
-    if(!isValid) return res.status(400).send("Bad request");
+roomRouter.put("/" , (req : Request , res : Response , next) => {
+    const { id , currentRoomImageId , playingMusicId } = req.body;
+    const isValid = id && currentRoomImageId && playingMusicId;
+    if(!isValid) return res.status(400).send("Bad request")
     next();
-}, async(req : Request , res : Response ) => {
-    const roomId = Number(req.query.roomId);
-    const userId = Number(req.query.userId);
-    const foundRoom = await prisma.room.findUnique({ where : { id : roomId }});
-    const foundUser = await prisma.user.findUnique({ where : { id : userId }});
-    const isExit = foundRoom && foundUser;
-    if(!isExit) return res.status(400).send("Bad request");
-    const roomMateUserIds = (await prisma.roommates.findMany({ where : { roomId } })).filter(item => item.userId).map(item => item.userId) as number[];
-    if(!roomMateUserIds.includes(userId)) return res.status(403).send("Forbidden");
-    const roomMateUsers = (await prisma.user.findMany({ where : { id : { in : roomMateUserIds } }})).map(item => ({...item , email : "" }));
-    res.status(200).json({ roomMateUsers })
+} , async(req : Request , res : Response) => {
+    const { id , currentRoomImageId , playingMusicId } = req.body;
+    const isExit = await prisma.room.findUnique({ where : { id }});
+    if(!isExit) return res.status(400).send("Bad request")
+    const updatedRoom = await prisma.room.update({ where : { id } , data : { currentRoomImageId , playingMusicId } });
+    res.status(200).json({ updatedRoom })
 })
 
 export default roomRouter;

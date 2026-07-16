@@ -1,5 +1,5 @@
 import { Room, User } from "@/type/prisma";
-import { CheckRoomMateUsersParaType, CreateNewRoomParaType } from "@/type/room";
+import { CheckRoomMateUsersParaType, CreateNewRoomParaType, UpdateRoomParaType } from "@/type/room";
 import { envValues } from "@/util/envValues";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { addRoomMates } from "./roomMateSlice";
@@ -7,12 +7,10 @@ import { addRoomMates } from "./roomMateSlice";
 
 interface RoomSliceInitialState {
     items : Room[]
-    roomMateUsers : User[]
 }
 
 const initialState : RoomSliceInitialState = {
     items : [],
-    roomMateUsers : []
 }
 
 
@@ -38,24 +36,23 @@ export const createNewRoom = createAsyncThunk("roomSlice/createNewRoom" , async(
     }
 })
 
-export const checkPermissionAndRoomMateUsers = createAsyncThunk("roomSlice/checkRoomMateUsers" , async( para : CheckRoomMateUsersParaType , thunkApi ) => {
-    const { roomId , userId , onFail , onSuccess } = para;
+export const updateRoom = createAsyncThunk("roomSlice/updateRoom" , async( para : UpdateRoomParaType , thunkApi ) => {
+    const { id , currentRoomImageId , playingMusicId , onFail , onSuccess } = para;
     try {
-        const response = await fetch(`${envValues.apiUrl}/room?roomId=${roomId}&userId=${userId}`);
-        if(!response.ok) {
-            if(onFail && response.status === 403) {
-                onFail();
-            }
-        } else {
-            const { roomMateUsers } = await response.json();
-            thunkApi.dispatch(setRoomMateUsers(roomMateUsers));
-            if(onSuccess) {
-                onSuccess();
-            }
+        const response = await fetch(`${envValues.apiUrl}/room` , {
+            method : "PUT",
+            headers : {
+                "content-type" : "application/json"
+            },
+            body : JSON.stringify({ id , currentRoomImageId , playingMusicId })
+        })
+        const { updatedRoom } = await response.json();
+        thunkApi.dispatch(replaceRoom(updatedRoom))
+        if(onSuccess) {
+            onSuccess();
         }
-
     } catch(err) {
-        console.log( err)
+        console.log(err)
     }
 
 })
@@ -70,13 +67,13 @@ const roomSlice = createSlice({
         setRooms : (state , action : PayloadAction<Room[]> ) => {
             state.items = action.payload;
         },
-        setRoomMateUsers : ( state , action : PayloadAction<User[]>) => {
-            state.roomMateUsers = action.payload;
+        replaceRoom : ( state , action : PayloadAction<Room> ) => {
+            state.items = state.items.map(item => item.id === action.payload.id ? action.payload : item )
         }
     }
 });
 
-export const { addNewRoom , setRooms , setRoomMateUsers } = roomSlice.actions;
+export const { addNewRoom , setRooms , replaceRoom } = roomSlice.actions;
 
 
 export default roomSlice.reducer;

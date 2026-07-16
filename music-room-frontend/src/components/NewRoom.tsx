@@ -187,7 +187,7 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
                                 <Box sx={{ mt : "-10px" , display : "flex" , flexDirection : "column" , gap : "10px"}}>
                                     <Box sx={{ display : "flex"  , justifyContent : "space-between"}}>
                                         <Typography sx={{ cursor : "default"}}>Room Images</Typography>
-                                        {roomImages.filter(item => item.userId ).length ? <FormControlLabel control={<Switch value={isMineRoomImages} onChange={e => setIsMineRoomImages(e.target.checked)} />} label="Mine" slotProps={{ typography : { sx : { fontSize : "13px" , ml : "-5px" }}}} />
+                                        {roomImages.filter(item => item.userId === user.id ).length ? <FormControlLabel control={<Switch value={isMineRoomImages} onChange={e => setIsMineRoomImages(e.target.checked)} />} label="Mine" slotProps={{ typography : { sx : { fontSize : "13px" , ml : "-5px" }}}} />
                                         :undefined}
                                     </Box>
                                     <Box sx={{ display : "flex" , gap : "10px" , width : "100%" , overflowX : "auto" , userSelect : "none"}} >
@@ -204,7 +204,7 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
                                 <Box sx={{ mt : "-10px" , display : "flex" , flexDirection : "column" , gap : "10px"}} >
                                     <Box sx={{ display : "flex"  , justifyContent : "space-between"}}>
                                         <Typography sx={{ cursor : "default"}}>First Music</Typography>
-                                        {musics.filter(item => item.userId ).length ? <FormControlLabel control={<Switch value={isMineRoomImages} onChange={e => setIsMineMusics(e.target.checked)} />} label="Mine" slotProps={{ typography : { sx : { fontSize : "13px" , ml : "-5px" }}}} />
+                                        {musics.filter(item => item.userId === user.id ).length ? <FormControlLabel control={<Switch value={isMineRoomImages} onChange={e => setIsMineMusics(e.target.checked)} />} label="Mine" slotProps={{ typography : { sx : { fontSize : "13px" , ml : "-5px" }}}} />
                                         :undefined}
                                     </Box>
                                     <Box sx={{ display : "flex" , gap : "10px" , width : "100%" , overflowX : "auto" , userSelect : "none" , pb : "5px" }} >

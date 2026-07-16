@@ -2,13 +2,12 @@
 import PlayMusic from "@/components/PlayMusic";
 import RoomImageSlide from "@/components/RoomImageSlide";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { changeIsLoading, changeSnackBarItems } from "@/store/slices/generalSlice";
-import { checkPermissionAndRoomMateUsers } from "@/store/slices/roomSlice";
+import { changeSnackBarItems } from "@/store/slices/generalSlice";
 import { ExtraImage, Music, Room, RoomImage, Roommates } from "@/type/prisma";
 import { Box, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import ImagesearchRollerRoundedIcon from '@mui/icons-material/ImagesearchRollerRounded';
 import MusicNoteRoundedIcon from '@mui/icons-material/MusicNoteRounded';
 
@@ -21,7 +20,7 @@ const InRoomPage = () => {
     const musics = useAppSelector(store => store.music.items);
     const extraImages = useAppSelector(store => store.extraImage.items);
     const roomMates = useAppSelector(store => store.roomMate.items);
-    const roomMateUsers = useAppSelector(store => store.room.roomMateUsers);
+    const otherUsers = useAppSelector(store => store.user.otherUsers);
     const [ currentRoom , setCurrentRoom ] = useState<Room>();
     const [ currentRoomImage , setCurrentRoomImage ] = useState<RoomImage>();
     const [ playingMusic , setPlayingMusic ] = useState<Music>();
@@ -30,12 +29,11 @@ const InRoomPage = () => {
     const [ hasPermission , setHasPermission ] = useState<boolean>(false);
     const [ updateRoomImageOpen , setUpdateRoomImageOpen ] = useState<boolean>(false);
     const [ isMineRoomImages , setIsMineRoomImages ] = useState(false);
-    const hasFetched = useRef(false);
     const dispatch = useAppDispatch();
     const router = useRouter();
 
     useEffect(() => {
-        if(rooms.length && roomImages.length && roomId) {
+        if(rooms.length && roomImages.length && musics.length && roomMates.length && roomId) {
             const foundRoom = rooms.find(item => item.id === roomId);
             setCurrentRoom(foundRoom);
             if(foundRoom) {
@@ -57,24 +55,18 @@ const InRoomPage = () => {
     } , [ currentRoomImage , extraImages ])
 
     useEffect(() => {
-        if(!hasFetched.current && roomId && user ) {
-            hasFetched.current = true;
-            dispatch(changeIsLoading(true))
-            dispatch(checkPermissionAndRoomMateUsers({ roomId , userId : user.id , 
-                onFail : () => {
-                    dispatch(changeIsLoading(false))
-                    dispatch(changeSnackBarItems({ message : "You are not a member of that room !" , severity : "error" , open : true }));
-                    router.push("/user/rooms")
-                },
-                onSuccess : () => {
-                    dispatch(changeIsLoading(false))
-                    setHasPermission(true)
-                }
-            }))
+        if(currentRoomMates.length && user) {
+            const roomMateUserIds = currentRoomMates.filter(item => item.userId).map(item => item.userId) as number[];
+            if(roomMateUserIds.includes(user.id)) {
+                setHasPermission(true)
+            } else {
+                dispatch(changeSnackBarItems({ message : "You are not a member of that room !" , severity : "error" , open : true }));
+                router.push("/user/rooms")
+            }
         }
-    } , [ roomId , user ] )
+    } , [ user , currentRoomMates ] )
 
-    if(!user || !currentRoom || !currentRoomImage || !playingMusic || !currentRoomMates.length || !hasPermission || !roomMateUsers.length) return null;
+    if(!user || !currentRoom || !currentRoomImage || !playingMusic || !currentRoomMates.length || !hasPermission ) return null;
 
 
     return (
@@ -106,10 +98,10 @@ const InRoomPage = () => {
             : undefined}
             <Box sx={{ zIndex : 2 , position : "absolute" , top : 0 , left : 0  }} >
                 {currentRoomMates.map(item => {
-                    const roomMateUser = roomMateUsers.find(rMUser => rMUser.id === item.userId);
+                    const roomMateUser = [...otherUsers , user].find(otherUser => otherUser.id === item.userId);
                     return ( 
                     <Box key={item.id} sx={{ position : "absolute" , left : item.x , top : item.y}} >
-                        <Typography sx={{ position : "absolute" , top : "-25px" , right : "50%" , zIndex : 10 , transform : "translateX(50%)"  }}>{roomMateUser ? ( roomMateUser.id === user.id ? "You" : roomMateUser.name ) : ""}</Typography>
+                        <Typography sx={{ position : "absolute" , top : "-25px" , right : "50%" , zIndex : 10 , transform : "translateX(50%)" , textWrap : "nowrap"  }}>{roomMateUser ? ( roomMateUser.id === user.id ? "You" : roomMateUser.name ) : ""}</Typography>
                         <Image alt="Room Mate" src={roomMateUser ? roomMateUser.url : "/roomMate.jpg"} width={400} height={400}
                             style={{ width : item.width , height : item.height , padding : "5.5px" }}
                         />

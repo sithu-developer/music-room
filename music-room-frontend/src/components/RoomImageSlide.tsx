@@ -1,9 +1,11 @@
 "use client"
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Room, RoomImage } from "@/type/prisma";
 import { Box, Button, FormControlLabel, Paper, Slide, Switch, Typography } from "@mui/material"
 import Image from "next/image";
 import { useState } from "react";
+import NewRoomImage from "./NewRoomImage";
+import { updateRoom } from "@/store/slices/roomSlice";
 
 interface Props {
     currentRoomImage : RoomImage
@@ -18,9 +20,19 @@ interface Props {
 const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , setUpdateRoomImageOpen , updateRoomImageOpen , currentRoom , isMineRoomImages , setIsMineRoomImages } : Props) => {
     const roomImages = useAppSelector(store => store.roomImage.items);
     const user = useAppSelector(store => store.user.item);
-
+    const [ openNewRoomImageDialog , setOpenNewRoomImageDialog ] = useState(false);
+    const dispatch = useAppDispatch();
     
     if(!user) return null;
+
+    const handleChangeCurrentRoomImage = () => {
+        if(currentRoom.ownerUserId === user.id) {  // doing here
+            dispatch(updateRoom({ ...currentRoom , currentRoomImageId : currentRoomImage.id , onSuccess : () => {
+                setUpdateRoomImageOpen(false)
+                setIsMineRoomImages(false);
+            } }))
+        }
+    }
 
     return (
         <Slide direction="left" in={updateRoomImageOpen} mountOnEnter unmountOnExit >
@@ -28,17 +40,18 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , setUpdateRoom
                 <Box sx={{ position : "relative" , zIndex : 10 , display : 'flex' , flexDirection : "column" , width : "300px" , maxHeight : "70vh" , background : "rgba(75, 110, 113, 0.1)" , backdropFilter : "blur(10px)" , WebkitBackdropFilter : "blur(10px)" , border : "1px solid white" , borderRadius : "10px" , overflowY : "auto"  }}>
                     <Box sx={{ display : "flex" , justifyContent : "space-between" , p : "10px" }}>
                         <Typography variant='h6' >Room Images</Typography>
-                        {roomImages.filter(item => item.userId ).length ? <FormControlLabel control={<Switch value={isMineRoomImages} onChange={e => setIsMineRoomImages(e.target.checked)} />} label="Mine" slotProps={{ typography : { sx : { fontSize : "13px" , ml : "-5px" }}}} />
+                        {roomImages.filter(item => item.userId === user.id ).length ? <FormControlLabel control={<Switch value={isMineRoomImages} onChange={e => setIsMineRoomImages(e.target.checked)} />} label="Mine" slotProps={{ typography : { sx : { fontSize : "13px" , ml : "-5px" }}}} />
                         :undefined}
                     </Box>
                     <Box sx={{ display : "flex" , flexDirection : "column" , alignItems : "center" , gap : "10px" , overflowY : "auto" , p : "10px" }}>
                         {roomImages.filter(item => (isMineRoomImages ? item.userId === user.id : !item.userId)).map(item => (
-                            <Box key={item.id} sx={{ position : "relative" , cursor : "pointer" , border : (currentRoomImage.id === item.id ? "1px solid white" : "") , borderRadius : "10px" }} onClick={() => setCurrentRoomImage(item)} >
+                            <Box key={item.id} onClick={() => setCurrentRoomImage(item)} sx={{ position : "relative" , cursor : "pointer" , border : (currentRoomImage.id === item.id ? "2px solid white" : "") , borderRadius : "10px" }} >
                                 <Typography sx={{ position : "absolute" , top : 0 , left : "50%" , transform : "translateX(-50%)" , background : "linear-gradient(90deg, #5635fa, #fd086a, #00ffd9)" , fontWeight : "bold" , backgroundClip : "text" , color : "transparent" , textShadow : "1px 1px 3px rgba(0,0,0,0.6)" }}>{item.vite}</Typography>
                                 <Image alt='Room Image' src={item.bgImageUrl} width={500} height={500} style={{ display : "block" , width : "100%" , height : "auto" , borderRadius : "10px"}} />
                             </Box>
                         ))}
                     </Box>
+                    <Button variant='contained' onClick={() => setOpenNewRoomImageDialog(true)} sx={{ width : "90%" , m : "10px" , borderRadius : "10px" , textTransform : "none" }} >Create</Button>
                     <Box sx={{ display : "flex" , justifyContent : "center" , gap : "40px" , p : "15px" }}>
                         <Button variant="outlined" color="secondary" onClick={() => {
                             setUpdateRoomImageOpen(false)
@@ -46,8 +59,9 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , setUpdateRoom
                             setCurrentRoomImage(foundRoomImage);
                             setIsMineRoomImages(false);
                         }}>Cancel</Button>
-                        <Button variant="contained" >Change</Button>
+                        <Button variant="contained" onClick={handleChangeCurrentRoomImage} disabled={currentRoom.currentRoomImageId === currentRoomImage.id} >Change</Button>
                     </Box>
+                    {openNewRoomImageDialog && <NewRoomImage openNewRoomImageDialog={openNewRoomImageDialog} setOpenNewRoomImageDialog={setOpenNewRoomImageDialog} />}
                 </Box>
             </Paper>
         </Slide>

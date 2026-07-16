@@ -21,6 +21,7 @@ model Admin {
   RoomCategories RoomCategory[]
   RoomImages     RoomImage[]
   Musics         Music[]
+  User           User[]
 }
 
 model RoomCategory {
@@ -73,6 +74,8 @@ model User {
   email      String      @unique
   name       String
   url        String
+  adminId    Int
+  Admin      Admin       @relation(fields: [adminId] , references: [id])
   Rooms      Room[]
   Musics     Music[]
   RoomImages RoomImage[]

@@ -45,6 +45,7 @@ export interface User {
     email   : string    
     name    : string
     url     : string
+    adminId : number
 }
 
 

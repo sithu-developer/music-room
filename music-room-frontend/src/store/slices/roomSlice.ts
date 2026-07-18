@@ -2,7 +2,7 @@ import { Room, User } from "@/type/prisma";
 import { CheckRoomMateUsersParaType, CreateNewRoomParaType, UpdateRoomParaType } from "@/type/room";
 import { envValues } from "@/util/envValues";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { addRoomMates } from "./roomMateSlice";
+import { addRoomMates, replaceRoomMate } from "./roomMateSlice";
 
 
 interface RoomSliceInitialState {
@@ -37,17 +37,18 @@ export const createNewRoom = createAsyncThunk("roomSlice/createNewRoom" , async(
 })
 
 export const updateRoom = createAsyncThunk("roomSlice/updateRoom" , async( para : UpdateRoomParaType , thunkApi ) => {
-    const { id , currentRoomImageId , playingMusicId , onFail , onSuccess } = para;
+    const { id , userId , currentRoomImageId , playingMusicId , onFail , onSuccess } = para;
     try {
         const response = await fetch(`${envValues.apiUrl}/room` , {
             method : "PUT",
             headers : {
                 "content-type" : "application/json"
             },
-            body : JSON.stringify({ id , currentRoomImageId , playingMusicId })
+            body : JSON.stringify({ id , userId , currentRoomImageId , playingMusicId })
         })
-        const { updatedRoom } = await response.json();
-        thunkApi.dispatch(replaceRoom(updatedRoom))
+        const { updatedRoom , updatedRoomMate } = await response.json();
+        if(updatedRoom) thunkApi.dispatch(replaceRoom(updatedRoom))
+        if(updatedRoomMate) thunkApi.dispatch(replaceRoomMate(updatedRoomMate))
         if(onSuccess) {
             onSuccess();
         }

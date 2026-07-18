@@ -36,6 +36,7 @@ export interface CheckRoomMateUsersParaType extends IsSuccessOrFailType {
 
 export interface UpdateRoomParaType extends IsSuccessOrFailType {
   id : number
-  currentRoomImageId : number
-  playingMusicId     : number
+  userId : number
+  currentRoomImageId ?: number
+  playingMusicId     ?: number
 }

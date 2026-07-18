@@ -1,6 +1,6 @@
 "use client"
 import NewRoom from "@/components/NewRoom";
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { RoomCategory } from "@/type/prisma";
 import { Box, ButtonBase, Chip, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
@@ -9,14 +9,21 @@ import ChairRoundedIcon from '@mui/icons-material/ChairRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import VpnKeyRoundedIcon from '@mui/icons-material/VpnKeyRounded';
 import LockRoundedIcon from '@mui/icons-material/LockRounded';
+import RequestRoomPasswordDialog from "@/components/RequestRoomPassword";
+import { joinRoom } from "@/store/slices/roomMateSlice";
+import { HandleJoinRoomParaType, RoomPasswordDialogItems } from "@/type/roomMate";
+import { changeIsLoading, changeSnackBarItems } from "@/store/slices/generalSlice";
 
 const RoomsPage = () => {
     const [ openNewRoom , setOpenNewRoom ] = useState<boolean>(false);
+    const [ roomPasswordDialogItems , setRoomPasswordDialogItems ] = useState<RoomPasswordDialogItems>({ open : false , roomId : 0 });
     const rooms = useAppSelector(store => store.room.items );
     const roomImages = useAppSelector(store => store.roomImage.items)
     const roomMates = useAppSelector(store => store.roomMate.items)
     const categories = useAppSelector(store => store.category.items)
+    const user = useAppSelector(store => store.user.item)
     const [ selectedCategory , setSelectedCategory ] = useState<RoomCategory>();
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if(categories.length) {
@@ -30,6 +37,20 @@ const RoomsPage = () => {
             
         }
     } , [ categories ])
+
+    if(!user) return null;
+
+    const handleJoinRoom = ( handlePara : HandleJoinRoomParaType ) => {
+        if(handlePara.roomPassword) {
+            setRoomPasswordDialogItems({ open : true , roomId : handlePara.roomId })
+        } else {
+            dispatch(changeIsLoading(true))
+            dispatch(joinRoom({ roomId : handlePara.roomId , userId : user.id , roomPassword : null , onSuccess : () => {
+                dispatch(changeIsLoading(false));
+                dispatch(changeSnackBarItems({ message : "Successfully Joined !" , open : true , severity : "success" }))
+            } }))
+        }
+    }
 
     return (
         <Box sx={{ height : "100vh" ,  display : "flex" , flexDirection : "column" , alignItems : "center" , bgcolor : "primary.light" }} >
@@ -54,22 +75,23 @@ const RoomsPage = () => {
                     const joinedRoomMates = roomMates.filter(roomMate => roomMate.userId && roomMate.roomId === item.id )
                     if(roomImage)
                     return (
-                        <Box key={item.id} sx={{ position : "relative" ,  display : "flex" , flexDirection : "column" , alignItems : "center" , height : "250px" , borderRadius : "10px" , overflow : "hidden" }} >
+                        <Box key={item.id} sx={{ position : "relative" , boxShadow : "10px 10px 30px #0c0b0b" , display : "flex" , flexDirection : "column" , alignItems : "center" , height : "250px" , borderRadius : "10px" , overflow : "hidden" }} >
                             <Box sx={{ position : "absolute" , p : "5px 8px" }}>
                                 <Typography sx={{ background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)", textShadow : "0px 0px 10px #ffffff" , fontWeight : "bold" , backgroundClip : "text" , color : "transparent" }} >{item.name}</Typography>
                             </Box>
                             <Typography sx={{ position : "absolute" , left : "7px" , top : "7px" , bgcolor : "primary.dark" , p : "1px 6px" , borderRadius : "5px" , fontSize : "14px"}} >{joinedRoomMates.length + "/" + item.roommateQty + " members" }</Typography>
                             {item.roomPassword && <LockRoundedIcon sx={{ position : "absolute" , right : "7px" , top : "7px" , color : "secondary.dark" , fontSize : "20px"}}  />}
                             <Image alt="room image" priority src={roomImage.bgImageUrl} width={500} height={500} style={{ height : "100%" , width : "auto"}} />
-                            <Box component={ButtonBase} onClick={() => {}} sx={{ position : "absolute" , bottom : 0 , background : "rgba(255, 255, 255, 0.1)" , backdropFilter : "blur(10px)" , border : "1px solid gray" , borderRadius : "30px 30px 10px 10px" , p : "8px 30px" }}>
-                                <Typography sx={{ textAlign : "center"}}>Join</Typography>
-                                {item.roomPassword && <VpnKeyRoundedIcon sx={{ position : "absolute" , top : "-12px" , fontSize : "20px" , color : "secondary.main" , rotate : "90deg" }} />}
+                            <Box component={ButtonBase} disabled={joinedRoomMates.length === item.roommateQty} onClick={() => handleJoinRoom({roomId : item.id , roomPassword : item.roomPassword})} sx={{ position : "absolute" , bottom : "0px" , background : "rgba(255, 255, 255, 0.1)" , backdropFilter : "blur(10px)" , border : "1px solid gray" , borderRadius : "30px 30px 10px 10px" , p : "8px 30px" , transition : "all 0.2s ease" , ":hover" : { bottom : "3px" , borderColor : "white" , boxShadow : "0px 0px 55px #ffffffbb" } }}>
+                                <Typography sx={{ textAlign : "center" , color : (joinedRoomMates.length === item.roommateQty ? "GrayText" : "") }}>Join</Typography>
+                                {item.roomPassword && <VpnKeyRoundedIcon sx={{ position : "absolute" , top : "-12px" , fontSize : "20px" , color : (joinedRoomMates.length === item.roommateQty ? "GrayText" : "secondary.main") , rotate : "90deg"  }} />}
                             </Box>
                         </Box>
                     )
                 })}
             </Box>
             <NewRoom openNewRoom={openNewRoom} setOpenNewRoom={setOpenNewRoom} />
+            <RequestRoomPasswordDialog roomPasswordDialogItems={roomPasswordDialogItems} setRoomPasswordDialogItems={setRoomPasswordDialogItems} />
         </Box>
     )
 

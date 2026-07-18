@@ -22,16 +22,23 @@ roomRouter.post("/" , (req : Request , res : Response , next) => {
 })
 
 roomRouter.put("/" , (req : Request , res : Response , next) => {
-    const { id , currentRoomImageId , playingMusicId } = req.body;
-    const isValid = id && currentRoomImageId && playingMusicId;
+    const { id , userId , currentRoomImageId , playingMusicId } = req.body;
+    const isValid = id && userId;
     if(!isValid) return res.status(400).send("Bad request")
     next();
 } , async(req : Request , res : Response) => {
-    const { id , currentRoomImageId , playingMusicId } = req.body;
-    const isExit = await prisma.room.findUnique({ where : { id }});
-    if(!isExit) return res.status(400).send("Bad request")
-    const updatedRoom = await prisma.room.update({ where : { id } , data : { currentRoomImageId , playingMusicId } });
-    res.status(200).json({ updatedRoom })
+    const { id , userId , currentRoomImageId , playingMusicId } = req.body;
+    const room = await prisma.room.findUnique({ where : { id }});
+    const isRoomMateUser = await prisma.roommates.findUnique({ where : { userId } })
+    if(!room || !isRoomMateUser) return res.status(400).send("Bad request")
+    if(room.ownerUserId === userId) {
+        const updatedRoom = await prisma.room.update({ where : { id } , data : { currentRoomImageId , playingMusicId } });
+        res.status(200).json({ updatedRoom })
+    } else {
+        const updatedRoomMate = await prisma.roommates.update({ where : { userId } , data : { requestRoomImageId : currentRoomImageId , requestMusicId : playingMusicId } })
+        res.status(200).json({ updatedRoomMate })
+    }
+
 })
 
 export default roomRouter;

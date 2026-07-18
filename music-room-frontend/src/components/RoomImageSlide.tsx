@@ -25,13 +25,11 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , setUpdateRoom
     
     if(!user) return null;
 
-    const handleChangeCurrentRoomImage = () => {
-        if(currentRoom.ownerUserId === user.id) {  // doing here
-            dispatch(updateRoom({ ...currentRoom , currentRoomImageId : currentRoomImage.id , onSuccess : () => {
-                setUpdateRoomImageOpen(false)
-                setIsMineRoomImages(false);
-            } }))
-        }
+    const handleChangeCurrentRoomImage = () => { 
+        dispatch(updateRoom({ id : currentRoom.id , currentRoomImageId : currentRoomImage.id , userId : user.id , onSuccess : () => {
+            setUpdateRoomImageOpen(false)
+            setIsMineRoomImages(false);
+        } }))
     }
 
     return (
@@ -59,7 +57,7 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , setUpdateRoom
                             setCurrentRoomImage(foundRoomImage);
                             setIsMineRoomImages(false);
                         }}>Cancel</Button>
-                        <Button variant="contained" onClick={handleChangeCurrentRoomImage} disabled={currentRoom.currentRoomImageId === currentRoomImage.id} >Change</Button>
+                        <Button variant="contained" onClick={handleChangeCurrentRoomImage} disabled={currentRoom.currentRoomImageId === currentRoomImage.id} >{currentRoom.ownerUserId === user.id ? "Change" : "Request"}</Button>
                     </Box>
                     {openNewRoomImageDialog && <NewRoomImage openNewRoomImageDialog={openNewRoomImageDialog} setOpenNewRoomImageDialog={setOpenNewRoomImageDialog} />}
                 </Box>

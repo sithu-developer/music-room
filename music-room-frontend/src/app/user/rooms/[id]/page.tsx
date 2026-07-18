@@ -26,7 +26,7 @@ const InRoomPage = () => {
     const [ playingMusic , setPlayingMusic ] = useState<Music>();
     const [ relatedExtraImages , setRelatedExtraImages ] = useState<ExtraImage[]>([]);
     const [ currentRoomMates , setCurrentRoomMates ] = useState<Roommates[]>([]);
-    const [ hasPermission , setHasPermission ] = useState<boolean>(false);
+    const [ myRoomMateRole , setMyRoomMateRole ] = useState<Roommates | null>(null);
     const [ updateRoomImageOpen , setUpdateRoomImageOpen ] = useState<boolean>(false);
     const [ isMineRoomImages , setIsMineRoomImages ] = useState(false);
     const dispatch = useAppDispatch();
@@ -56,9 +56,9 @@ const InRoomPage = () => {
 
     useEffect(() => {
         if(currentRoomMates.length && user) {
-            const roomMateUserIds = currentRoomMates.filter(item => item.userId).map(item => item.userId) as number[];
-            if(roomMateUserIds.includes(user.id)) {
-                setHasPermission(true)
+            const foundRoomMateRole = currentRoomMates.find(item => item.userId === user.id);
+            if(foundRoomMateRole) {
+                setMyRoomMateRole(foundRoomMateRole)
             } else {
                 dispatch(changeSnackBarItems({ message : "You are not a member of that room !" , severity : "error" , open : true }));
                 router.push("/user/rooms")
@@ -66,7 +66,7 @@ const InRoomPage = () => {
         }
     } , [ user , currentRoomMates ] )
 
-    if(!user || !currentRoom || !currentRoomImage || !playingMusic || !currentRoomMates.length || !hasPermission ) return null;
+    if(!user || !currentRoom || !currentRoomImage || !playingMusic || !currentRoomMates.length || !myRoomMateRole ) return null;
 
 
     return (
@@ -108,6 +108,9 @@ const InRoomPage = () => {
                     </Box>
                 )
                 })}
+            </Box>
+            <Box sx={{ position : "absolute" , bottom : "20px" , right : "20px" }}>{/* doing here */}
+                {myRoomMateRole.requestRoomImageId && <Typography>{"You are requesting the owner to set background Image (" + roomImages.find(roomImg => roomImg.id === myRoomMateRole.requestRoomImageId)?.vite + ") ....."}</Typography>}
             </Box>
             <RoomImageSlide currentRoomImage={currentRoomImage} setCurrentRoomImage={setCurrentRoomImage} updateRoomImageOpen={updateRoomImageOpen} setUpdateRoomImageOpen={setUpdateRoomImageOpen} currentRoom={currentRoom} isMineRoomImages={isMineRoomImages} setIsMineRoomImages={setIsMineRoomImages} />
         </Box>

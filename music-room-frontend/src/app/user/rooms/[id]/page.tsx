@@ -10,7 +10,9 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ImagesearchRollerRoundedIcon from '@mui/icons-material/ImagesearchRollerRounded';
 import MusicNoteRoundedIcon from '@mui/icons-material/MusicNoteRounded';
-import RequestTextBox from "@/components/RequestTextBox";
+import RequestTextBoxToOwner from "@/components/RequestTextBoxToOwner";
+import NotificationsActiveRoundedIcon from '@mui/icons-material/NotificationsActiveRounded';
+import RequestsInOwner from "@/components/RequestsInOwner";
 
 const InRoomPage = () => {
     const param = useParams();
@@ -29,6 +31,7 @@ const InRoomPage = () => {
     const [ currentRoomMates , setCurrentRoomMates ] = useState<Roommates[]>([]);
     const [ myRoomMateRole , setMyRoomMateRole ] = useState<Roommates | null>(null);
     const [ updateRoomImageOpen , setUpdateRoomImageOpen ] = useState<boolean>(false);
+    const [ requestsInOwnerOpen , setRequestsInOwnerOpen ] = useState<boolean>(false);
     const [ isMineRoomImages , setIsMineRoomImages ] = useState(false);
     const dispatch = useAppDispatch();
     const router = useRouter();
@@ -74,7 +77,13 @@ const InRoomPage = () => {
         <Box sx={{ position : "relative", height : "100vh" , background : `url(${currentRoomImage.bgImageUrl})` , backgroundSize : "cover" , backgroundPosition : "center" , backgroundRepeat : "no-repeat"  , overflow : "hidden" }} >
             <Typography sx={{ zIndex : 5 , position : "relative" , p : "21px 0 0 24px" , textAlign : "center" , fontSize : "27px" , fontWeight : "bold" , background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)" , textShadow : "1px 1px 25px #b5b2b2" , backgroundClip : "text" , WebkitBackgroundClip : "text"  , width : "fit-content" , color : "transparent"  }} >{currentRoom.name}</Typography>
             <PlayMusic playingMusic={playingMusic} setPlayingMusic={setPlayingMusic} />
-            <Box sx={{ position : "absolute", zIndex : 5 , top : "21px" , right : "24px" , display : "flex" , gap : "20px"}} >
+            <Box sx={{ position : "absolute", zIndex : 5 , top : "21px" , right : "24px" , display : "flex" , gap : "15px"}} >
+                {currentRoom.ownerUserId === user.id && <IconButton onClick={() => setRequestsInOwnerOpen(prev => !prev)} sx={{ position : "relative" , border : "1px solid white"}}>
+                    <NotificationsActiveRoundedIcon color="secondary" />
+                    {currentRoomMates.filter(item => item.requestRoomImageId || item.requestMusicId).length ? 
+                    <Box sx={{ position : "absolute" , top : "2px" , right : "0px" , bgcolor : "#ff0202" , width : "8px" , height : "8px" , borderRadius : "5px"}} />
+                    :undefined}
+                </IconButton>}
                 <IconButton sx={{  border : "1px solid white"}} 
                     onClick={() => {
                         setUpdateRoomImageOpen(prev => (!prev))
@@ -110,7 +119,8 @@ const InRoomPage = () => {
                 )
                 })}
             </Box>
-            <RequestTextBox myRoomMateRole={myRoomMateRole} />
+            {currentRoom.ownerUserId === user.id && <RequestsInOwner requestsInOwnerOpen={requestsInOwnerOpen} currentRoomMates={currentRoomMates} />}
+            <RequestTextBoxToOwner myRoomMateRole={myRoomMateRole} />
             <RoomImageSlide currentRoomImage={currentRoomImage} setCurrentRoomImage={setCurrentRoomImage} updateRoomImageOpen={updateRoomImageOpen} setUpdateRoomImageOpen={setUpdateRoomImageOpen} currentRoom={currentRoom} isMineRoomImages={isMineRoomImages} setIsMineRoomImages={setIsMineRoomImages} />
         </Box>
     )

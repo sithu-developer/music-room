@@ -6,12 +6,12 @@ interface Props {
     myRoomMateRole : Roommates
 }
 
-const RequestTextBox = ({ myRoomMateRole } : Props ) => {
+const RequestTextBoxToOwner = ({ myRoomMateRole } : Props ) => {
     const roomImages = useAppSelector(store => store.roomImage.items);
 
     return (
-        <Box sx={{ position : "absolute" , bottom : "20px" , right : "20px" }}>
-            {myRoomMateRole.requestRoomImageId && (() => {  // think for admin side to accpet
+        <Box sx={{ position : "absolute" , bottom : "0px" , right : "0px" , p : "20px" }}>
+            {myRoomMateRole.requestRoomImageId && (() => { 
                 const textArray = ("You are requesting the owner to set background Image (" + roomImages.find(roomImg => roomImg.id === myRoomMateRole.requestRoomImageId)?.vite + ") .....").split("")
                 
                 const totalDuration = (textArray.length * 0.05) + 0.6 + 1;
@@ -48,8 +48,9 @@ const RequestTextBox = ({ myRoomMateRole } : Props ) => {
                     </Box>
                 )
             })()}
+            
         </Box>
     )
 }
 
-export default RequestTextBox;
+export default RequestTextBoxToOwner;

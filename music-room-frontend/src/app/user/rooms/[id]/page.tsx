@@ -10,6 +10,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ImagesearchRollerRoundedIcon from '@mui/icons-material/ImagesearchRollerRounded';
 import MusicNoteRoundedIcon from '@mui/icons-material/MusicNoteRounded';
+import RequestTextBox from "@/components/RequestTextBox";
 
 const InRoomPage = () => {
     const param = useParams();
@@ -109,9 +110,7 @@ const InRoomPage = () => {
                 )
                 })}
             </Box>
-            <Box sx={{ position : "absolute" , bottom : "20px" , right : "20px" }}>{/* doing here */}
-                {myRoomMateRole.requestRoomImageId && <Typography>{"You are requesting the owner to set background Image (" + roomImages.find(roomImg => roomImg.id === myRoomMateRole.requestRoomImageId)?.vite + ") ....."}</Typography>}
-            </Box>
+            <RequestTextBox myRoomMateRole={myRoomMateRole} />
             <RoomImageSlide currentRoomImage={currentRoomImage} setCurrentRoomImage={setCurrentRoomImage} updateRoomImageOpen={updateRoomImageOpen} setUpdateRoomImageOpen={setUpdateRoomImageOpen} currentRoom={currentRoom} isMineRoomImages={isMineRoomImages} setIsMineRoomImages={setIsMineRoomImages} />
         </Box>
     )

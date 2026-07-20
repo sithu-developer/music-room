@@ -4,10 +4,12 @@ import ImagesearchRollerRoundedIcon from '@mui/icons-material/ImagesearchRollerR
 import MusicNoteRoundedIcon from '@mui/icons-material/MusicNoteRounded';
 import { useState } from "react";
 import { Roommates } from "@/type/prisma";
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import Image from "next/image";
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { acceptOrRejectRequestsFromOwner } from "@/store/slices/extraImagesSlice";
+import { HandleAcceptOrRejectParaType } from "@/type/roomMate";
 
 interface Props {
     requestsInOwnerOpen : boolean;
@@ -20,6 +22,11 @@ const RequestsInOwner = ({ requestsInOwnerOpen , currentRoomMates } : Props) => 
     const otherUsers = useAppSelector(store => store.user.otherUsers);
     const roomImages = useAppSelector(store => store.roomImage.items);
     const musics = useAppSelector(store => store.music.items);
+    const dispatch = useAppDispatch();
+
+    const handleAcceptOrRejectRequest = ( { isAccept , roomMateId  } : HandleAcceptOrRejectParaType ) => { // Loading after accept and Reject
+        dispatch(acceptOrRejectRequestsFromOwner({ roomMateId , isAccept , isRoomImage : (selectedToggle === "image") }))
+    }
 
     return (
         <Slide direction="left" in={requestsInOwnerOpen} mountOnEnter unmountOnExit >
@@ -71,9 +78,9 @@ const RequestsInOwner = ({ requestsInOwnerOpen , currentRoomMates } : Props) => 
                                             <Slider size="small" valueLabelDisplay="auto" color="secondary" />
                                         </Box>
                                     )}
-                                    <Box sx={{ display : "flex" , justifyContent : "space-between"}}> {/* accept and Reject */}
-                                        <Button variant="contained" color="error" >Reject</Button>
-                                        <Button variant="contained" color="success" >Reject</Button>
+                                    <Box sx={{ display : "flex" , justifyContent : "space-between"}}> 
+                                        <Button variant="contained" color="error" onClick={() => { handleAcceptOrRejectRequest({ roomMateId : item.id , isAccept : false }) }} >Reject</Button>
+                                        <Button variant="contained" color="success" onClick={() => { handleAcceptOrRejectRequest({ roomMateId : item.id , isAccept : true }) }} >Reject</Button>
                                     </Box>
                                 </Box>
                             )

@@ -1,5 +1,9 @@
 import { ExtraImage } from "@/type/prisma";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AcceptOrRejectRequestsParaType } from "@/type/roomMate";
+import { envValues } from "@/util/envValues";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { replaceRoom } from "./roomSlice";
+import { replaceRoomMate } from "./roomMateSlice";
 
 interface ExtraImageInitialStateType {
     items : ExtraImage[]
@@ -8,6 +12,24 @@ interface ExtraImageInitialStateType {
 const initialState : ExtraImageInitialStateType = {
     items : []
 }
+
+export const acceptOrRejectRequestsFromOwner = createAsyncThunk("acceptOrRejectRequests" , async( para : AcceptOrRejectRequestsParaType , thunkApi ) => {
+    const { isAccept , isRoomImage , roomMateId , onFail , onSuccess } = para;
+    try {
+        const response = await fetch(`${envValues.apiUrl}/room-mate/acceptOrReject` , {
+            method : "PUT",
+            headers : {
+                "content-type" : "application/json"
+            },
+            body : JSON.stringify({ isAccept , isRoomImage , roomMateId })
+        })
+        const { updatedRoom , updatedRoomMate } = await response.json();
+        if(updatedRoom) thunkApi.dispatch(replaceRoom(updatedRoom))
+        thunkApi.dispatch(replaceRoomMate(updatedRoomMate))
+    } catch(err) {
+        console.log(err)
+    }
+})
 
 const extraImagesSlice = createSlice({
     name : "ExtraImages Slice",

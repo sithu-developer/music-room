@@ -15,3 +15,12 @@ export interface RoomPasswordDialogItems {
     open : boolean;
     roomId : number
 }
+
+export interface AcceptOrRejectRequestsParaType extends IsSuccessOrFailType , HandleAcceptOrRejectParaType {
+    isRoomImage : boolean;
+}
+
+export interface HandleAcceptOrRejectParaType {
+    roomMateId : number;
+    isAccept : boolean;
+}

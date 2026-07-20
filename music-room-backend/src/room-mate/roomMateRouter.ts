@@ -26,5 +26,35 @@ roomMateRouter.put("/" , (req : Request , res : Response , next) => {
     }
 })
 
+roomMateRouter.put("/acceptOrReject" , (req : Request , res : Response , next) => {
+    const { isAccept , isRoomImage , roomMateId } = req.body;
+    const isValid = isAccept !== undefined && isRoomImage !== undefined && roomMateId;
+    if(!isValid) return res.status(400).send("Bad request");
+    next()
+} , async( req : Request , res : Response ) => {
+    const { isAccept , isRoomImage , roomMateId } = req.body;
+    const isExit = await prisma.roommates.findUnique({ where : { id : roomMateId }});
+    if(!isExit) return res.status(400).send("Bad request");
+    if(isAccept) {
+        if(isRoomImage) {
+            const updatedRoom = await prisma.room.update({ where : { id : isExit.roomId } , data : { currentRoomImageId : (isExit.requestRoomImageId as number) } });
+            const updatedRoomMate = await prisma.roommates.update({ where : { id : roomMateId } , data : { requestRoomImageId : null } })
+            res.status(200).json({ updatedRoom , updatedRoomMate })
+        } else {
+            const updatedRoom = await prisma.room.update({ where : { id : isExit.roomId } , data : { playingMusicId : (isExit.requestMusicId as number) } });
+            const updatedRoomMate = await prisma.roommates.update({ where : { id : roomMateId } , data : { requestMusicId : null } })
+            res.status(200).json({ updatedRoom , updatedRoomMate })
+        }
+    } else {
+        if(isRoomImage) {
+            const updatedRoomMate = await prisma.roommates.update({ where : { id : roomMateId } , data : { requestRoomImageId : null } })
+            res.status(200).json({ updatedRoomMate })
+        } else {
+            const updatedRoomMate = await prisma.roommates.update({ where : { id : roomMateId } , data : { requestMusicId : null } })
+            res.status(200).json({ updatedRoomMate })
+        }
+    }
+})
+
 
 export default roomMateRouter;

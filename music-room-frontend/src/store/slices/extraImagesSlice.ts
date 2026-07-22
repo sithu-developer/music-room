@@ -25,7 +25,10 @@ export const acceptOrRejectRequestsFromOwner = createAsyncThunk("acceptOrRejectR
         })
         const { updatedRoom , updatedRoomMate } = await response.json();
         if(updatedRoom) thunkApi.dispatch(replaceRoom(updatedRoom))
-        thunkApi.dispatch(replaceRoomMate(updatedRoomMate))
+        thunkApi.dispatch(replaceRoomMate(updatedRoomMate));
+        if(onSuccess) {
+            onSuccess();
+        }
     } catch(err) {
         console.log(err)
     }

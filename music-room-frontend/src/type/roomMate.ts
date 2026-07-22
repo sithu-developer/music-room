@@ -24,3 +24,7 @@ export interface HandleAcceptOrRejectParaType {
     roomMateId : number;
     isAccept : boolean;
 }
+
+export interface LoadingItemType extends HandleAcceptOrRejectParaType  {
+    roomMateOrMusic : string
+}

@@ -1,5 +1,5 @@
 "use client"
-import { Box, Button, IconButton, Paper, Slide, Slider, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, IconButton, Paper, Slide, Slider, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import ImagesearchRollerRoundedIcon from '@mui/icons-material/ImagesearchRollerRounded';
 import MusicNoteRoundedIcon from '@mui/icons-material/MusicNoteRounded';
 import { useState } from "react";
@@ -9,7 +9,9 @@ import Image from "next/image";
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { acceptOrRejectRequestsFromOwner } from "@/store/slices/extraImagesSlice";
-import { HandleAcceptOrRejectParaType } from "@/type/roomMate";
+import { AcceptOrRejectRequestsParaType, HandleAcceptOrRejectParaType, LoadingItemType } from "@/type/roomMate";
+import { error } from "console";
+import TypographyWithWaveAnimation from "./TypographyWithWaveAnimation";
 
 interface Props {
     requestsInOwnerOpen : boolean;
@@ -19,13 +21,17 @@ interface Props {
 const RequestsInOwner = ({ requestsInOwnerOpen , currentRoomMates } : Props) => {
     const [ isPlayingMusic , setIsPlayingMusic ] = useState<boolean>(false);
     const [ selectedToggle , setSelectedToggle ] = useState<string>("image");
+    const [ loadingItems , setLoadingItems ] = useState<LoadingItemType[]>([]);
     const otherUsers = useAppSelector(store => store.user.otherUsers);
     const roomImages = useAppSelector(store => store.roomImage.items);
     const musics = useAppSelector(store => store.music.items);
     const dispatch = useAppDispatch();
-
-    const handleAcceptOrRejectRequest = ( { isAccept , roomMateId  } : HandleAcceptOrRejectParaType ) => { // Loading after accept and Reject
-        dispatch(acceptOrRejectRequestsFromOwner({ roomMateId , isAccept , isRoomImage : (selectedToggle === "image") }))
+    
+    const handleAcceptOrRejectRequest = ( { isAccept , roomMateId  } : HandleAcceptOrRejectParaType ) => {
+        setLoadingItems(prev => [...prev , { roomMateId , isAccept , roomMateOrMusic : selectedToggle }])
+        dispatch(acceptOrRejectRequestsFromOwner({ roomMateId , isAccept , isRoomImage : (selectedToggle === "image") , onSuccess : () => {
+            setLoadingItems(prev => prev.filter(item => !(item.roomMateId === roomMateId && item.roomMateOrMusic === selectedToggle) ))
+        } }))
     }
 
     return (
@@ -56,6 +62,8 @@ const RequestsInOwner = ({ requestsInOwnerOpen , currentRoomMates } : Props) => 
                             const requestedOtherUser = otherUsers.find(eachUser => eachUser.id === item.userId);
                             const requestedRoomImage = roomImages.find(eachRoomImage => eachRoomImage.id === item.requestRoomImageId)
                             const requestedMusic = musics.find(eachMusic => eachMusic.id === item.requestMusicId)
+                            const loadingItemExit = loadingItems.find(eachLoadingItem => eachLoadingItem.roomMateId === item.id && eachLoadingItem.roomMateOrMusic === selectedToggle);
+                            
                             if(requestedOtherUser)
                             return (
                                 <Box key={item.id} >
@@ -78,10 +86,24 @@ const RequestsInOwner = ({ requestsInOwnerOpen , currentRoomMates } : Props) => 
                                             <Slider size="small" valueLabelDisplay="auto" color="secondary" />
                                         </Box>
                                     )}
-                                    <Box sx={{ display : "flex" , justifyContent : "space-between"}}> 
-                                        <Button variant="contained" color="error" onClick={() => { handleAcceptOrRejectRequest({ roomMateId : item.id , isAccept : false }) }} >Reject</Button>
-                                        <Button variant="contained" color="success" onClick={() => { handleAcceptOrRejectRequest({ roomMateId : item.id , isAccept : true }) }} >Reject</Button>
-                                    </Box>
+                                    {loadingItemExit ? (
+                                        <Box sx={{ display : "flex" , flexDirection : (loadingItemExit.isAccept ? "row-reverse" : "row") , justifyContent : "space-between" , alignItems : "center" , width : "100%" }} >
+                                            <Box sx={{ width : "86px" , height : "36px" , borderRadius : "4px" , display : "flex" , justifyContent : "center" , alignItems : "center" , bgcolor : (loadingItemExit.isAccept ? "success.main" : "error.main") }}>
+                                                <CircularProgress color="success" aria-label="Loading…" size={25} sx={{ color : "secondary.main" }} />
+                                            </Box>
+                                            <Typography 
+                                                sx={{
+                                                    px : "10px",
+                                                }}
+                                            ></Typography>
+                                            <TypographyWithWaveAnimation text={loadingItemExit.isAccept ? "Accepting....." : "Rejecting....."} />
+                                        </Box>
+                                    )
+                                    :<Box sx={{ display : "flex" , justifyContent : "space-between"}}>
+                                        <Button variant="contained"  color="error" onClick={() => { handleAcceptOrRejectRequest({ roomMateId : item.id , isAccept : false }) }} >Reject</Button>
+                                        <Button variant="contained" color="success" sx={{ width : "86px" }} onClick={() => { handleAcceptOrRejectRequest({ roomMateId : item.id , isAccept : true }) }} >Accept</Button>
+                                    </Box>}
+                                    
                                 </Box>
                             )
                         }):

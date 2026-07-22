@@ -10,9 +10,9 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ImagesearchRollerRoundedIcon from '@mui/icons-material/ImagesearchRollerRounded';
 import MusicNoteRoundedIcon from '@mui/icons-material/MusicNoteRounded';
-import RequestTextBoxToOwner from "@/components/RequestTextBoxToOwner";
 import NotificationsActiveRoundedIcon from '@mui/icons-material/NotificationsActiveRounded';
 import RequestsInOwner from "@/components/RequestsInOwner";
+import TypographyWithWaveAnimation from "@/components/TypographyWithWaveAnimation";
 
 const InRoomPage = () => {
     const param = useParams();
@@ -119,8 +119,10 @@ const InRoomPage = () => {
                 )
                 })}
             </Box>
+            <Box sx={{ position : "absolute" , bottom : "0px" , right : "0px" , p : "20px" }}>
+                {myRoomMateRole.requestRoomImageId && <TypographyWithWaveAnimation text={("You are requesting the owner to set background Image (" + roomImages.find(roomImg => roomImg.id === myRoomMateRole.requestRoomImageId)?.vite + ") .....")} />}
+            </Box>
             {currentRoom.ownerUserId === user.id && <RequestsInOwner requestsInOwnerOpen={requestsInOwnerOpen} currentRoomMates={currentRoomMates} />}
-            <RequestTextBoxToOwner myRoomMateRole={myRoomMateRole} />
             <RoomImageSlide currentRoomImage={currentRoomImage} setCurrentRoomImage={setCurrentRoomImage} updateRoomImageOpen={updateRoomImageOpen} setUpdateRoomImageOpen={setUpdateRoomImageOpen} currentRoom={currentRoom} isMineRoomImages={isMineRoomImages} setIsMineRoomImages={setIsMineRoomImages} />
         </Box>
     )

@@ -12,6 +12,7 @@ import { acceptOrRejectRequestsFromOwner } from "@/store/slices/extraImagesSlice
 import { AcceptOrRejectRequestsParaType, HandleAcceptOrRejectParaType, LoadingItemType } from "@/type/roomMate";
 import { error } from "console";
 import TypographyWithWaveAnimation from "./TypographyWithWaveAnimation";
+import { changeSnackBarItems } from "@/store/slices/generalSlice";
 
 interface Props {
     requestsInOwnerOpen : boolean;

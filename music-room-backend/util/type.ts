@@ -13,3 +13,15 @@ export interface RoomMateLayoutType {
   h      : string,
   w      : string,
 }
+
+// for scoket.io 
+
+import { Server } from "socket.io"
+
+declare global {
+  namespace Express {
+    interface Request {
+      io : Server
+    }
+  }
+}

@@ -33,9 +33,13 @@ roomRouter.put("/" , (req : Request , res : Response , next) => {
     if(!room || !isRoomMateUser) return res.status(400).send("Bad request")
     if(room.ownerUserId === userId) {
         const updatedRoom = await prisma.room.update({ where : { id } , data : { currentRoomImageId , playingMusicId } });
+        // send to other roommates using socket
+        req.io.to(String(updatedRoom.id)).emit("update_room" , { updatedRoom })
         res.status(200).json({ updatedRoom })
     } else {
         const updatedRoomMate = await prisma.roommates.update({ where : { userId } , data : { requestRoomImageId : currentRoomImageId , requestMusicId : playingMusicId } })
+        // request to owner using socket
+        req.io.to(String(updatedRoomMate.roomId)).emit("request_to_owner" , { updatedRoomMate })
         res.status(200).json({ updatedRoomMate })
     }
 

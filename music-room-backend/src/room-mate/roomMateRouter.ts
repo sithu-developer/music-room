@@ -39,18 +39,26 @@ roomMateRouter.put("/acceptOrReject" , (req : Request , res : Response , next) =
         if(isRoomImage) {
             const updatedRoom = await prisma.room.update({ where : { id : isExit.roomId } , data : { currentRoomImageId : (isExit.requestRoomImageId as number) } });
             const updatedRoomMate = await prisma.roommates.update({ where : { id : roomMateId } , data : { requestRoomImageId : null } })
+            // sent to the user that request using socket
+            req.io.to(String(updatedRoom.id)).emit("accept_or_reject_from_owner" , { updatedRoom , updatedRoomMate , isAccept , isRoomImage })
             res.status(200).json({ updatedRoom , updatedRoomMate })
         } else {
             const updatedRoom = await prisma.room.update({ where : { id : isExit.roomId } , data : { playingMusicId : (isExit.requestMusicId as number) } });
             const updatedRoomMate = await prisma.roommates.update({ where : { id : roomMateId } , data : { requestMusicId : null } })
+            // sent to the user that request using socket
+            req.io.to(String(updatedRoom.id)).emit("accept_or_reject_from_owner" , { updatedRoom , updatedRoomMate , isAccept , isRoomImage })
             res.status(200).json({ updatedRoom , updatedRoomMate })
         }
     } else {
         if(isRoomImage) {
             const updatedRoomMate = await prisma.roommates.update({ where : { id : roomMateId } , data : { requestRoomImageId : null } })
+            // sent to the user that request using socket
+            req.io.to(String(updatedRoomMate.roomId)).emit("accept_or_reject_from_owner" , { updatedRoomMate , isAccept , isRoomImage })
             res.status(200).json({ updatedRoomMate })
         } else {
             const updatedRoomMate = await prisma.roommates.update({ where : { id : roomMateId } , data : { requestMusicId : null } })
+            // sent to the user that request using socket
+            req.io.to(String(updatedRoomMate.roomId)).emit("accept_or_reject_from_owner" , { updatedRoomMate , isAccept , isRoomImage })
             res.status(200).json({ updatedRoomMate })
         }
     }

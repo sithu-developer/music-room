@@ -1,11 +1,12 @@
 "use client"
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Room, RoomImage } from "@/type/prisma";
-import { Box, Button, FormControlLabel, Paper, Slide, Switch, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, FormControlLabel, Paper, Slide, Switch, Typography } from "@mui/material"
 import Image from "next/image";
 import { useState } from "react";
 import NewRoomImage from "./NewRoomImage";
 import { updateRoom } from "@/store/slices/roomSlice";
+import { changeSnackBarItems } from "@/store/slices/generalSlice";
 
 interface Props {
     currentRoomImage : RoomImage
@@ -13,22 +14,26 @@ interface Props {
     updateRoomImageOpen : boolean;
     setUpdateRoomImageOpen : (value : boolean) => void
     currentRoom : Room;
-    isMineRoomImages : boolean
-    setIsMineRoomImages : (value : boolean) => void;
 }
 
-const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , setUpdateRoomImageOpen , updateRoomImageOpen , currentRoom , isMineRoomImages , setIsMineRoomImages } : Props) => {
+const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , setUpdateRoomImageOpen , updateRoomImageOpen , currentRoom } : Props) => {
     const roomImages = useAppSelector(store => store.roomImage.items);
     const user = useAppSelector(store => store.user.item);
     const [ openNewRoomImageDialog , setOpenNewRoomImageDialog ] = useState(false);
+    const [ isLoading , setIsLoading ] = useState(false);
+    const [ isMineRoomImages , setIsMineRoomImages ] = useState(false);
+
     const dispatch = useAppDispatch();
     
     if(!user) return null;
 
     const handleChangeCurrentRoomImage = () => { 
+        setIsLoading(true)
         dispatch(updateRoom({ id : currentRoom.id , currentRoomImageId : currentRoomImage.id , userId : user.id , onSuccess : () => {
             setUpdateRoomImageOpen(false)
             setIsMineRoomImages(false);
+            setIsLoading(false);
+            if(currentRoom.ownerUserId === user.id) dispatch(changeSnackBarItems({ open : true , message : "Room image is successfully changed !" , severity : "success" }))
         } }))
     }
 
@@ -50,7 +55,11 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , setUpdateRoom
                         ))}
                     </Box>
                     <Button variant='contained' onClick={() => setOpenNewRoomImageDialog(true)} sx={{ width : "90%" , m : "10px" , borderRadius : "10px" , textTransform : "none" }} >Create</Button>
-                    <Box sx={{ display : "flex" , justifyContent : "center" , gap : "40px" , p : "15px" }}>
+                    {isLoading ? 
+                    <Box sx={{ display : "flex" , justifyContent : "center" ,  p : "13px" }} >
+                        <CircularProgress color="success" aria-label="Loading…" sx={{ color : "secondary.main" }} />
+                    </Box>
+                    :<Box sx={{ display : "flex" , justifyContent : "center" , gap : "40px" , p : "15px" }}>
                         <Button variant="outlined" color="secondary" onClick={() => {
                             setUpdateRoomImageOpen(false)
                             const foundRoomImage = roomImages.find(item => item.id === currentRoom.currentRoomImageId);
@@ -58,7 +67,7 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , setUpdateRoom
                             setIsMineRoomImages(false);
                         }}>Cancel</Button>
                         <Button variant="contained" onClick={handleChangeCurrentRoomImage} disabled={currentRoom.currentRoomImageId === currentRoomImage.id} >{currentRoom.ownerUserId === user.id ? "Change" : "Request"}</Button>
-                    </Box>
+                    </Box>}
                     {openNewRoomImageDialog && <NewRoomImage openNewRoomImageDialog={openNewRoomImageDialog} setOpenNewRoomImageDialog={setOpenNewRoomImageDialog} />}
                 </Box>
             </Paper>

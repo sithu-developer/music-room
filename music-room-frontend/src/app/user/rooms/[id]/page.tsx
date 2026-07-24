@@ -13,6 +13,9 @@ import MusicNoteRoundedIcon from '@mui/icons-material/MusicNoteRounded';
 import NotificationsActiveRoundedIcon from '@mui/icons-material/NotificationsActiveRounded';
 import RequestsInOwner from "@/components/RequestsInOwner";
 import TypographyWithWaveAnimation from "@/components/TypographyWithWaveAnimation";
+import { socket } from "@/util/socket";
+import { replaceRoom } from "@/store/slices/roomSlice";
+import { replaceRoomMate } from "@/store/slices/roomMateSlice";
 
 const InRoomPage = () => {
     const param = useParams();
@@ -32,7 +35,6 @@ const InRoomPage = () => {
     const [ myRoomMateRole , setMyRoomMateRole ] = useState<Roommates | null>(null);
     const [ updateRoomImageOpen , setUpdateRoomImageOpen ] = useState<boolean>(false);
     const [ requestsInOwnerOpen , setRequestsInOwnerOpen ] = useState<boolean>(false);
-    const [ isMineRoomImages , setIsMineRoomImages ] = useState(false);
     const dispatch = useAppDispatch();
     const router = useRouter();
 
@@ -59,16 +61,62 @@ const InRoomPage = () => {
     } , [ currentRoomImage , extraImages ])
 
     useEffect(() => {
-        if(currentRoomMates.length && user) {
+        if(currentRoomMates.length && user && currentRoom) {
             const foundRoomMateRole = currentRoomMates.find(item => item.userId === user.id);
             if(foundRoomMateRole) {
                 setMyRoomMateRole(foundRoomMateRole)
+
+                // join room in socket and others
+                socket.emit("join_room" , { roomId : foundRoomMateRole.roomId });
+
+                // recieve updated room by roommates from owner changed room image
+                const handleSocketUpdateRoom = ({ updatedRoom } : { updatedRoom : Room }) => {
+                    if(updatedRoom.ownerUserId !== user.id) {
+                        dispatch(replaceRoom(updatedRoom));
+                        dispatch(changeSnackBarItems({ open : true , message : "Owner changed the Room Image !" , severity : "success" }))
+                    }
+                }
+                socket.on("update_room" , handleSocketUpdateRoom )
+
+                // request to owner from roommate
+                const handleSocketRequestToOwner = ({ updatedRoomMate } : { updatedRoomMate : Roommates }) => {
+                    if(currentRoom.ownerUserId === user.id) {
+                        const requestedUser = otherUsers.find(oU => oU.id === updatedRoomMate.userId)
+                        dispatch(replaceRoomMate(updatedRoomMate));
+                        dispatch(changeSnackBarItems({ open : true , message : `${requestedUser?.name} requested you !` , severity : "info" }))
+                    }
+                }
+                socket.on("request_to_owner" , handleSocketRequestToOwner )
+                
+                // accept or reject from Owner 
+                const handleSocketAcceptOrRejectFromOwner = ({ updatedRoom , updatedRoomMate , isAccept , isRoomImage } : { updatedRoom : Room | undefined , updatedRoomMate : Roommates , isAccept : boolean , isRoomImage : boolean }) => {
+                    if(currentRoom.ownerUserId !== user.id) {
+                        if(updatedRoom) dispatch(replaceRoom(updatedRoom))
+                        dispatch(replaceRoomMate(updatedRoomMate));
+                        if(updatedRoomMate.userId === user.id) {
+                            dispatch(changeSnackBarItems({ open : true , message : `Your request to change the ${isRoomImage ? "room image" : "music"} is ${isAccept ? "accepted" : "rejected"} !` , severity : (isAccept ? "success" : "error") }))
+                        } else if(isAccept) {
+                            dispatch(changeSnackBarItems({ open : true , message : `Owner changed the ${isRoomImage ? "room image" : "music"} !` , severity : "success" }))
+                        }
+                    }
+                }
+                socket.on("accept_or_reject_from_owner" , handleSocketAcceptOrRejectFromOwner )
+                
+                console.log("in")
+                return () => {
+                    socket.off("update_room" , handleSocketUpdateRoom);
+                    socket.off("request_to_owner" , handleSocketRequestToOwner);
+                    socket.off("accept_or_reject_from_owner" , handleSocketAcceptOrRejectFromOwner )
+                    socket.emit("leave_room" , { roomId : foundRoomMateRole.roomId })
+                    console.log("out")
+                }
+
             } else {
                 dispatch(changeSnackBarItems({ message : "You are not a member of that room !" , severity : "error" , open : true }));
                 router.push("/user/rooms")
             }
         }
-    } , [ user , currentRoomMates ] )
+    } , [ user , currentRoomMates , currentRoom , otherUsers ] )
 
     if(!user || !currentRoom || !currentRoomImage || !playingMusic || !currentRoomMates.length || !myRoomMateRole ) return null;
 
@@ -87,9 +135,6 @@ const InRoomPage = () => {
                 <IconButton sx={{  border : "1px solid white"}} 
                     onClick={() => {
                         setUpdateRoomImageOpen(prev => (!prev))
-                        const foundRoomImage = roomImages.find(item => item.id === currentRoom.currentRoomImageId);
-                        setCurrentRoomImage(foundRoomImage);
-                        setIsMineRoomImages(false)
                     }}
                 >
                     <ImagesearchRollerRoundedIcon color="secondary" />
@@ -123,7 +168,7 @@ const InRoomPage = () => {
                 {myRoomMateRole.requestRoomImageId && <TypographyWithWaveAnimation text={("You are requesting the owner to set background Image (" + roomImages.find(roomImg => roomImg.id === myRoomMateRole.requestRoomImageId)?.vite + ") .....")} />}
             </Box>
             {currentRoom.ownerUserId === user.id && <RequestsInOwner requestsInOwnerOpen={requestsInOwnerOpen} currentRoomMates={currentRoomMates} />}
-            <RoomImageSlide currentRoomImage={currentRoomImage} setCurrentRoomImage={setCurrentRoomImage} updateRoomImageOpen={updateRoomImageOpen} setUpdateRoomImageOpen={setUpdateRoomImageOpen} currentRoom={currentRoom} isMineRoomImages={isMineRoomImages} setIsMineRoomImages={setIsMineRoomImages} />
+            <RoomImageSlide currentRoomImage={currentRoomImage} setCurrentRoomImage={setCurrentRoomImage} updateRoomImageOpen={updateRoomImageOpen} setUpdateRoomImageOpen={setUpdateRoomImageOpen} currentRoom={currentRoom} />
         </Box>
     )
 

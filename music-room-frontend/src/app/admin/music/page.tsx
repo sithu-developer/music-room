@@ -27,7 +27,7 @@ const MusicPage = () => {
                     <AddRoundedIcon sx={{ color : "whitesmoke"}} />
                 </IconButton>
             </Box>
-            <Box sx={{ display : "flex" , flexWrap : "wrap" , gap : "10px" , p : "10px"}} >
+            <Box sx={{ display : "flex" , flexWrap : "wrap" , gap : "20px" , overflowY : "auto", height : "calc(100vh - 95px)" , p : "10px 20px" , mt : "10px" }} >
                 {musics.map(item => (
                     // <Box>
                     //     <Typography key={item.id} >{item.name}</Typography>

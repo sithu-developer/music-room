@@ -18,6 +18,8 @@ roomRouter.post("/" , (req : Request , res : Response , next) => {
     const newRoomMates = await prisma.$transaction(
         (roomMateLayouts as RoomMateLayoutType[]).map(item => prisma.roommates.create({ data : { userId : (item.tempId === 0 ? ownerUserId : null)  , roomId : newRoom.id , height : item.h , width : item.w , x : item.x , y : item.y } }))
     )
+    // sent to all users connected to the socket server
+    req.io.emit("created_new_room" , { newRoom , newRoomMates } )
     res.status(200).json( { newRoom , newRoomMates } )
 })
 
@@ -35,6 +37,7 @@ roomRouter.put("/" , (req : Request , res : Response , next) => {
         const updatedRoom = await prisma.room.update({ where : { id } , data : { currentRoomImageId , playingMusicId } });
         // send to other roommates using socket
         req.io.to(String(updatedRoom.id)).emit("update_room" , { updatedRoom })
+        req.io.emit("check_room_changes_by_owner_from_rooms_page" , { updatedRoom })
         res.status(200).json({ updatedRoom })
     } else {
         const updatedRoomMate = await prisma.roommates.update({ where : { userId } , data : { requestRoomImageId : currentRoomImageId , requestMusicId : playingMusicId } })

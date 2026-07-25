@@ -29,7 +29,7 @@ const SettingPage = () => {
     }
 
     return (
-        <Box  sx={{ bgcolor : "primary.light" , width : "calc(100vw - 250px)" , height : "100%" , p : "10px", borderRadius : "7px"}} >
+        <Box  sx={{ bgcolor : "primary.light" , width : "calc(100vw - 250px)" , height : "100%" , overflowY : "auto" , p : "10px", borderRadius : "7px"}} >
             <Typography sx={{ textAlign : "center" , fontSize : "30px" }} >Settings</Typography>
             <Box sx={{ display : "flex" , gap : "10px" , flexWrap : "wrap" , p : "20px"}}>
                 <Box sx={{ bgcolor : "primary.dark" , width : "300px" , height : "200px" , borderRadius : "10px" , display : "flex" , flexDirection : "column" , justifyContent : "space-between" , p : "20px"}}>

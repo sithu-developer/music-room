@@ -142,7 +142,7 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
                 </Box>
 
                 <Slide direction="left" in={isShown} mountOnEnter unmountOnExit >
-                    <Paper sx={{ zIndex : 2 , position : "fixed" , right : 20 , top : 80 , bgcolor : "transparent", borderRadius : "10px" }}>
+                    <Paper sx={{ zIndex : 3 , position : "fixed" , right : 20 , top : 80 , bgcolor : "transparent", borderRadius : "10px" }}>
                         <Box sx={{ position : "relative" , zIndex : 10 , display : 'flex' , flexDirection : "column" , width : "300px" , maxHeight : "70vh" , background : "rgba(75, 110, 113, 0.1)" , backdropFilter : "blur(10px)" , WebkitBackdropFilter : "blur(10px)" , border : "1px solid white" , borderRadius : "10px"  }}>
                             <Typography sx={{ textAlign : "center" ,  position : "sticky" , top : 0 , p : "10px 0 25px 0"}} variant='h6' >Room Details</Typography>
                             <Box sx={{ display : 'flex' , flexDirection : "column" , gap : "20px" , p : "20px" , overflowY : "auto" }} >

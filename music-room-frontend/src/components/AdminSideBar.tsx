@@ -15,7 +15,7 @@ const AdminSideBar = () => {
     
     return (
         <Box sx={{ width : "250px" , height : "100vh" , p : "5px" }}>
-            <Box sx={{ bgcolor : "primary.main", width : "100%" , height : "100%" , borderRadius : "7px"  }}>
+            <Box sx={{ bgcolor : "primary.main", width : "100%" , height : "100%" , borderRadius : "7px"  , overflowY : "auto" }}>
                 <Box sx={{ display : "flex" , alignItems : "center" , gap : "20px" , p : "30px 15px"}}>
                     <Image alt="music logo" src={"/music-logo.jpg"} width={300} height={300} style={{ width : "35px" , height : "auto" , borderRadius : "4px" }} />
                     <Typography sx={{ fontSize : "22px" , fontWeight : "600" }}>{admin ? admin.companyName : "Company"}</Typography>

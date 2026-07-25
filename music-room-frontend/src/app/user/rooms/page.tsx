@@ -1,7 +1,7 @@
 "use client"
 import NewRoom from "@/components/NewRoom";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { RoomCategory } from "@/type/prisma";
+import { Room, RoomCategory, Roommates } from "@/type/prisma";
 import { Box, ButtonBase, Chip, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -10,9 +10,12 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import VpnKeyRoundedIcon from '@mui/icons-material/VpnKeyRounded';
 import LockRoundedIcon from '@mui/icons-material/LockRounded';
 import RequestRoomPasswordDialog from "@/components/RequestRoomPassword";
-import { joinRoom } from "@/store/slices/roomMateSlice";
+import { addRoomMates, joinRoom, replaceRoomMate } from "@/store/slices/roomMateSlice";
 import { HandleJoinRoomParaType, RoomPasswordDialogItems } from "@/type/roomMate";
 import { changeIsLoading, changeSnackBarItems } from "@/store/slices/generalSlice";
+import { socket } from "@/util/socket";
+import PersonIcon from '@mui/icons-material/Person';
+import { addNewRoom, replaceRoom } from "@/store/slices/roomSlice";
 
 const RoomsPage = () => {
     const [ openNewRoom , setOpenNewRoom ] = useState<boolean>(false);
@@ -37,6 +40,47 @@ const RoomsPage = () => {
             
         }
     } , [ categories ])
+
+    useEffect(() => {
+        if(user) {
+            const handleSocketUserJoinRoom = ({ updatedRoomMate } : {  updatedRoomMate : Roommates }) => {
+                dispatch(replaceRoomMate(updatedRoomMate))
+            }
+            socket.on("a_user_joined_a_room" , handleSocketUserJoinRoom)
+
+            const handleSocketCreateNewRoom = ({ newRoom , newRoomMates } : { newRoom : Room , newRoomMates : Roommates[] }) => {
+                if(newRoom.ownerUserId !== user.id) {
+                    dispatch(addNewRoom(newRoom));
+                    dispatch(addRoomMates(newRoomMates))
+                }
+            }
+            socket.on("created_new_room" , handleSocketCreateNewRoom )
+
+            // changes in room 
+            const handleSocketUpdateRoom = ({ updatedRoom } : { updatedRoom : Room }) => {
+                if(updatedRoom.ownerUserId !== user.id) {
+                    dispatch(replaceRoom(updatedRoom));
+                }
+            }
+            socket.on("check_room_changes_by_owner_from_rooms_page" , handleSocketUpdateRoom )
+
+            const handleSocketAcceptOrRejectFromOwner = ({ updatedRoom } : { updatedRoom : Room | undefined }) => {
+                if(updatedRoom && updatedRoom.ownerUserId !== user.id) {
+                    dispatch(replaceRoom(updatedRoom))
+                }
+            }
+            socket.on("accept_or_reject_by_owner_check_by_rooms_page" , handleSocketAcceptOrRejectFromOwner )
+            
+            console.log("in")
+            return () => {
+                socket.off("a_user_joined_a_room" , handleSocketUserJoinRoom)
+                socket.off("created_new_room" , handleSocketCreateNewRoom )
+                socket.off("check_room_changes_by_owner_from_rooms_page" , handleSocketUpdateRoom )
+                socket.off("accept_or_reject_by_owner_check_by_rooms_page" , handleSocketAcceptOrRejectFromOwner )
+                console.log("out")
+            }
+        }
+    } , [user])
 
     if(!user) return null;
 
@@ -69,7 +113,7 @@ const RoomsPage = () => {
                     }} label={item.name} clickable sx={{ color : "white" , boxShadow : (selectedCategory && item.id === selectedCategory.id ? "5px 5px 15px #374a5f" : "none") , borderTopRightRadius : "0" , borderTopLeftRadius : "0" , border : (selectedCategory && item.id === selectedCategory.id ? "1px solid white": "") , borderTop : (selectedCategory && item.id === selectedCategory.id ? "1px solid #3e648c": "") , bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "")  , ":hover" : { bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "") } }} />
                 )) }
             </Box>
-            <Box sx={{ width : "100%" , p : "10px 20px" , display : "flex" , gap : "20px" , flexWrap : "wrap"}}>
+            <Box sx={{ width : "100%" , p : "10px 20px" , display : "flex" , gap : "20px" , flexWrap : "wrap" , overflowY : "auto"}}>
                 {selectedCategory && rooms.filter(item => item.roomCategoryId === selectedCategory.id).map(item => {
                     const roomImage = roomImages.find(roomImg => roomImg.id === item.currentRoomImageId );
                     const joinedRoomMates = roomMates.filter(roomMate => roomMate.userId && roomMate.roomId === item.id )
@@ -79,7 +123,10 @@ const RoomsPage = () => {
                             <Box sx={{ position : "absolute" , p : "5px 8px" }}>
                                 <Typography sx={{ background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)", textShadow : "0px 0px 10px #ffffff" , fontWeight : "bold" , backgroundClip : "text" , color : "transparent" }} >{item.name}</Typography>
                             </Box>
-                            <Typography sx={{ position : "absolute" , left : "7px" , top : "7px" , bgcolor : "primary.dark" , p : "1px 6px" , borderRadius : "5px" , fontSize : "14px"}} >{joinedRoomMates.length + "/" + item.roommateQty + " members" }</Typography>
+                            <Box sx={{ position : "absolute" , left : "7px" , top : "7px" , display : "flex" , alignItems : "center" , gap : "1px"  , bgcolor : "primary.dark" , p : "1px 2px 1px 5px" , borderRadius : "5px" }} >
+                                <Typography sx={{ fontSize : "14px"}}>{joinedRoomMates.length + "/" + item.roommateQty }</Typography>
+                                <PersonIcon sx={{ fontSize : "17.5px"}} color="secondary" />
+                            </Box>
                             {item.roomPassword && <LockRoundedIcon sx={{ position : "absolute" , right : "7px" , top : "7px" , color : "secondary.dark" , fontSize : "20px"}}  />}
                             <Image alt="room image" priority src={roomImage.bgImageUrl} width={500} height={500} style={{ height : "100%" , width : "auto"}} />
                             <Box component={ButtonBase} disabled={joinedRoomMates.length === item.roommateQty} onClick={() => handleJoinRoom({roomId : item.id , roomPassword : item.roomPassword})} sx={{ position : "absolute" , bottom : "0px" , background : "rgba(255, 255, 255, 0.1)" , backdropFilter : "blur(10px)" , border : "1px solid gray" , borderRadius : "30px 30px 10px 10px" , p : "8px 30px" , transition : "all 0.2s ease" , ":hover" : { bottom : "3px" , borderColor : "white" , boxShadow : "0px 0px 55px #ffffffbb" } }}>

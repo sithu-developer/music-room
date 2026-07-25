@@ -19,9 +19,13 @@ roomMateRouter.put("/" , (req : Request , res : Response , next) => {
     if(roomPassword) {
         if(roomPassword !== room.roomPassword) return res.status(403).send("Wrong Password")
         const updatedRoomMate = await prisma.roommates.update({ where : { id : foundRoomMatePlace.id } , data : { userId } });
+        // send to all other users that is connected to the socket server
+        req.io.emit("a_user_joined_a_room" , { updatedRoomMate })
         res.status(200).json({ updatedRoomMate })
     } else {
         const updatedRoomMate = await prisma.roommates.update({ where : { id : foundRoomMatePlace.id } , data : { userId } });
+        // send to all other users that is connected to the socket server
+        req.io.emit("a_user_joined_a_room" , { updatedRoomMate })
         res.status(200).json({ updatedRoomMate })
     }
 })
@@ -41,12 +45,14 @@ roomMateRouter.put("/acceptOrReject" , (req : Request , res : Response , next) =
             const updatedRoomMate = await prisma.roommates.update({ where : { id : roomMateId } , data : { requestRoomImageId : null } })
             // sent to the user that request using socket
             req.io.to(String(updatedRoom.id)).emit("accept_or_reject_from_owner" , { updatedRoom , updatedRoomMate , isAccept , isRoomImage })
+            req.io.emit("accept_or_reject_by_owner_check_by_rooms_page" , { updatedRoom })
             res.status(200).json({ updatedRoom , updatedRoomMate })
         } else {
             const updatedRoom = await prisma.room.update({ where : { id : isExit.roomId } , data : { playingMusicId : (isExit.requestMusicId as number) } });
             const updatedRoomMate = await prisma.roommates.update({ where : { id : roomMateId } , data : { requestMusicId : null } })
             // sent to the user that request using socket
             req.io.to(String(updatedRoom.id)).emit("accept_or_reject_from_owner" , { updatedRoom , updatedRoomMate , isAccept , isRoomImage })
+            req.io.emit("accept_or_reject_by_owner_check_by_rooms_page" , { updatedRoom })
             res.status(200).json({ updatedRoom , updatedRoomMate })
         }
     } else {

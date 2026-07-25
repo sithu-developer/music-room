@@ -14,8 +14,9 @@ import NotificationsActiveRoundedIcon from '@mui/icons-material/NotificationsAct
 import RequestsInOwner from "@/components/RequestsInOwner";
 import TypographyWithWaveAnimation from "@/components/TypographyWithWaveAnimation";
 import { socket } from "@/util/socket";
-import { replaceRoom } from "@/store/slices/roomSlice";
-import { replaceRoomMate } from "@/store/slices/roomMateSlice";
+import { addNewRoom, replaceRoom } from "@/store/slices/roomSlice";
+import { addRoomMates, replaceRoomMate } from "@/store/slices/roomMateSlice";
+import Link from "next/link";
 
 const InRoomPage = () => {
     const param = useParams();
@@ -101,12 +102,32 @@ const InRoomPage = () => {
                     }
                 }
                 socket.on("accept_or_reject_from_owner" , handleSocketAcceptOrRejectFromOwner )
+
+                const handleSocketUserJoinRoom = ({ updatedRoomMate } : {  updatedRoomMate : Roommates }) => {
+                    dispatch(replaceRoomMate(updatedRoomMate))
+                    if(updatedRoomMate.roomId === currentRoom.id) { // to avoid showing noti to other roommates in other rooms
+                        const joinedUser = otherUsers.find(oU => oU.id === updatedRoomMate.userId)
+                        dispatch(changeSnackBarItems({ open : true , message : `${joinedUser?.name} joined the room !` , severity : "info" }))
+                    }
+                }
+                socket.on("a_user_joined_a_room" , handleSocketUserJoinRoom)
+
+                // to just know a new room is created for other roommates in other rooms
+                const handleSocketCreateNewRoom = ({ newRoom , newRoomMates } : { newRoom : Room , newRoomMates : Roommates[] }) => {
+                    if(newRoom.ownerUserId !== user.id) {
+                        dispatch(addNewRoom(newRoom));
+                        dispatch(addRoomMates(newRoomMates))
+                    }
+                }
+                socket.on("created_new_room" , handleSocketCreateNewRoom )
                 
                 console.log("in")
                 return () => {
                     socket.off("update_room" , handleSocketUpdateRoom);
                     socket.off("request_to_owner" , handleSocketRequestToOwner);
                     socket.off("accept_or_reject_from_owner" , handleSocketAcceptOrRejectFromOwner )
+                    socket.off("a_user_joined_a_room" , handleSocketUserJoinRoom)
+                    socket.off("created_new_room" , handleSocketCreateNewRoom )
                     socket.emit("leave_room" , { roomId : foundRoomMateRole.roomId })
                     console.log("out")
                 }
@@ -118,7 +139,12 @@ const InRoomPage = () => {
         }
     } , [ user , currentRoomMates , currentRoom , otherUsers ] )
 
-    if(!user || !currentRoom || !currentRoomImage || !playingMusic || !currentRoomMates.length || !myRoomMateRole ) return null;
+    if(!user || !currentRoom || !currentRoomImage || !playingMusic || !currentRoomMates.length || !myRoomMateRole ) return (
+        <Box sx={{ bgcolor : "primary.light" , height : "calc(100vh - 7px)" , p : "30px"}}>
+            <Typography sx={{ textAlign : "center" }} >May be you are joining the room that doesn't exit !</Typography>
+            <Link href={"/user/rooms"} ><Typography sx={{ textAlign : "center" , mt : "50px" , fontStyle : "italic" , textDecoration : "underline" }}>Please, click me to go to the rooms page !</Typography></Link>
+        </Box>
+    );
 
 
     return (
@@ -156,7 +182,7 @@ const InRoomPage = () => {
                     const roomMateUser = [...otherUsers , user].find(otherUser => otherUser.id === item.userId);
                     return ( 
                     <Box key={item.id} sx={{ position : "absolute" , left : item.x , top : item.y}} >
-                        <Typography sx={{ position : "absolute" , top : "-25px" , right : "50%" , zIndex : 10 , transform : "translateX(50%)" , textWrap : "nowrap"  }}>{roomMateUser ? ( roomMateUser.id === user.id ? "You" : roomMateUser.name ) : ""}</Typography>
+                        <Typography sx={{ position : "absolute" , top : "-25px" , right : "50%" , zIndex : 10 , transform : "translateX(50%)" , textWrap : "nowrap"  }}>{roomMateUser ? ( roomMateUser.id === user.id ? "You" : roomMateUser.name ) : "Roommate"}</Typography>
                         <Image alt="Room Mate" src={roomMateUser ? roomMateUser.url : "/roomMate.jpg"} width={400} height={400}
                             style={{ width : item.width , height : item.height , padding : "5.5px" }}
                         />

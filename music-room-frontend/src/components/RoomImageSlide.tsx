@@ -11,12 +11,12 @@ import { changeSnackBarItems } from "@/store/slices/generalSlice";
 interface Props {
     currentRoomImage : RoomImage
     setCurrentRoomImage : ( value : RoomImage | undefined ) => void
-    updateRoomImageOpen : boolean;
-    setUpdateRoomImageOpen : (value : boolean) => void
+    openedSlideName : string;
+    setOpenedSlideName : (value : string) => void
     currentRoom : Room;
 }
 
-const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , setUpdateRoomImageOpen , updateRoomImageOpen , currentRoom } : Props) => {
+const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , openedSlideName , setOpenedSlideName , currentRoom } : Props) => {
     const roomImages = useAppSelector(store => store.roomImage.items);
     const user = useAppSelector(store => store.user.item);
     const [ openNewRoomImageDialog , setOpenNewRoomImageDialog ] = useState(false);
@@ -30,7 +30,7 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , setUpdateRoom
     const handleChangeCurrentRoomImage = () => { 
         setIsLoading(true)
         dispatch(updateRoom({ id : currentRoom.id , currentRoomImageId : currentRoomImage.id , userId : user.id , onSuccess : () => {
-            setUpdateRoomImageOpen(false)
+            setOpenedSlideName("")
             setIsMineRoomImages(false);
             setIsLoading(false);
             if(currentRoom.ownerUserId === user.id) dispatch(changeSnackBarItems({ open : true , message : "Room image is successfully changed !" , severity : "success" }))
@@ -38,7 +38,7 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , setUpdateRoom
     }
 
     return (
-        <Slide direction="left" in={updateRoomImageOpen} mountOnEnter unmountOnExit >
+        <Slide direction="left" in={openedSlideName === "roomImageSlide"} mountOnEnter unmountOnExit >
             <Paper sx={{ zIndex : 3 , position : "fixed" , right : 20 , top : 80 , bgcolor : "transparent", borderRadius : "10px" }}>
                 <Box sx={{ position : "relative" , zIndex : 10 , display : 'flex' , flexDirection : "column" , width : "300px" , maxHeight : "70vh" , background : "rgba(75, 110, 113, 0.1)" , backdropFilter : "blur(10px)" , WebkitBackdropFilter : "blur(10px)" , border : "1px solid white" , borderRadius : "10px" , overflowY : "auto"  }}>
                     <Box sx={{ display : "flex" , justifyContent : "space-between" , p : "10px" }}>
@@ -61,7 +61,7 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , setUpdateRoom
                     </Box>
                     :<Box sx={{ display : "flex" , justifyContent : "center" , gap : "40px" , p : "15px" }}>
                         <Button variant="outlined" color="secondary" onClick={() => {
-                            setUpdateRoomImageOpen(false)
+                            setOpenedSlideName("")
                             const foundRoomImage = roomImages.find(item => item.id === currentRoom.currentRoomImageId);
                             setCurrentRoomImage(foundRoomImage);
                             setIsMineRoomImages(false);

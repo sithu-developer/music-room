@@ -17,6 +17,7 @@ import { socket } from "@/util/socket";
 import { addNewRoom, replaceRoom } from "@/store/slices/roomSlice";
 import { addRoomMates, replaceRoomMate } from "@/store/slices/roomMateSlice";
 import Link from "next/link";
+import MusicSlide from "@/components/musicSlide";
 
 const InRoomPage = () => {
     const param = useParams();
@@ -34,8 +35,7 @@ const InRoomPage = () => {
     const [ relatedExtraImages , setRelatedExtraImages ] = useState<ExtraImage[]>([]);
     const [ currentRoomMates , setCurrentRoomMates ] = useState<Roommates[]>([]);
     const [ myRoomMateRole , setMyRoomMateRole ] = useState<Roommates | null>(null);
-    const [ updateRoomImageOpen , setUpdateRoomImageOpen ] = useState<boolean>(false);
-    const [ requestsInOwnerOpen , setRequestsInOwnerOpen ] = useState<boolean>(false);
+    const [ openedSlideName , setOpenedSlideName  ] = useState<string>("");
     const dispatch = useAppDispatch();
     const router = useRouter();
 
@@ -152,7 +152,7 @@ const InRoomPage = () => {
             <Typography sx={{ zIndex : 5 , position : "relative" , p : "21px 0 0 24px" , textAlign : "center" , fontSize : "27px" , fontWeight : "bold" , background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)" , textShadow : "1px 1px 25px #b5b2b2" , backgroundClip : "text" , WebkitBackgroundClip : "text"  , width : "fit-content" , color : "transparent"  }} >{currentRoom.name}</Typography>
             <PlayMusic playingMusic={playingMusic} setPlayingMusic={setPlayingMusic} />
             <Box sx={{ position : "absolute", zIndex : 5 , top : "21px" , right : "24px" , display : "flex" , gap : "15px"}} >
-                {currentRoom.ownerUserId === user.id && <IconButton onClick={() => setRequestsInOwnerOpen(prev => !prev)} sx={{ position : "relative" , border : "1px solid white"}}>
+                {currentRoom.ownerUserId === user.id && <IconButton onClick={() => setOpenedSlideName(prev => (prev === "requestSlide" ? "" : "requestSlide"))} sx={{ position : "relative" , border : "1px solid white"}}>
                     <NotificationsActiveRoundedIcon color="secondary" />
                     {currentRoomMates.filter(item => item.requestRoomImageId || item.requestMusicId).length ? 
                     <Box sx={{ position : "absolute" , top : "2px" , right : "0px" , bgcolor : "#ff0202" , width : "8px" , height : "8px" , borderRadius : "5px"}} />
@@ -160,12 +160,12 @@ const InRoomPage = () => {
                 </IconButton>}
                 <IconButton sx={{  border : "1px solid white"}} 
                     onClick={() => {
-                        setUpdateRoomImageOpen(prev => (!prev))
+                        setOpenedSlideName(prev => (prev === "roomImageSlide" ? "" : "roomImageSlide"))
                     }}
                 >
                     <ImagesearchRollerRoundedIcon color="secondary" />
                 </IconButton>
-                <IconButton sx={{  border : "1px solid white"}}>
+                <IconButton sx={{  border : "1px solid white"}} onClick={() => setOpenedSlideName(prev => (prev === "musicSlide" ? "" : "musicSlide"))} >
                     <MusicNoteRoundedIcon color="secondary" />
                 </IconButton>
             </Box>
@@ -193,8 +193,9 @@ const InRoomPage = () => {
             <Box sx={{ position : "absolute" , bottom : "0px" , right : "0px" , p : "20px" }}>
                 {myRoomMateRole.requestRoomImageId && <TypographyWithWaveAnimation text={("You are requesting the owner to set background Image (" + roomImages.find(roomImg => roomImg.id === myRoomMateRole.requestRoomImageId)?.vite + ") .....")} />}
             </Box>
-            {currentRoom.ownerUserId === user.id && <RequestsInOwner requestsInOwnerOpen={requestsInOwnerOpen} currentRoomMates={currentRoomMates} />}
-            <RoomImageSlide currentRoomImage={currentRoomImage} setCurrentRoomImage={setCurrentRoomImage} updateRoomImageOpen={updateRoomImageOpen} setUpdateRoomImageOpen={setUpdateRoomImageOpen} currentRoom={currentRoom} />
+            {currentRoom.ownerUserId === user.id && <RequestsInOwner openedSlideName={openedSlideName} currentRoomMates={currentRoomMates} />}
+            <RoomImageSlide currentRoomImage={currentRoomImage} setCurrentRoomImage={setCurrentRoomImage} openedSlideName={openedSlideName} setOpenedSlideName={setOpenedSlideName} currentRoom={currentRoom} />
+            <MusicSlide openedSlideName={openedSlideName} setOpenedSlideName={setOpenedSlideName} />
         </Box>
     )
 

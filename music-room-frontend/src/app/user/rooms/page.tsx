@@ -46,7 +46,7 @@ const RoomsPage = () => {
             const handleSocketUserJoinRoom = ({ updatedRoomMate } : {  updatedRoomMate : Roommates }) => {
                 dispatch(replaceRoomMate(updatedRoomMate))
             }
-            socket.on("a_user_joined_a_room" , handleSocketUserJoinRoom)
+            socket.on("a_user_joined_a_room" , handleSocketUserJoinRoom )
 
             const handleSocketCreateNewRoom = ({ newRoom , newRoomMates } : { newRoom : Room , newRoomMates : Roommates[] }) => {
                 if(newRoom.ownerUserId !== user.id) {

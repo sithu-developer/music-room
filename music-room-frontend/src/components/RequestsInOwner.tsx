@@ -9,17 +9,15 @@ import Image from "next/image";
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { acceptOrRejectRequestsFromOwner } from "@/store/slices/extraImagesSlice";
-import { AcceptOrRejectRequestsParaType, HandleAcceptOrRejectParaType, LoadingItemType } from "@/type/roomMate";
-import { error } from "console";
+import { HandleAcceptOrRejectParaType, LoadingItemType } from "@/type/roomMate";
 import TypographyWithWaveAnimation from "./TypographyWithWaveAnimation";
-import { changeSnackBarItems } from "@/store/slices/generalSlice";
 
 interface Props {
-    requestsInOwnerOpen : boolean;
+    openedSlideName : string
     currentRoomMates    : Roommates[]
 }
 
-const RequestsInOwner = ({ requestsInOwnerOpen , currentRoomMates } : Props) => {
+const RequestsInOwner = ({ openedSlideName , currentRoomMates } : Props) => {
     const [ isPlayingMusic , setIsPlayingMusic ] = useState<boolean>(false);
     const [ selectedToggle , setSelectedToggle ] = useState<string>("image");
     const [ loadingItems , setLoadingItems ] = useState<LoadingItemType[]>([]);
@@ -36,7 +34,7 @@ const RequestsInOwner = ({ requestsInOwnerOpen , currentRoomMates } : Props) => 
     }
 
     return (
-        <Slide direction="left" in={requestsInOwnerOpen} mountOnEnter unmountOnExit >
+        <Slide direction="left" in={openedSlideName === "requestSlide"} mountOnEnter unmountOnExit >
             <Paper sx={{ zIndex : 3 , position : "fixed" , right : 20 , top : 80 , bgcolor : "transparent", borderRadius : "10px" }}>
                 <Box sx={{ position : "relative" , zIndex : 10 , display : 'flex' , flexDirection : "column" , width : "300px" , maxHeight : "70vh" , background : "rgba(75, 110, 113, 0.1)" , backdropFilter : "blur(10px)" , WebkitBackdropFilter : "blur(10px)" , border : "1px solid white" , borderRadius : "10px"   }}>
                     <Box sx={{ display : "flex" , justifyContent : "center" , p : "13px" }}>

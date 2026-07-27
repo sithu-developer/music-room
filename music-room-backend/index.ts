@@ -46,6 +46,18 @@ io.on("connection" , (socket) => {
         console.log(`${socket.id} is leaved roomId : ${data.roomId}`)
     })
 
+    socket.on("sync_music_data" , ({ roomId } : { roomId : number}) => {
+        socket.to(String(roomId)).emit("take_currentMusicTime_isPlaying_from_owner" , { socketId : socket.id });
+    })
+
+    socket.on("sent_currentMusicTime_isPlaying_to_joined_roommate" , ({ socketId , isPlaying , currentTime } : { socketId : string , isPlaying : boolean , currentTime : number }) => {
+        socket.to(socketId).emit("set_currentMusicTime_IsPlaying" , {isPlaying  , currentTime })
+    })
+
+    socket.on("play_or_pause_music_musicTime_from_owner" , ({ isPlaying , currentTime , roomId } : { isPlaying : boolean , currentTime : number , roomId : number }) => {
+        socket.to(String(roomId)).emit("play_or_pause_music_musicTime_to_roommate" , { isPlaying , currentTime })
+    })
+    
 })
 
 // attach io to req

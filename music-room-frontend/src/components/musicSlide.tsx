@@ -6,13 +6,17 @@ import YouTubeIcon from '@mui/icons-material/YouTube';
 import MusicNoteRoundedIcon from '@mui/icons-material/MusicNoteRounded';
 import { useAppSelector } from "@/store/hooks";
 import PlayCircleFilledRoundedIcon from '@mui/icons-material/PlayCircleFilledRounded';
+import { Music } from "@/type/prisma";
+import GraphicEqRoundedIcon from '@mui/icons-material/GraphicEqRounded';
+
 
 interface Props {
     openedSlideName : string;
     setOpenedSlideName : (value : string) => void
+    playingMusic : Music
 }
 
-const MusicSlide = ({ openedSlideName , setOpenedSlideName } : Props ) => {
+const MusicSlide = ({ openedSlideName , setOpenedSlideName , playingMusic } : Props ) => {
     const [ selectedToggle , setSelectedToggle ] = useState<string>("music");
     const musics = useAppSelector(store => store.music.items)
     const user = useAppSelector(store => store.user.item)
@@ -45,10 +49,12 @@ const MusicSlide = ({ openedSlideName , setOpenedSlideName } : Props ) => {
                     </ToggleButtonGroup>
                     {selectedToggle === "music" && <Box  sx={{ display : "flex" , flexDirection : "column" , gap : "10px" , p : "20px 15px" , overflowY : "auto"}} >
                         {musics.filter(item => (isMineRoomImages ? item.userId === user.id : !item.userId)).map(item => (
-                            <Box key={item.id} sx={{ display : "flex" , alignItems : "center" , justifyContent : "space-between" , bgcolor : "primary.main" , pl : "15px" , borderRadius : "35px"}} >
+                            <Box key={item.id} sx={{ border : ( item.id === playingMusic.id ? "1px solid white" : "" ) , display : "flex" , alignItems : "center" , justifyContent : "space-between" , bgcolor : "primary.main" , pl : "15px" , borderRadius : "35px"}} >
                                 <Typography>{item.name}</Typography>
                                 <IconButton>
-                                    <PlayCircleFilledRoundedIcon color="secondary" sx={{ fontSize : "40px"}} />
+                                    {item.id === playingMusic.id ? 
+                                    <GraphicEqRoundedIcon color="secondary" sx={{ fontSize : "40px"}} />
+                                    :<PlayCircleFilledRoundedIcon color="secondary" sx={{ fontSize : "40px"}} />}
                                 </IconButton>
                             </Box>
                         ))}

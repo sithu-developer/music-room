@@ -150,7 +150,7 @@ const InRoomPage = () => {
     return (
         <Box sx={{ position : "relative", height : "100vh" , background : `url(${currentRoomImage.bgImageUrl})` , backgroundSize : "cover" , backgroundPosition : "center" , backgroundRepeat : "no-repeat"  , overflow : "hidden" }} >
             <Typography sx={{ zIndex : 5 , position : "relative" , p : "21px 0 0 24px" , textAlign : "center" , fontSize : "27px" , fontWeight : "bold" , background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)" , textShadow : "1px 1px 25px #b5b2b2" , backgroundClip : "text" , WebkitBackgroundClip : "text"  , width : "fit-content" , color : "transparent"  }} >{currentRoom.name}</Typography>
-            <PlayMusic playingMusic={playingMusic} setPlayingMusic={setPlayingMusic} />
+            <PlayMusic  playingMusic={playingMusic} setPlayingMusic={setPlayingMusic} currentRoom={currentRoom} />
             <Box sx={{ position : "absolute", zIndex : 5 , top : "21px" , right : "24px" , display : "flex" , gap : "15px"}} >
                 {currentRoom.ownerUserId === user.id && <IconButton onClick={() => setOpenedSlideName(prev => (prev === "requestSlide" ? "" : "requestSlide"))} sx={{ position : "relative" , border : "1px solid white"}}>
                     <NotificationsActiveRoundedIcon color="secondary" />
@@ -195,7 +195,7 @@ const InRoomPage = () => {
             </Box>
             {currentRoom.ownerUserId === user.id && <RequestsInOwner openedSlideName={openedSlideName} currentRoomMates={currentRoomMates} />}
             <RoomImageSlide currentRoomImage={currentRoomImage} setCurrentRoomImage={setCurrentRoomImage} openedSlideName={openedSlideName} setOpenedSlideName={setOpenedSlideName} currentRoom={currentRoom} />
-            <MusicSlide openedSlideName={openedSlideName} setOpenedSlideName={setOpenedSlideName} />
+            <MusicSlide openedSlideName={openedSlideName} setOpenedSlideName={setOpenedSlideName} playingMusic={playingMusic} />
         </Box>
     )
 

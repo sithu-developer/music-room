@@ -35,6 +35,8 @@ export interface Music {
     id    : number
     name : string;
     musicUrl : string;
+    artist  : string
+    musicImgUrl ?: string
     adminId   ?: number
     userId    ?: number
 }

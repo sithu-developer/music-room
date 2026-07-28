@@ -4,26 +4,26 @@ import { prisma } from "../../util/prisma";
 const musicRouter = express.Router();
 
 musicRouter.post("/" , ( req : Request , res : Response , next ) => {
-    const { name , musicUrl , adminId , userId } = req.body;
+    const { name , musicUrl , artist , musicImgUrl  , adminId , userId } = req.body;
     const isValid = name && musicUrl;
     if(!isValid || !(adminId || userId)) return res.status(400).send("Bad request");
     next();
 } , async( req : Request , res : Response ) => {
-    const { name , musicUrl , adminId , userId } = req.body;
-    const newMusic = await prisma.music.create({ data : { name , musicUrl , adminId , userId } });
+    const { name , musicUrl , artist , musicImgUrl  , adminId , userId } = req.body;
+    const newMusic = await prisma.music.create({ data : { name , musicUrl , adminId , userId , artist , musicImgUrl } });
     return res.status(200).json({ newMusic })
 })
 
 musicRouter.put("/" , async( req : Request , res : Response , next ) => {
-    const { id , name , musicUrl } = req.body;
+    const { id , name , musicUrl  , artist , musicImgUrl  } = req.body;
     const isValid = id && name && musicUrl;
     if(!isValid) return res.status(400).send("Bad request");
     const isExit = await prisma.music.findUnique({ where : { id }})
     if(!isExit) return res.status(400).send("Bad request");
     next();
 } , async( req : Request , res : Response ) => {
-    const { id , name , musicUrl } = req.body;
-    const updatedMusic = await prisma.music.update({ where : { id } , data : { name , musicUrl }});
+    const { id , name , musicUrl  , artist , musicImgUrl } = req.body;
+    const updatedMusic = await prisma.music.update({ where : { id } , data : { name , musicUrl , artist , musicImgUrl }});
     return res.status(200).json({ updatedMusic });
 })
 

@@ -15,14 +15,14 @@ const initialState : MusicInitialState = {
 }
 
 export const createMusic = createAsyncThunk("musicSlice/createMusic" , async( data : NewMusic , thunkApi ) => {
-    const { name , musicUrl , adminId , userId , onFail , onSuccess } = data;
+    const { name , musicUrl , artist , musicImgUrl , adminId , userId , onFail , onSuccess } = data;
     try {
         const response = await fetch(`${envValues.apiUrl}/music` , {
             method : "POST",
             headers : {
                 "content-type" : "application/json"
             },
-            body : JSON.stringify({ name , musicUrl , adminId , userId })
+            body : JSON.stringify({ name , musicUrl , adminId , userId , artist , musicImgUrl })
         });
         const { newMusic } = await response.json();
         thunkApi.dispatch(addMusic(newMusic));
@@ -35,14 +35,14 @@ export const createMusic = createAsyncThunk("musicSlice/createMusic" , async( da
 })
 
 export const updateMusic = createAsyncThunk("musicSlice/updateMusic" , async( data : UpdateMusic , thunkApi ) => {
-    const { id , name , musicUrl , onFail , onSuccess } = data;
+    const { id , name , musicUrl , artist , musicImgUrl , onFail , onSuccess } = data;
     try {
         const response = await fetch(`${envValues.apiUrl}/music` , {
             method : "PUT",
             headers : {
                 "content-type" : "application/json"
             },
-            body : JSON.stringify({ id , name , musicUrl })
+            body : JSON.stringify({ id , name , musicUrl  , artist , musicImgUrl  })
         });
         const { updatedMusic } = await response.json();
         thunkApi.dispatch(replaceMusic(updatedMusic));

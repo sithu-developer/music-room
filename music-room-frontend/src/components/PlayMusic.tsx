@@ -21,7 +21,6 @@ interface Props {
 
 const PlayMusic = ({ playingMusic, setNewRoom , setPlayingMusic , currentRoom } : Props ) => {
     const [ isPlayingMusic , setIsPlayingMusic ] = useState<boolean>(false);
-    const [ isMuted , setIsMuted ] = useState<boolean>(false);
     const [ musicVolume , setMusicVolume ] = useState<number>(0);
     const [ isAudioAllowed , setIsAudioAllowed ] = useState<boolean>(false);
     const musics = useAppSelector(store => store.music.items)
@@ -162,8 +161,11 @@ const PlayMusic = ({ playingMusic, setNewRoom , setPlayingMusic , currentRoom } 
             <Box sx={{ background : "rgba(255, 255, 255, 0.08)" , backdropFilter : "blur(20px)" , WebkitBackdropFilter : "blur(20px)" ,  border: "1px solid rgba(255,255,255,0.2)", boxShadow: `0 8px 32px rgba(0,0,0,0.4),inset 0 1px 1px rgba(255,255,255,0.2)`, borderRadius : "20px" , width : "250px" , display : "flex" , flexDirection : "column" , alignItems : "center" , p : "5px 15px"  }}>
                 <audio 
                     ref={audioRef} 
-                    src={"/testMusic.m4a"} 
-                    onLoadedMetadata={() => setMusicDuration(audioRef.current ? audioRef.current.duration : 0 ) }
+                    src={playingMusic.musicUrl} 
+                    onLoadedMetadata={() => {
+                        setMusicDuration(audioRef.current ? audioRef.current.duration : 0 )
+                        setIsPlayingMusic(false)
+                    }}
                     onTimeUpdate={() => setCurrentMusicTime(audioRef.current ? audioRef.current.currentTime : 0)}
                     onEnded={() => setIsPlayingMusic(false)}
                 />
@@ -174,7 +176,7 @@ const PlayMusic = ({ playingMusic, setNewRoom , setPlayingMusic , currentRoom } 
                         </Box>
                     )}
                     <Box sx={{ overflow : "hidden" , width : (playingMusic.musicImgUrl ? "160px" : "100%" )}}>
-                        <Typography sx={{ fontSize : "19px"  , color : "primary.dark" , whiteSpace : "nowrap" , animation : (isPlayingMusic ? "marquee 8s linear infinite" : "") , "@keyframes marquee" : { "0%" : { transform : "translate(100% , 0)" }, "40%,60%" : { transform : "translate(0 , 0)" } ,  "100%" : { transform : `translate(-130% , 0)` } }  }} >{playingMusic.name}</Typography>
+                        <Typography sx={{ fontSize : "19px"  , color : "primary.dark" , whiteSpace : "nowrap" ,"& span": {  display : "inline-block" , paddingLeft : (isPlayingMusic ? "100%" : "0") , "--translate-mid" : (playingMusic.musicImgUrl ? "-160px" : "-220px") , animation : (isPlayingMusic ? "marquee 8s linear infinite" : "")}  , "@keyframes marquee" : { "0%" : { transform : "translate(0 , 0)" }, "40%,60%" : { transform : `translate(var(--translate-mid) , 0)` } ,  "100%" : { transform : `translate(-110% , 0)` } }  }} ><span>{playingMusic.name}</span></Typography>
                         <Typography sx={{ fontSize : "12px" , color : "primary.dark"  }}>{playingMusic.artist}</Typography>
                     </Box>
                 </Box>

@@ -74,15 +74,16 @@ const RequestsInOwner = ({ openedSlideName , currentRoomMates } : Props) => {
                                     </Box>
                                     {(selectedToggle === "image" && requestedRoomImage) && <Image alt="Requested Room Image" src={requestedRoomImage.bgImageUrl} width={400} height={400} style={{ height : "auto" , width : "100%" , borderRadius : "5px" , display : "block"  }} />}
                                     {(selectedToggle === "music" && requestedMusic) && (
-                                        <Box sx={{ bgcolor : "primary.dark" , width : "100%" , p : "15px 20px" , borderRadius : "5px" }}>
-                                            <Box sx={{ display : "flex" , justifyContent : "space-between" , alignItems : "center"}}>
-                                                <Typography  >{requestedMusic.name}</Typography>
-                                                <IconButton onClick={() => setIsPlayingMusic(!isPlayingMusic)}>
-                                                    {isPlayingMusic ? <PauseIcon color="secondary" /> 
-                                                    : <PlayArrowIcon color="secondary" />}
-                                                </IconButton>
+                                        <Box sx={{ bgcolor : "primary.dark" , width : "100%" , p : "15px 20px" , borderRadius : "5px" , display : "flex" , gap : "10px" }}>
+                                            {requestedMusic.musicImgUrl && (
+                                                <Box sx={{ width : "46px" , height : "46px" , overflow : "hidden" , display : 'flex' , justifyContent : "center" , alignItems : "center" , borderRadius : "3px" }} >
+                                                    <Image alt="Music Image" src={requestedMusic.musicImgUrl} width={100} height={100} style={{ width : "100%" , height : "auto"}} />
+                                                </Box>
+                                            )}
+                                            <Box sx={{ overflow : "hidden" , width : (requestedMusic.musicImgUrl ? "160px" : "100%" )}}>
+                                                <Typography sx={{ fontSize : "16px"  , whiteSpace : "nowrap" }} >{requestedMusic.name}</Typography>
+                                                <Typography sx={{ fontSize : "10px" , mt : "3px"  }}>{requestedMusic.artist}</Typography>
                                             </Box>
-                                            <Slider size="small" valueLabelDisplay="auto" color="secondary" />
                                         </Box>
                                     )}
                                     {loadingItemExit ? (

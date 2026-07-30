@@ -24,6 +24,7 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , openedSlideNa
     const [ isMineRoomImages , setIsMineRoomImages ] = useState(false);
 
     const dispatch = useAppDispatch();
+
     
     if(!user) return null;
 
@@ -43,7 +44,7 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , openedSlideNa
                 <Box sx={{ position : "relative" , zIndex : 10 , display : 'flex' , flexDirection : "column" , width : "300px" , maxHeight : "70vh" , background : "rgba(75, 110, 113, 0.1)" , backdropFilter : "blur(10px)" , WebkitBackdropFilter : "blur(10px)" , border : "1px solid white" , borderRadius : "10px" , overflowY : "auto"  }}>
                     <Box sx={{ display : "flex" , justifyContent : "space-between" , p : "10px" }}>
                         <Typography variant='h6' >Room Images</Typography>
-                        {roomImages.filter(item => item.userId === user.id ).length ? <FormControlLabel control={<Switch value={isMineRoomImages} onChange={e => setIsMineRoomImages(e.target.checked)} />} label="Mine" slotProps={{ typography : { sx : { fontSize : "13px" , ml : "-5px" }}}} />
+                        {roomImages.filter(item => item.userId === user.id ).length ? <FormControlLabel control={<Switch checked={isMineRoomImages} onChange={e => setIsMineRoomImages(e.target.checked)} />} label="Mine" slotProps={{ typography : { sx : { fontSize : "13px" , ml : "-5px" }}}} />
                         :undefined}
                     </Box>
                     <Box sx={{ display : "flex" , flexDirection : "column" , alignItems : "center" , gap : "10px" , overflowY : "auto" , p : "10px" }}>
@@ -54,7 +55,7 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , openedSlideNa
                             </Box>
                         ))}
                     </Box>
-                    <Button variant='contained' onClick={() => setOpenNewRoomImageDialog(true)} sx={{ width : "90%" , m : "10px" , borderRadius : "10px" , textTransform : "none" }} >Create</Button>
+                    <Button variant='contained' onClick={() => setOpenNewRoomImageDialog(true)} sx={{ width : "90%" , m : "10px" , borderRadius : "10px" , textTransform : "none" , alignSelf : "center" }} >Create</Button>
                     {isLoading ? 
                     <Box sx={{ display : "flex" , justifyContent : "center" ,  p : "13px" }} >
                         <CircularProgress color="success" aria-label="Loading…" sx={{ color : "secondary.main" }} />

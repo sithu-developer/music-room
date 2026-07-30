@@ -71,10 +71,10 @@ const InRoomPage = () => {
                 socket.emit("join_room" , { roomId : foundRoomMateRole.roomId });
 
                 // recieve updated room by roommates from owner changed room image
-                const handleSocketUpdateRoom = ({ updatedRoom } : { updatedRoom : Room }) => {
+                const handleSocketUpdateRoom = ({ updatedRoom , isMusicChanged } : { updatedRoom : Room , isMusicChanged : boolean }) => {
                     if(updatedRoom.ownerUserId !== user.id) {
                         dispatch(replaceRoom(updatedRoom));
-                        dispatch(changeSnackBarItems({ open : true , message : "Owner changed the Room Image !" , severity : "success" }))
+                        dispatch(changeSnackBarItems({ open : true , message : `Owner changed the ${isMusicChanged ? "music" : "Room Image"} !` , severity : "success" }))
                     }
                 }
                 socket.on("update_room" , handleSocketUpdateRoom )
@@ -190,12 +190,13 @@ const InRoomPage = () => {
                 )
                 })}
             </Box>
-            <Box sx={{ position : "absolute" , bottom : "0px" , right : "0px" , p : "20px" }}>
+            <Box sx={{ position : "absolute" , bottom : "0px" , right : "0px" , p : "20px" , display : "flex" , flexDirection : "column" , gap : "10px" }}>
                 {myRoomMateRole.requestRoomImageId && <TypographyWithWaveAnimation text={("You are requesting the owner to set background Image (" + roomImages.find(roomImg => roomImg.id === myRoomMateRole.requestRoomImageId)?.vite + ") .....")} />}
+                {myRoomMateRole.requestMusicId && <TypographyWithWaveAnimation text={("You are requesting the owner to change the music (" + musics.find(eachMusic => eachMusic.id === myRoomMateRole.requestMusicId)?.name + ") .....")} />}
             </Box>
             {currentRoom.ownerUserId === user.id && <RequestsInOwner openedSlideName={openedSlideName} currentRoomMates={currentRoomMates} />}
             <RoomImageSlide currentRoomImage={currentRoomImage} setCurrentRoomImage={setCurrentRoomImage} openedSlideName={openedSlideName} setOpenedSlideName={setOpenedSlideName} currentRoom={currentRoom} />
-            <MusicSlide openedSlideName={openedSlideName} setOpenedSlideName={setOpenedSlideName} playingMusic={playingMusic} />
+            <MusicSlide openedSlideName={openedSlideName} setOpenedSlideName={setOpenedSlideName} playingMusic={playingMusic} currentRoom={currentRoom} />
         </Box>
     )
 

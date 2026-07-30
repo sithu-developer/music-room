@@ -26,7 +26,7 @@ roomRouter.post("/" , (req : Request , res : Response , next) => {
 roomRouter.put("/" , (req : Request , res : Response , next) => {
     const { id , userId , currentRoomImageId , playingMusicId } = req.body;
     const isValid = id && userId;
-    if(!isValid) return res.status(400).send("Bad request")
+    if(!isValid && (!currentRoomImageId && !playingMusicId)) return res.status(400).send("Bad request")
     next();
 } , async(req : Request , res : Response) => {
     const { id , userId , currentRoomImageId , playingMusicId } = req.body;
@@ -36,7 +36,7 @@ roomRouter.put("/" , (req : Request , res : Response , next) => {
     if(room.ownerUserId === userId) {
         const updatedRoom = await prisma.room.update({ where : { id } , data : { currentRoomImageId , playingMusicId } });
         // send to other roommates using socket
-        req.io.to(String(updatedRoom.id)).emit("update_room" , { updatedRoom })
+        req.io.to(String(updatedRoom.id)).emit("update_room" , { updatedRoom , isMusicChanged : (playingMusicId ? true : false) })
         req.io.emit("check_room_changes_by_owner_from_rooms_page" , { updatedRoom })
         res.status(200).json({ updatedRoom })
     } else {

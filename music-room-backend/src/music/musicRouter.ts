@@ -10,7 +10,7 @@ musicRouter.post("/" , ( req : Request , res : Response , next ) => {
     next();
 } , async( req : Request , res : Response ) => {
     const { name , musicUrl , artist , musicImgUrl  , adminId , userId } = req.body;
-    const newMusic = await prisma.music.create({ data : { name , musicUrl , adminId , userId , artist , musicImgUrl } });
+    const newMusic = await prisma.music.create({ data : { name , musicUrl , adminId , userId , artist : artist ? artist : undefined , musicImgUrl } });
     return res.status(200).json({ newMusic })
 })
 
@@ -23,7 +23,7 @@ musicRouter.put("/" , async( req : Request , res : Response , next ) => {
     next();
 } , async( req : Request , res : Response ) => {
     const { id , name , musicUrl  , artist , musicImgUrl } = req.body;
-    const updatedMusic = await prisma.music.update({ where : { id } , data : { name , musicUrl , artist , musicImgUrl }});
+    const updatedMusic = await prisma.music.update({ where : { id } , data : { name , musicUrl , artist : artist ? artist : undefined , musicImgUrl }});
     return res.status(200).json({ updatedMusic });
 })
 

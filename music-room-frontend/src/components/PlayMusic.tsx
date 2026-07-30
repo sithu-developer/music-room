@@ -5,18 +5,20 @@ import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Music, Room } from "@/type/prisma";
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { NewRoomType } from "@/type/room";
 import { formatMusicTime } from "@/util/general";
 import { socket } from "@/util/socket";
 import Image from "next/image";
+import { changeIsLoading, changeSnackBarItems } from "@/store/slices/generalSlice";
+import { updateRoom } from "@/store/slices/roomSlice";
 
 
 interface Props {
     playingMusic : Music;
     setNewRoom ?: Dispatch<SetStateAction<NewRoomType>>
     setPlayingMusic ?: (value : Music) => void;
-    currentRoom : Room
+    currentRoom ?: Room
 }
 
 const PlayMusic = ({ playingMusic, setNewRoom , setPlayingMusic , currentRoom } : Props ) => {
@@ -28,6 +30,7 @@ const PlayMusic = ({ playingMusic, setNewRoom , setPlayingMusic , currentRoom } 
     const audioRef = useRef<HTMLAudioElement>(null);
     const [ currentMusicTime , setCurrentMusicTime ] = useState<number>(0);
     const [ musicDuration , setMusicDuration ] = useState<number>(0);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if(user && currentRoom) {
@@ -96,34 +99,13 @@ const PlayMusic = ({ playingMusic, setNewRoom , setPlayingMusic , currentRoom } 
 
     if(!user) return null;
 
-    const handlePreviousMusic = () => {
-        const indexOfCurrentMusic = musics.findIndex(item => item.id === playingMusic.id);
-        if(indexOfCurrentMusic === 0) { // if first music index
-            const previousMusic = musics[musics.length - 1];
-            if(setNewRoom) {
-                setNewRoom((prev) => { return {...prev , playingMusic : previousMusic}})
-            }
-            if(setPlayingMusic) {
-                setPlayingMusic(previousMusic)
-            }
-        } else {
-            const previousMusic = musics[indexOfCurrentMusic - 1];
-            if(setNewRoom) {
-                setNewRoom((prev) => { return {...prev , playingMusic : previousMusic}})
-            }
-            if(setPlayingMusic) {
-                setPlayingMusic(previousMusic)
-            }
-        }
-    }
-
     const handelPlayOrPause = () => {
         if(isPlayingMusic) {
             audioRef.current?.pause()
         } else {
             audioRef.current?.play().catch(console.error);
         }
-        socket.emit("play_or_pause_music_musicTime_from_owner" , { isPlaying : !isPlayingMusic , currentTime : (audioRef.current ? audioRef.current.currentTime : currentMusicTime) , roomId : currentRoom.id })
+        if(currentRoom) socket.emit("play_or_pause_music_musicTime_from_owner" , { isPlaying : !isPlayingMusic , currentTime : (audioRef.current ? audioRef.current.currentTime : currentMusicTime) , roomId : currentRoom.id })
         setIsPlayingMusic(prev => !prev)  
     }
 
@@ -131,28 +113,62 @@ const PlayMusic = ({ playingMusic, setNewRoom , setPlayingMusic , currentRoom } 
         if(audioRef.current) {
             audioRef.current.currentTime = v;
         }
-        socket.emit("play_or_pause_music_musicTime_from_owner" , { isPlaying : isPlayingMusic , currentTime : v , roomId : currentRoom.id })
+        if(currentRoom) socket.emit("play_or_pause_music_musicTime_from_owner" , { isPlaying : isPlayingMusic , currentTime : v , roomId : currentRoom.id })
         setCurrentMusicTime(v);
     }
 
-    const handleNextMusic = () => {
-        const indexOfCurrentMusic = musics.findIndex(item => item.id === playingMusic.id);
-        if(indexOfCurrentMusic === (musics.length - 1)) { // if last music index
-            const nextMusic = musics[0];
-            if(setNewRoom) {
-                setNewRoom((prev) => { return {...prev , playingMusic : nextMusic}})
-            }
-            if(setPlayingMusic) {
-                setPlayingMusic(nextMusic)
+    const handlePreviousMusic = () => {
+        handelPlayOrPause(); // pause the music first
+        const relatedMusics = [...musics.filter(item => item.adminId) , ...musics.filter(item => item.userId === user.id)]
+        const indexOfCurrentMusic = relatedMusics.findIndex(item => item.id === playingMusic.id);
+        let previousMusic : Music | null = null;
+        if(indexOfCurrentMusic > -1) {
+            if(indexOfCurrentMusic === 0) { // if first music index
+                previousMusic = relatedMusics[relatedMusics.length - 1];
+            } else {
+                previousMusic = relatedMusics[indexOfCurrentMusic - 1];
             }
         } else {
-            const nextMusic = musics[indexOfCurrentMusic + 1];
-            if(setNewRoom) {
-                setNewRoom((prev) => { return {...prev , playingMusic : nextMusic}})
+            previousMusic = relatedMusics[0];
+        }
+        if(setNewRoom) {
+            setNewRoom((prev) => { return {...prev , playingMusic : previousMusic}})
+        } else if(currentRoom) {
+            dispatch(changeIsLoading(true))
+            dispatch(updateRoom({ id : currentRoom.id , userId : user.id , playingMusicId : previousMusic.id , onSuccess : () => {
+                dispatch(changeIsLoading(false));
+                if(audioRef.current) {
+                    audioRef.current.play().catch(err => console.warn("Autoplay blocked until user interacts with the page:",err));
+                }
+            } }))
+        }
+    }
+
+    const handleNextMusic = () => {
+        
+        handelPlayOrPause(); // pause the music first
+        const relatedMusics = [...musics.filter(item => item.adminId) , ...musics.filter(item => item.userId === user.id)]
+        const indexOfCurrentMusic = relatedMusics.findIndex(item => item.id === playingMusic.id);
+        let nextMusic : Music | null = null;
+        if(indexOfCurrentMusic > -1) {
+            if(indexOfCurrentMusic === (relatedMusics.length - 1)) { // if last music index
+                nextMusic = relatedMusics[0];
+            } else {
+                nextMusic = relatedMusics[indexOfCurrentMusic + 1];
             }
-            if(setPlayingMusic) {
-                setPlayingMusic(nextMusic)
-            }
+        } else {
+            nextMusic = relatedMusics[0];
+        }
+        if(setNewRoom) {
+            setNewRoom((prev) => { return {...prev , playingMusic : nextMusic}})
+        } else if(currentRoom) {
+            dispatch(changeIsLoading(true))
+            dispatch(updateRoom({ id : currentRoom.id , userId : user.id , playingMusicId : nextMusic.id , onSuccess : () => {
+                dispatch(changeIsLoading(false));
+                if(audioRef.current) {
+                    audioRef.current.play().catch(err => console.warn("Autoplay blocked until user interacts with the page:",err));
+                }
+            } }))
         }
     }
     
@@ -182,9 +198,9 @@ const PlayMusic = ({ playingMusic, setNewRoom , setPlayingMusic , currentRoom } 
                 </Box>
                 <Box sx={{ width : "100%"}}>
                     <Typography sx={{ fontSize : "11px" , textAlign : "end" , color : "primary.dark" , lineHeight : "3px" }}>{formatMusicTime(currentMusicTime) + " / " + formatMusicTime(musicDuration)}</Typography>
-                    <Slider disabled={user.id !== currentRoom.ownerUserId} size="small" value={currentMusicTime} max={musicDuration || 100} sx={{ color : "primary.dark" }} onChange={(e , v) => handleChangeMusicTime(v)} />
+                    <Slider disabled={currentRoom && user.id !== currentRoom.ownerUserId} size="small" value={currentMusicTime} max={musicDuration || 100} sx={{ color : "primary.dark" , "&.Mui-disabled" : { color : "primary.main"} }} onChange={(e , v) => handleChangeMusicTime(v)} />
                 </Box>
-                {user.id === currentRoom.ownerUserId && <Box sx={{ display : "flex" , gap : "10px"}}>
+                {(currentRoom && user.id === currentRoom.ownerUserId) || setNewRoom ? <Box sx={{ display : "flex" , gap : "10px"}}>
                     <IconButton onClick={handlePreviousMusic}>
                         <SkipPreviousIcon sx={{ color : "primary.dark"}} />
                     </IconButton>
@@ -195,8 +211,9 @@ const PlayMusic = ({ playingMusic, setNewRoom , setPlayingMusic , currentRoom } 
                     <IconButton onClick={handleNextMusic}>
                         <SkipNextIcon sx={{ color : "primary.dark"}} />
                     </IconButton>
-                </Box>}
-                <Box sx={{ position : "absolute" , right : "-16px" , top : "20px" , borderRadius : "0 5px 5px 0" , height : "100px", width : "15px" , py : "10px", bgcolor : "primary.dark" , display :"flex" , flexDirection :"column", alignItems : "center"}}>
+                </Box>
+                :undefined}
+                <Box sx={{ position : "absolute" , right : "-16px" , top : "18px" , borderRadius : "0 5px 5px 0" , height : ((currentRoom && user.id === currentRoom.ownerUserId) || setNewRoom ? "105px" : "65px"), width : "15px" , py : "10px", bgcolor : "primary.dark" , display :"flex" , flexDirection :"column", alignItems : "center"}}>
                     <Slider size="small" orientation="vertical" value={musicVolume} sx={{ color : "primary.light" , "& .MuiSlider-track" : { border : "none" , width : "4px"} , "& .MuiSlider-thumb" : { width : 0 , height : 0 }}} onChange={( _ , v) => {
                         setMusicVolume(v)
                         if(audioRef.current) {
@@ -206,7 +223,7 @@ const PlayMusic = ({ playingMusic, setNewRoom , setPlayingMusic , currentRoom } 
                     } } />
                 </Box>
             </Box>
-            {user.id !== currentRoom.ownerUserId && <Dialog open={!isAudioAllowed}>
+            {currentRoom && user.id !== currentRoom.ownerUserId && <Dialog open={!isAudioAllowed}>
                 <DialogContent sx={{ bgcolor : "primary.main" , display : "flex" , flexDirection : "column" , gap : "20px"}}>
                     <Typography>Please, allow the audio to play music and sync the music.</Typography>
                     <Button variant="outlined" color="secondary" onClick={() => {

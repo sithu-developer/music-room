@@ -47,7 +47,7 @@ const NewMusicDialog = ({ open , setOpen } : Prop ) => {
 
     const handleCreateNewMusic = () => {
         dispatch(changeIsLoading(true))
-        dispatch(createMusic({ name : newMusic.name , musicUrl : "/" , artist : newMusic.artist , musicImgUrl : ""  , adminId : (admin.id ? admin.id : undefined) , userId : user?.id , onSuccess : () => {
+        dispatch(createMusic({ name : newMusic.name , musicUrl : "/The Script.mp3" , artist : newMusic.artist  , adminId : (admin.id ? admin.id : undefined) , userId : user?.id , onSuccess : () => {
             setOpen(false);
             setNewMusic({ name : "" , artist : "" })
             dispatch(changeIsLoading(false));

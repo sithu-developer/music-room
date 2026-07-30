@@ -91,7 +91,7 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
                     </Box>
                 </Box>
 
-                {newRoom.playingMusic && <PlayMusic playingMusic={newRoom.playingMusic} setNewRoom={setNewRoom} />}
+                {newRoom.playingMusic && <PlayMusic playingMusic={newRoom.playingMusic} setNewRoom={setNewRoom}  />}
 
                 {(extraImages.length && newRoom.currentRoomImage) 
                 ? extraImages.filter(item => item.roomImageId === newRoom.currentRoomImage?.id).map(item => (
@@ -184,13 +184,13 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
                                     </Box>
                                 </Box>
                                 <Divider variant='middle' />
-                                <Box sx={{ mt : "-10px" , display : "flex" , flexDirection : "column" , gap : "10px"}}>
+                                <Box sx={{ mt : "-10px" , display : "flex" , flexDirection : "column" }}>
                                     <Box sx={{ display : "flex"  , justifyContent : "space-between"}}>
                                         <Typography sx={{ cursor : "default"}}>Room Images</Typography>
                                         {roomImages.filter(item => item.userId === user.id ).length ? <FormControlLabel control={<Switch value={isMineRoomImages} onChange={e => setIsMineRoomImages(e.target.checked)} />} label="Mine" slotProps={{ typography : { sx : { fontSize : "13px" , ml : "-5px" }}}} />
                                         :undefined}
                                     </Box>
-                                    <Box sx={{ display : "flex" , gap : "10px" , width : "100%" , overflowX : "auto" , userSelect : "none"}} >
+                                    <Box sx={{ display : "flex" , gap : "10px" , width : "100%" , overflowX : "auto" , userSelect : "none" , py : "10px"}} >
                                         {roomImages.filter(item => (isMineRoomImages ? item.userId === user.id : !item.userId)).map(item => (
                                             <Box key={item.id} sx={{ mb : "5px" , cursor : "pointer" }} onClick={() => setNewRoom({ ...newRoom , currentRoomImage : item})} >
                                                 <Typography sx={{ textAlign : "center" , bgcolor : "primary.dark" , p : "5px", borderRadius : "5px 5px 0 0" , border : (newRoom.currentRoomImage && newRoom.currentRoomImage.id === item.id ? "1px solid white" : "") , borderBottom : "none" }}>{item.vite}</Typography>
@@ -201,13 +201,13 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
                                     <Button variant='contained' onClick={() => setOpenNewRoomImageDialog(true)} sx={{ width : "100%" , borderRadius : "10px" , textTransform : "none" }} >Create</Button>
                                 </Box>
                                 <Divider variant='middle' />
-                                <Box sx={{ mt : "-10px" , display : "flex" , flexDirection : "column" , gap : "10px"}} >
+                                <Box sx={{ mt : "-10px" , display : "flex" , flexDirection : "column" , gap : "5px"}} >
                                     <Box sx={{ display : "flex"  , justifyContent : "space-between"}}>
                                         <Typography sx={{ cursor : "default"}}>First Music</Typography>
                                         {musics.filter(item => item.userId === user.id ).length ? <FormControlLabel control={<Switch value={isMineRoomImages} onChange={e => setIsMineMusics(e.target.checked)} />} label="Mine" slotProps={{ typography : { sx : { fontSize : "13px" , ml : "-5px" }}}} />
                                         :undefined}
                                     </Box>
-                                    <Box sx={{ display : "flex" , gap : "10px" , width : "100%" , overflowX : "auto" , userSelect : "none" , pb : "5px" }} >
+                                    <Box sx={{ display : "flex" , gap : "10px" , width : "100%" , overflowX : "auto" , userSelect : "none" , py : "15px" }} >
                                         {musics.filter(item => (isMineMusics ? item.userId === user.id : !item.userId)).map(item => (
                                             <Chip key={item.id} icon={<MusicNoteIcon color='inherit' fontSize='inherit' />} label={item.name} sx={{ bgcolor : "primary.dark" , color : "white" , border : (newRoom.playingMusic && newRoom.playingMusic.id === item.id ? "1px solid white" : "") }} onClick={() => setNewRoom({ ...newRoom , playingMusic : item })} />
                                         ))}

@@ -6,7 +6,7 @@ import { changeSnackBarItems } from "@/store/slices/generalSlice";
 import { ExtraImage, Music, Room, RoomImage, Roommates } from "@/type/prisma";
 import { Box, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ImagesearchRollerRoundedIcon from '@mui/icons-material/ImagesearchRollerRounded';
 import MusicNoteRoundedIcon from '@mui/icons-material/MusicNoteRounded';
@@ -18,6 +18,9 @@ import { addNewRoom, replaceRoom } from "@/store/slices/roomSlice";
 import { addRoomMates, replaceRoomMate } from "@/store/slices/roomMateSlice";
 import Link from "next/link";
 import MusicSlide from "@/components/musicSlide";
+import { addMusic } from "@/store/slices/musicSlice";
+import { addRoomImage } from "@/store/slices/roomImageSlice";
+import { addExtraImages } from "@/store/slices/extraImagesSlice";
 
 const InRoomPage = () => {
     const param = useParams();
@@ -38,6 +41,7 @@ const InRoomPage = () => {
     const [ openedSlideName , setOpenedSlideName  ] = useState<string>("");
     const dispatch = useAppDispatch();
     const router = useRouter();
+    const path = usePathname();
 
     useEffect(() => {
         if(rooms.length && roomImages.length && musics.length && roomMates.length && roomId) {
@@ -62,19 +66,21 @@ const InRoomPage = () => {
     } , [ currentRoomImage , extraImages ])
 
     useEffect(() => {
-        if(currentRoomMates.length && user && currentRoom) {
-            const foundRoomMateRole = currentRoomMates.find(item => item.userId === user.id);
-            if(foundRoomMateRole) {
-                setMyRoomMateRole(foundRoomMateRole)
+        if(roomMates.length && user && currentRoom) {
+            const foundRoomMate = roomMates.find(item => item.userId === user.id);
+            if(foundRoomMate && foundRoomMate.roomId === currentRoom.id) {
+                setMyRoomMateRole(foundRoomMate)
 
                 // join room in socket and others
-                socket.emit("join_room" , { roomId : foundRoomMateRole.roomId });
+                socket.emit("join_room" , { roomId : foundRoomMate.roomId });
 
                 // recieve updated room by roommates from owner changed room image
                 const handleSocketUpdateRoom = ({ updatedRoom , isMusicChanged } : { updatedRoom : Room , isMusicChanged : boolean }) => {
                     if(updatedRoom.ownerUserId !== user.id) {
                         dispatch(replaceRoom(updatedRoom));
-                        dispatch(changeSnackBarItems({ open : true , message : `Owner changed the ${isMusicChanged ? "music" : "Room Image"} !` , severity : "success" }))
+                        if(updatedRoom.id === currentRoom.id) {  // avoid show noti in other rooms
+                            dispatch(changeSnackBarItems({ open : true , message : `Owner changed the ${isMusicChanged ? "music" : "Room Image"} !` , severity : "success" }))
+                        }
                     }
                 }
                 socket.on("update_room" , handleSocketUpdateRoom )
@@ -103,6 +109,13 @@ const InRoomPage = () => {
                 }
                 socket.on("accept_or_reject_from_owner" , handleSocketAcceptOrRejectFromOwner )
 
+                const handleSocketAcceptOrRejectFromOwnerForOtherRooms = ({ updatedRoom } : { updatedRoom : Room}) => {
+                    if(updatedRoom.id !== currentRoom.id) {
+                        dispatch(replaceRoom(updatedRoom))
+                    }
+                }
+                socket.on("accept_or_reject_by_owner_check_from_outside_and_other_rooms" , handleSocketAcceptOrRejectFromOwnerForOtherRooms )
+
                 const handleSocketUserJoinRoom = ({ updatedRoomMate } : {  updatedRoomMate : Roommates }) => {
                     dispatch(replaceRoomMate(updatedRoomMate))
                     if(updatedRoomMate.roomId === currentRoom.id) { // to avoid showing noti to other roommates in other rooms
@@ -120,24 +133,46 @@ const InRoomPage = () => {
                     }
                 }
                 socket.on("created_new_room" , handleSocketCreateNewRoom )
+
+                // create music and room image
+                const handleSocketNewMusicCreated  = ({ newMusic } : { newMusic : Music }) => {
+                    if(newMusic.userId !== user.id) {
+                        dispatch(addMusic(newMusic))
+                    }
+                }
+                socket.on("created_new_music" , handleSocketNewMusicCreated )
                 
-                console.log("in")
+                const handleSocketNewRoomImageCreated  = ({ newRoomImage , newExtraImages } : { newRoomImage : RoomImage , newExtraImages : ExtraImage[] }) => {
+                    if(newRoomImage.userId !== user.id) {
+                        dispatch(addRoomImage(newRoomImage))
+                        dispatch(addExtraImages(newExtraImages))
+                    }
+                }
+                socket.on("new_roomImage_created" , handleSocketNewRoomImageCreated )
+
+                console.log("in to [id] page")
                 return () => {
                     socket.off("update_room" , handleSocketUpdateRoom);
                     socket.off("request_to_owner" , handleSocketRequestToOwner);
                     socket.off("accept_or_reject_from_owner" , handleSocketAcceptOrRejectFromOwner )
                     socket.off("a_user_joined_a_room" , handleSocketUserJoinRoom)
                     socket.off("created_new_room" , handleSocketCreateNewRoom )
-                    socket.emit("leave_room" , { roomId : foundRoomMateRole.roomId })
-                    console.log("out")
+                    socket.off("accept_or_reject_by_owner_check_from_outside_and_other_rooms" , handleSocketAcceptOrRejectFromOwnerForOtherRooms )
+                    socket.off("created_new_music" , handleSocketNewMusicCreated )
+                    socket.off("new_roomImage_created" , handleSocketNewRoomImageCreated )
+                    socket.emit("leave_room" , { roomId : foundRoomMate.roomId })
+                    console.log("out from [id] page")
                 }
 
+            } else if(foundRoomMate && foundRoomMate.roomId !== currentRoom.id) {
+                dispatch(changeSnackBarItems({ message : "You are entering the wrong room and passing to the correct room !" , severity : "info" , open : true }));
+                router.push(`/user/rooms/${foundRoomMate.roomId}`)
             } else {
                 dispatch(changeSnackBarItems({ message : "You are not a member of that room !" , severity : "error" , open : true }));
                 router.push("/user/rooms")
             }
         }
-    } , [ user , currentRoomMates , currentRoom , otherUsers ] )
+    } , [ user , roomMates , currentRoom , otherUsers , path ] )
 
     if(!user || !currentRoom || !currentRoomImage || !playingMusic || !currentRoomMates.length || !myRoomMateRole ) return (
         <Box sx={{ bgcolor : "primary.light" , height : "calc(100vh - 7px)" , p : "30px"}}>

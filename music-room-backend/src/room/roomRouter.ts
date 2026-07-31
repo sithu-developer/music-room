@@ -36,8 +36,7 @@ roomRouter.put("/" , (req : Request , res : Response , next) => {
     if(room.ownerUserId === userId) {
         const updatedRoom = await prisma.room.update({ where : { id } , data : { currentRoomImageId , playingMusicId } });
         // send to other roommates using socket
-        req.io.to(String(updatedRoom.id)).emit("update_room" , { updatedRoom , isMusicChanged : (playingMusicId ? true : false) })
-        req.io.emit("check_room_changes_by_owner_from_rooms_page" , { updatedRoom })
+        req.io.emit("update_room" , { updatedRoom , isMusicChanged : (playingMusicId ? true : false) })
         res.status(200).json({ updatedRoom })
     } else {
         const updatedRoomMate = await prisma.roommates.update({ where : { userId } , data : { requestRoomImageId : currentRoomImageId , requestMusicId : playingMusicId } })

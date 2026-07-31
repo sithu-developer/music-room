@@ -1,5 +1,5 @@
 "use client"
-import { Box, Button, IconButton, Typography } from "@mui/material"
+import { Box, Button, IconButton, Slider, Typography } from "@mui/material"
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import NewMusicDialog from "@/components/NewMusic";
 import { useState } from "react";
@@ -9,6 +9,7 @@ import UpdateMusicDialog from "@/components/UpdateMusic";
 import { UpdateMusicDialogItems } from "@/type/music";
 import { WarnningItemType } from "@/type/warnning";
 import WarnningDialog from "@/components/Warnning";
+import Image from "next/image";
 
 
 const MusicPage = () => {
@@ -27,16 +28,36 @@ const MusicPage = () => {
                     <AddRoundedIcon sx={{ color : "whitesmoke"}} />
                 </IconButton>
             </Box>
-            <Box sx={{ display : "flex" , flexWrap : "wrap" , gap : "20px" , overflowY : "auto", height : "calc(100vh - 95px)" , p : "10px 20px" , mt : "10px" }} >
+            <Box sx={{ display : "flex" , alignContent : "start" , bgcolor : "red" , flexWrap : "wrap" , gap : "20px" , overflowY : "auto", height : "calc(100vh - 95px)" , p : "10px 20px" , mt : "10px" }} >
                 {musics.map(item => (
-                    // <Box>
-                    //     <Typography key={item.id} >{item.name}</Typography>
-
-                    // </Box>
-                    <Box key={item.id} sx={{ display : "flex" , flexDirection : 'column' , alignItems : "center" , width : "150px" , gap : "10px"}} >
+                    <Box key={item.id} sx={{ display : "flex" , flexDirection : 'column' , alignItems : "center" , width : "200px" , gap : "10px"}} >
                         <Box sx={{ position : "relative" , bgcolor : "primary.dark" , width : "100%" , height : "80px"  , borderRadius : "5px" , display : "flex" , justifyContent : "center" , alignItems : "center" }}>
-                            <Typography>{item.name}</Typography>
-                            
+                            {/* <audio 
+                                ref={audioRef} 
+                                src={playingMusic.musicUrl} 
+                                onLoadedMetadata={() => {
+                                    setMusicDuration(audioRef.current ? audioRef.current.duration : 0 )
+                                    setIsPlayingMusic(false)
+                                }}
+                                onTimeUpdate={() => setCurrentMusicTime(audioRef.current ? audioRef.current.currentTime : 0)}
+                                onEnded={() => setIsPlayingMusic(false)}
+                            />
+                            <Box sx={{ width : "100%" ,  py : "5px" , display : "flex" , gap : "10px" }}>
+                                {item.musicImgUrl && (
+                                    <Box sx={{ width : "46px" , height : "46px" , overflow : "hidden" , display : 'flex' , justifyContent : "center" , alignItems : "center" , borderRadius : "3px" }} >
+                                        <Image alt="Music Image" src={item.musicImgUrl} width={100} height={100} style={{ width : "100%" , height : "auto"}} />
+                                    </Box>
+                                )}
+                                <Box sx={{ overflow : "hidden" , width : (item.musicImgUrl ? "160px" : "100%" )}}>
+                                    <Typography sx={{ fontSize : "19px"  , color : "primary.dark" , whiteSpace : "nowrap" ,"& span": {  display : "inline-block" , paddingLeft : (isPlayingMusic ? "100%" : "0") , "--translate-mid" : (playingMusic.musicImgUrl ? "-160px" : "-219px") , animation : (isPlayingMusic ? "marquee 8s linear infinite" : "")}  , "@keyframes marquee" : { "0%" : { transform : "translate(0 , 0)" }, "40%,60%" : { transform : `translate(var(--translate-mid) , 0)` } ,  "100%" : { transform : `translate(-110% , 0)` } }  }} ><span>{item.name}</span></Typography>
+                                    <Typography sx={{ fontSize : "12px" , color : "primary.dark"  }}>{item.artist}</Typography>
+                                </Box>
+                            </Box>
+                            <Box sx={{ width : "100%"}}>
+                                <Typography sx={{ fontSize : "11px" , textAlign : "end" , color : "primary.dark" , lineHeight : "3px" }}>{formatMusicTime(currentMusicTime) + " / " + formatMusicTime(musicDuration)}</Typography>
+                                <Slider size="small" value={currentMusicTime} max={musicDuration || 100} sx={{ color : "primary.dark" , "&.Mui-disabled" : { color : "primary.main"} }} onChange={(e , v) => handleChangeMusicTime(v)} />
+                            </Box>
+                             */}
                             <IconButton onClick={() => setWarnningItem({ open : true , musicToDelete : item })} sx={{ bgcolor : "primary.main" , p : "4px" , position : "absolute" , top : "-10px" , right : "-10px" , border : "3px solid", borderColor : "primary.light" , ":hover" : { bgcolor : "primary.dark" } }}>
                                 <DeleteOutlineRoundedIcon sx={{ color : "whitesmoke"}} />
                             </IconButton>

@@ -26,7 +26,7 @@ const ModificationPage = () => {
                     <AddRoundedIcon sx={{ color : "whitesmoke"}} />
                 </IconButton>
             </Box>
-            <Box sx={{ display : "flex" , flexWrap : "wrap" , gap : "20px" , overflowY : "auto", height : "calc(100vh - 95px)" , p : "10px 20px" , mt : "10px"  }} >
+            <Box sx={{ display : "flex" , flexWrap : "wrap", alignContent : "start"  , gap : "20px" , overflowY : "auto", height : "calc(100vh - 95px)" , p : "10px 20px" , mt : "10px"  }} >
                 {categories.map(item => (
                     <Box key={item.id} sx={{ display : "flex" , flexDirection : 'column' , alignItems : "center" , width : "150px" , gap : "10px"}} >
                         <Box sx={{ position : "relative" , bgcolor : "primary.dark" , width : "100%" , height : "80px"  , borderRadius : "5px" , display : "flex" , justifyContent : "center" , alignItems : "center" }}>

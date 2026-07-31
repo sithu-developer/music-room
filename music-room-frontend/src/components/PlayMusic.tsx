@@ -192,7 +192,7 @@ const PlayMusic = ({ playingMusic, setNewRoom , setPlayingMusic , currentRoom } 
                         </Box>
                     )}
                     <Box sx={{ overflow : "hidden" , width : (playingMusic.musicImgUrl ? "160px" : "100%" )}}>
-                        <Typography sx={{ fontSize : "19px"  , color : "primary.dark" , whiteSpace : "nowrap" ,"& span": {  display : "inline-block" , paddingLeft : (isPlayingMusic ? "100%" : "0") , "--translate-mid" : (playingMusic.musicImgUrl ? "-160px" : "-220px") , animation : (isPlayingMusic ? "marquee 8s linear infinite" : "")}  , "@keyframes marquee" : { "0%" : { transform : "translate(0 , 0)" }, "40%,60%" : { transform : `translate(var(--translate-mid) , 0)` } ,  "100%" : { transform : `translate(-110% , 0)` } }  }} ><span>{playingMusic.name}</span></Typography>
+                        <Typography sx={{ fontSize : "19px"  , color : "primary.dark" , whiteSpace : "nowrap" ,"& span": {  display : "inline-block" , paddingLeft : (isPlayingMusic ? "100%" : "0") , "--translate-mid" : (playingMusic.musicImgUrl ? "-160px" : "-219px") , animation : (isPlayingMusic ? "marquee 8s linear infinite" : "")}  , "@keyframes marquee" : { "0%" : { transform : "translate(0 , 0)" }, "40%,60%" : { transform : `translate(var(--translate-mid) , 0)` } ,  "100%" : { transform : `translate(-110% , 0)` } }  }} ><span>{playingMusic.name}</span></Typography>
                         <Typography sx={{ fontSize : "12px" , color : "primary.dark"  }}>{playingMusic.artist}</Typography>
                     </Box>
                 </Box>

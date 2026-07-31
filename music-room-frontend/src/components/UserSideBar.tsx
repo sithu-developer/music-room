@@ -24,6 +24,7 @@ const UserSideBar = () => {
             userSideBarItems.map(item => (
                 <Box component={ButtonBase} onClick={(e) => {
                     e.stopPropagation();
+                    router.push(item.url)
                 }} key={item.id} sx={{ position : "relative" , zIndex : 2 , p : "8px"}} >
                     <item.icon sx={{ color : "whitesmoke" , fontSize : "25px" }} />
                 </Box>
@@ -58,7 +59,7 @@ const userSideBarItems : UserSideBarItemType[] = [
         id : 2,
         name : "Room Image",
         icon : WallpaperIcon,
-        url : "/user/room-image"
+        url : "/user/rooms"
     },
     {
         id : 3,

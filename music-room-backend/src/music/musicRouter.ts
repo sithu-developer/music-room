@@ -11,6 +11,7 @@ musicRouter.post("/" , ( req : Request , res : Response , next ) => {
 } , async( req : Request , res : Response ) => {
     const { name , musicUrl , artist , musicImgUrl  , adminId , userId } = req.body;
     const newMusic = await prisma.music.create({ data : { name , musicUrl , adminId , userId , artist : artist ? artist : undefined , musicImgUrl } });
+    req.io.emit("created_new_music" , { newMusic })
     return res.status(200).json({ newMusic })
 })
 

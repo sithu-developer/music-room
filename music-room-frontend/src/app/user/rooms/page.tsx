@@ -13,7 +13,6 @@ import RequestRoomPasswordDialog from "@/components/RequestRoomPassword";
 import { addRoomMates, joinRoom, replaceRoomMate } from "@/store/slices/roomMateSlice";
 import { HandleJoinRoomParaType, RoomPasswordDialogItems } from "@/type/roomMate";
 import { changeIsLoading, changeSnackBarItems } from "@/store/slices/generalSlice";
-import { socket } from "@/util/socket";
 import PersonIcon from '@mui/icons-material/Person';
 import { addNewRoom, replaceRoom } from "@/store/slices/roomSlice";
 
@@ -41,46 +40,7 @@ const RoomsPage = () => {
         }
     } , [ categories ])
 
-    useEffect(() => {
-        if(user) {
-            const handleSocketUserJoinRoom = ({ updatedRoomMate } : {  updatedRoomMate : Roommates }) => {
-                dispatch(replaceRoomMate(updatedRoomMate))
-            }
-            socket.on("a_user_joined_a_room" , handleSocketUserJoinRoom )
-
-            const handleSocketCreateNewRoom = ({ newRoom , newRoomMates } : { newRoom : Room , newRoomMates : Roommates[] }) => {
-                if(newRoom.ownerUserId !== user.id) {
-                    dispatch(addNewRoom(newRoom));
-                    dispatch(addRoomMates(newRoomMates))
-                }
-            }
-            socket.on("created_new_room" , handleSocketCreateNewRoom )
-
-            // changes in room 
-            const handleSocketUpdateRoom = ({ updatedRoom } : { updatedRoom : Room }) => {
-                if(updatedRoom.ownerUserId !== user.id) {
-                    dispatch(replaceRoom(updatedRoom));
-                }
-            }
-            socket.on("check_room_changes_by_owner_from_rooms_page" , handleSocketUpdateRoom )
-
-            const handleSocketAcceptOrRejectFromOwner = ({ updatedRoom } : { updatedRoom : Room | undefined }) => {
-                if(updatedRoom && updatedRoom.ownerUserId !== user.id) {
-                    dispatch(replaceRoom(updatedRoom))
-                }
-            }
-            socket.on("accept_or_reject_by_owner_check_by_rooms_page" , handleSocketAcceptOrRejectFromOwner )
-            
-            console.log("in")
-            return () => {
-                socket.off("a_user_joined_a_room" , handleSocketUserJoinRoom)
-                socket.off("created_new_room" , handleSocketCreateNewRoom )
-                socket.off("check_room_changes_by_owner_from_rooms_page" , handleSocketUpdateRoom )
-                socket.off("accept_or_reject_by_owner_check_by_rooms_page" , handleSocketAcceptOrRejectFromOwner )
-                console.log("out")
-            }
-        }
-    } , [user])
+    
 
     if(!user) return null;
 

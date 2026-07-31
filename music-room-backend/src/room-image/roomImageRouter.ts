@@ -17,6 +17,7 @@ roomImageRouter.post("/" , ( req : Request , res : Response , next ) => {
     const newExtraImages = await prisma.$transaction(
         extraImagesWithType.map(item => prisma.extraImage.create({ data : { roomImageId : newRoomImage.id , imageUrl : item.imageUrl , height : item.height , width : item.width , x : item.x , y : item.y }}))
     )
+    req.io.emit("new_roomImage_created" , { newRoomImage , newExtraImages })
     return res.status(200).json({ newRoomImage , newExtraImages })
 })
 

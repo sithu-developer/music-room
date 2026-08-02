@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import AdminSideBar from "@/components/AdminSideBar";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { adminSignIn } from "@/store/slices/adminSlice";
@@ -7,7 +7,7 @@ import { Box, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
     children : React.ReactNode
@@ -19,6 +19,7 @@ const AdminLayout = ( { children } : Props) => {
     const dispatch = useAppDispatch();
     const path = usePathname();
     const router = useRouter();
+    const [ isMounted , setIsMounted ] = useState(false);
     
     useEffect(() => {
         if(data && data.user && data.user.email && !admin) {
@@ -31,6 +32,12 @@ const AdminLayout = ( { children } : Props) => {
             } }))
         }
     } , [ data ]);
+
+    useEffect(() => {
+        setIsMounted(true)
+    } , [])
+
+    if(!isMounted) return null;
 
     if(!data && !admin && path !== "/admin" ) 
     return (

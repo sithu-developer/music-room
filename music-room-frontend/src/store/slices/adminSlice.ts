@@ -6,6 +6,9 @@ import { setCategories } from "./categorySlice";
 import { setRoomImages } from "./roomImageSlice";
 import { setExtraImages } from "./extraImagesSlice";
 import { setMusics } from "./musicSlice";
+import { setAllUsers } from "./userSlice";
+import { setRooms } from "./roomSlice";
+import { setRoomMates } from "./roomMateSlice";
 
 
 interface AdminSliceType {
@@ -26,12 +29,15 @@ export const adminSignIn = createAsyncThunk("adminSlice/adminSignIn" , async( da
             },
             body : JSON.stringify({ email })
         });
-        const { createdAdmin , categories , roomImages , extraImages , musics } = await response.json();
+        const { createdAdmin , categories , roomImages , extraImages , musics , users , rooms , roommates } = await response.json();
         thunkApi.dispatch(setAdmin(createdAdmin));
         if(categories) thunkApi.dispatch(setCategories(categories));
         if(roomImages) thunkApi.dispatch(setRoomImages(roomImages));
         if(extraImages) thunkApi.dispatch(setExtraImages(extraImages));
         if(musics) thunkApi.dispatch(setMusics(musics))
+        if(users) thunkApi.dispatch(setAllUsers(users))
+        if(rooms) thunkApi.dispatch(setRooms(rooms))
+        if(roommates) thunkApi.dispatch(setRoomMates(roommates))
         if(onSuccess) {
             onSuccess();
         }

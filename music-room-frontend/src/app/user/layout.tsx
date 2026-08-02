@@ -2,7 +2,7 @@
 
 import UserSideBar from "@/components/UserSideBar"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
-import { changeIsLoading } from "@/store/slices/generalSlice"
+import { changeIsLoading, changeSnackBarItems } from "@/store/slices/generalSlice"
 import { userSignIn } from "@/store/slices/userSlice"
 import { Box, Typography } from "@mui/material"
 import { useSession } from "next-auth/react"
@@ -13,7 +13,7 @@ import { socket } from "@/util/socket";
 import { addRoomMates, replaceRoomMate } from "@/store/slices/roomMateSlice"
 import { ExtraImage, Music, Room, RoomImage, Roommates } from "@/type/prisma"
 import { addNewRoom, replaceRoom } from "@/store/slices/roomSlice"
-import { addMusic } from "@/store/slices/musicSlice"
+import { addMusic, removeMusic, replaceMusic } from "@/store/slices/musicSlice"
 import { addRoomImage } from "@/store/slices/roomImageSlice"
 import { addExtraImages } from "@/store/slices/extraImagesSlice"
 
@@ -53,42 +53,57 @@ const UserLayout = ({ children } : Props ) => {
     } , [ roomMates , user , path ])
 
     useEffect(() => {
-        if(user && !id) {
+        if(user ) {
             const handleSocketUserJoinRoom = ({ updatedRoomMate } : {  updatedRoomMate : Roommates }) => {
                 dispatch(replaceRoomMate(updatedRoomMate))
             }
-            socket.on("a_user_joined_a_room" , handleSocketUserJoinRoom )
-
             const handleSocketCreateNewRoom = ({ newRoom , newRoomMates } : { newRoom : Room , newRoomMates : Roommates[] }) => {
                 if(newRoom.ownerUserId !== user.id) {
                     dispatch(addNewRoom(newRoom));
                     dispatch(addRoomMates(newRoomMates))
                 }
             }
-            socket.on("created_new_room" , handleSocketCreateNewRoom )
-
             // changes in room 
             const handleSocketUpdateRoom = ({ updatedRoom } : { updatedRoom : Room }) => {
                 if(updatedRoom.ownerUserId !== user.id) {
                     dispatch(replaceRoom(updatedRoom));
                 }
             }
-            socket.on("update_room" , handleSocketUpdateRoom )
-
             const handleSocketAcceptOrRejectFromOwner = ({ updatedRoom } : { updatedRoom : Room | undefined }) => {
                 if(updatedRoom && updatedRoom.ownerUserId !== user.id) {
                     dispatch(replaceRoom(updatedRoom))
                 }
             }
-            socket.on("accept_or_reject_by_owner_check_from_outside_and_other_rooms" , handleSocketAcceptOrRejectFromOwner )
+            if(!id) {
+                socket.on("a_user_joined_a_room" , handleSocketUserJoinRoom )
+                socket.on("created_new_room" , handleSocketCreateNewRoom )
+                socket.on("update_room" , handleSocketUpdateRoom )
+                socket.on("accept_or_reject_by_owner_check_from_outside_and_other_rooms" , handleSocketAcceptOrRejectFromOwner )
+            }
 
-            // create music and room images
+            // CRUD music and room images
             const handleSocketNewMusicCreated  = ({ newMusic } : { newMusic : Music }) => {
                 if(newMusic.userId !== user.id) {
                     dispatch(addMusic(newMusic))
                 }
             }
             socket.on("created_new_music" , handleSocketNewMusicCreated )
+
+            const handleSocketMusicUpdated  = ({ updatedMusic } : { updatedMusic : Music }) => {
+                if(updatedMusic.userId !== user.id) {
+                    dispatch(replaceMusic(updatedMusic))
+                    dispatch(changeSnackBarItems({ open : true , message : `Admin updated the music (${updatedMusic.name})` , severity : "info"  }))
+                }
+            }
+            socket.on("update_music" , handleSocketMusicUpdated);
+
+            const handleSocketMusicDeleted  = ( { deletedMusic } : { deletedMusic : Music }) => {
+                if(deletedMusic.userId !== user.id) {
+                    dispatch(removeMusic(deletedMusic.id))
+                    dispatch(changeSnackBarItems({ open : true , message : `Admin deleted the music (${deletedMusic.name})` , severity : "info"  }))
+                }
+            }
+            socket.on("delete_music" , handleSocketMusicDeleted)
 
             const handleSocketNewRoomImageCreated  = ({ newRoomImage , newExtraImages } : { newRoomImage : RoomImage , newExtraImages : ExtraImage[] }) => {
                 if(newRoomImage.userId !== user.id) {
@@ -105,6 +120,8 @@ const UserLayout = ({ children } : Props ) => {
                 socket.off("update_room" , handleSocketUpdateRoom )
                 socket.off("accept_or_reject_by_owner_check_from_outside_and_other_rooms" , handleSocketAcceptOrRejectFromOwner )
                 socket.off("created_new_music" , handleSocketNewMusicCreated )
+                socket.off("update_music" , handleSocketMusicUpdated);
+                socket.off("delete_music" , handleSocketMusicDeleted)
                 socket.off("new_roomImage_created" , handleSocketNewRoomImageCreated )
                 console.log("out")
             }

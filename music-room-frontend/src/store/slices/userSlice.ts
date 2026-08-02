@@ -13,11 +13,13 @@ import { setRoomMates } from "./roomMateSlice";
 interface UserSliceInitialState {
     item : User | null
     otherUsers : User[]
+    allUsers : User[]
 }
 
 const initialState : UserSliceInitialState = {
     item : null,
-    otherUsers : []
+    otherUsers : [],
+    allUsers : []
 }
 
 export const userSignIn = createAsyncThunk("userSlice/userSignIn" , async( data : UserSignInData , thunkApi ) => {
@@ -58,10 +60,13 @@ const userSlice = createSlice({
         },
         setOtherUsers : ( state , action : PayloadAction<User[]>) => {
             state.otherUsers = action.payload;
+        },
+        setAllUsers : (state , action : PayloadAction<User[]>) => {
+            state.allUsers = action.payload;
         }
     }
 });
 
-const { setUser , setOtherUsers } = userSlice.actions;
+export const { setUser , setOtherUsers , setAllUsers } = userSlice.actions;
 
 export default userSlice.reducer;

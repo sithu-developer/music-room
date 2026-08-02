@@ -134,22 +134,6 @@ const InRoomPage = () => {
                 }
                 socket.on("created_new_room" , handleSocketCreateNewRoom )
 
-                // create music and room image
-                const handleSocketNewMusicCreated  = ({ newMusic } : { newMusic : Music }) => {
-                    if(newMusic.userId !== user.id) {
-                        dispatch(addMusic(newMusic))
-                    }
-                }
-                socket.on("created_new_music" , handleSocketNewMusicCreated )
-                
-                const handleSocketNewRoomImageCreated  = ({ newRoomImage , newExtraImages } : { newRoomImage : RoomImage , newExtraImages : ExtraImage[] }) => {
-                    if(newRoomImage.userId !== user.id) {
-                        dispatch(addRoomImage(newRoomImage))
-                        dispatch(addExtraImages(newExtraImages))
-                    }
-                }
-                socket.on("new_roomImage_created" , handleSocketNewRoomImageCreated )
-
                 console.log("in to [id] page")
                 return () => {
                     socket.off("update_room" , handleSocketUpdateRoom);
@@ -158,8 +142,6 @@ const InRoomPage = () => {
                     socket.off("a_user_joined_a_room" , handleSocketUserJoinRoom)
                     socket.off("created_new_room" , handleSocketCreateNewRoom )
                     socket.off("accept_or_reject_by_owner_check_from_outside_and_other_rooms" , handleSocketAcceptOrRejectFromOwnerForOtherRooms )
-                    socket.off("created_new_music" , handleSocketNewMusicCreated )
-                    socket.off("new_roomImage_created" , handleSocketNewRoomImageCreated )
                     socket.emit("leave_room" , { roomId : foundRoomMate.roomId })
                     console.log("out from [id] page")
                 }

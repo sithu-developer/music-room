@@ -48,7 +48,7 @@ const UpdateMusicDialog = ( { updateMusicDialogItems , setUpdateMusicDialogItems
         dispatch(changeIsLoading(true));
         if(musicFileToUpdate || musicImgFileToUpdate) {
             // upload music or image or both
-            dispatch(updateMusic({...updateMusicDialogItems.selectedMusic , musicUrl : "/updatedMusicUrl" , musicImgUrl : "/roomMate.jpg" , onSuccess : () => {
+            dispatch(updateMusic({...updateMusicDialogItems.selectedMusic , musicUrl : "/The Script.mp3" , musicImgUrl : "/roomMate.jpg" , onSuccess : () => {
                 setUpdateMusicDialogItems(null);
                 setMusicFileToUpdate(null);
                 dispatch(changeIsLoading(false));
@@ -81,7 +81,7 @@ const UpdateMusicDialog = ( { updateMusicDialogItems , setUpdateMusicDialogItems
                     </Button>
                     {musicImgFileToUpdate? 
                     <Chip color="primary" label={musicImgFileToUpdate.name} sx={{ maxWidth : "250px" , border : "1px solid white"}} onDelete={() => setMusicImgFileToUpdate(null)} />
-                    :<Chip color="primary" label={updateMusicDialogItems.selectedMusic.musicImgUrl ? "Original Music Image" : "No Image yet !" } icon={<LandscapeRoundedIcon sx={{ fontSize : "15px" , color : "secondary.main" }} />} sx={{ border : (updateMusicDialogItems.selectedMusic.musicImgUrl ? "1px solid #1d53a9" : "1px solid gray") , bgcolor : (updateMusicDialogItems.selectedMusic.musicImgUrl ? "primary.main" : "primary.light") }} />}
+                    :<Chip color="primary" label={updateMusicDialogItems.selectedMusic.musicImgUrl ? "Original Music Image" : "No Image yet !" } icon={<LandscapeRoundedIcon sx={{ fontSize : "15px" , color : "secondary.main" }} />} sx={{ border : (updateMusicDialogItems.selectedMusic.musicImgUrl ? "1px solid #1d53a9" : "1px solid gray") , bgcolor : (updateMusicDialogItems.selectedMusic.musicImgUrl ? "primary.main" : "primary.light") }} onDelete={updateMusicDialogItems.selectedMusic.musicImgUrl ? () => setUpdateMusicDialogItems({...updateMusicDialogItems , selectedMusic : { ...updateMusicDialogItems.selectedMusic , musicImgUrl : undefined } }) : undefined }   />}
                 </Box>
 
                 <Box sx={{ display : "flex" , flexDirection :"column" , gap : "5px" , alignItems : "start" }}>

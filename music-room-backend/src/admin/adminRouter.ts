@@ -16,7 +16,12 @@ adminRouter.post("/" , (req , res , next) => {
         const roomImageIds = roomImages.map(item => item.id);
         const extraImages = await prisma.extraImage.findMany({ where : { roomImageId : { in : roomImageIds } } })
         const musics = await prisma.music.findMany({ where : { adminId : isExit.id } , orderBy : { id : "asc" }});
-        res.status(200).json({ createdAdmin : isExit , categories , roomImages , extraImages , musics });
+        const users = await prisma.user.findMany({ where : { adminId : isExit.id }})
+        const categoryIds = categories.map(item => item.id);
+        const rooms = await prisma.room.findMany({ where : { roomCategoryId : { in : categoryIds } }});
+        const roomIds = rooms.map(item => item.id)
+        const roommates = await prisma.roommates.findMany({ where : { roomId : { in : roomIds } }});
+        res.status(200).json({ createdAdmin : isExit , categories , roomImages , extraImages , musics , users , rooms , roommates });
     } else {
         const createdAdmin = await prisma.admin.create({ data : { email , companyName : "Default Name" }});
         res.status(200).json({ createdAdmin });

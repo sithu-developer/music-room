@@ -24,22 +24,28 @@ const WarnningDialog = ({ warnningItem , setWarnningItem } : Props ) => {
     useEffect(() => {
         if(rooms.length) {
             if(roomImageToDelete) {
-
+                const usedRooms = rooms.filter(room => room.currentRoomImageId === roomImageToDelete.id);
+                const isRequestedInRoom = roomMates.find(roomMate => roomMate.requestRoomImageId === roomImageToDelete.id)
+                if(usedRooms.length) {
+                    setPermisionString(`This room image is using in Rooms [ ${usedRooms.map(item => item.name).join(" , ")} ].`);
+                } else if(isRequestedInRoom) {
+                    const foundRoom = rooms.find(room => room.id === isRequestedInRoom.roomId) as Room;
+                    setPermisionString(`This room image was requested in Room [ ${foundRoom.name} ].`);
+                }
             }
 
             if(musicToDelete) {
                 const isUsedInRoom = rooms.find(room => room.playingMusicId === musicToDelete.id);
                 const isRequestedInRoom = roomMates.find(roomMate => roomMate.requestMusicId === musicToDelete.id)
                 if(isUsedInRoom) {
-                    setPermisionString(`This music is playing in Room (${isUsedInRoom.name}).`);
+                    setPermisionString(`This music is playing in Room [ ${isUsedInRoom.name} ].`);
                 } else if(isRequestedInRoom) {
                     const foundRoom = rooms.find(room => room.id === isRequestedInRoom.roomId) as Room;
-                    const requestedUser = users.find(user => user.id === isRequestedInRoom.userId) as User;
-                    setPermisionString(`This music was requested by user (${requestedUser.name}) in Room (${foundRoom.name}).`);
+                    setPermisionString(`This music was requested in Room [ ${foundRoom.name} ].`);
                 }
             }
         }
-    } , [roomImageToDelete , musicToDelete , rooms , roomMates , users])
+    } , [roomImageToDelete , musicToDelete , rooms , roomMates])
 
     const handleDelete = () => {
         if(categoryToDelete) {

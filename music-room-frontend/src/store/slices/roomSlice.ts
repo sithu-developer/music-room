@@ -1,5 +1,5 @@
 import { Room, User } from "@/type/prisma";
-import { CheckRoomMateUsersParaType, CreateNewRoomParaType, UpdateRoomParaType } from "@/type/room";
+import { CreateNewRoomParaType, UpdateRoomParaType } from "@/type/room";
 import { envValues } from "@/util/envValues";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { addRoomMates, replaceRoomMate } from "./roomMateSlice";

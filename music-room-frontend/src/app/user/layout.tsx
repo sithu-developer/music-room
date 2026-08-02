@@ -14,8 +14,8 @@ import { addRoomMates, replaceRoomMate } from "@/store/slices/roomMateSlice"
 import { ExtraImage, Music, Room, RoomImage, Roommates } from "@/type/prisma"
 import { addNewRoom, replaceRoom } from "@/store/slices/roomSlice"
 import { addMusic, removeMusic, replaceMusic } from "@/store/slices/musicSlice"
-import { addRoomImage } from "@/store/slices/roomImageSlice"
-import { addExtraImages } from "@/store/slices/extraImagesSlice"
+import { addRoomImage, removeRoomImage, replaceRoomImage, updateRoomImage } from "@/store/slices/roomImageSlice"
+import { addExtraImages, removeAllExtraImagesUnderOneRoomImage } from "@/store/slices/extraImagesSlice"
 
 interface Props {
     children : React.ReactNode
@@ -112,6 +112,25 @@ const UserLayout = ({ children } : Props ) => {
                 }
             }
             socket.on("new_roomImage_created" , handleSocketNewRoomImageCreated )
+
+            const handleSocketUpdateRoomImage = ({ updatedRoomImage , finalExtraImages } : { updatedRoomImage : RoomImage , finalExtraImages : ExtraImage[] }) => {
+                if(updatedRoomImage.userId !== user.id) { 
+                    dispatch(replaceRoomImage(updatedRoomImage))
+                    dispatch(removeAllExtraImagesUnderOneRoomImage(updatedRoomImage.id))
+                    dispatch(addExtraImages(finalExtraImages))
+                    dispatch(changeSnackBarItems({ open : true , message : `Admin updated the Room Image (${updatedRoomImage.vite})` , severity : "info"  }))
+                }
+            }
+            socket.on("update_roomImage" , handleSocketUpdateRoomImage)
+
+            const handleSocketDeleteRoomImage = ({ deletedRoomImage } : { deletedRoomImage : RoomImage }) => {
+                if(deletedRoomImage.userId !== user.id) { 
+                    dispatch(removeAllExtraImagesUnderOneRoomImage(deletedRoomImage.id))
+                    dispatch(removeRoomImage(deletedRoomImage.id))
+                    dispatch(changeSnackBarItems({ open : true , message : `Admin deleted the Room Image [ ${deletedRoomImage.vite} ]` , severity : "info"  }))
+                }
+            }
+            socket.on("delete_roomImage" , handleSocketDeleteRoomImage)
             
             console.log("in")
             return () => {
@@ -123,6 +142,8 @@ const UserLayout = ({ children } : Props ) => {
                 socket.off("update_music" , handleSocketMusicUpdated);
                 socket.off("delete_music" , handleSocketMusicDeleted)
                 socket.off("new_roomImage_created" , handleSocketNewRoomImageCreated )
+                socket.off("update_roomImage" , handleSocketUpdateRoomImage)
+                socket.off("delete_roomImage" , handleSocketDeleteRoomImage)
                 console.log("out")
             }
         }

@@ -22,9 +22,7 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , openedSlideNa
     const [ openNewRoomImageDialog , setOpenNewRoomImageDialog ] = useState(false);
     const [ isLoading , setIsLoading ] = useState(false);
     const [ isMineRoomImages , setIsMineRoomImages ] = useState(false);
-
     const dispatch = useAppDispatch();
-
     
     if(!user) return null;
 
@@ -50,7 +48,7 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , openedSlideNa
                     <Box sx={{ display : "flex" , flexDirection : "column" , alignItems : "center" , gap : "10px" , overflowY : "auto" , p : "10px" }}>
                         {roomImages.filter(item => (isMineRoomImages ? item.userId === user.id : !item.userId)).map(item => (
                             <Box key={item.id} onClick={() => setCurrentRoomImage(item)} sx={{ position : "relative" , cursor : "pointer" , border : (currentRoomImage.id === item.id ? "2px solid white" : "") , borderRadius : "10px" }} >
-                                <Typography sx={{ position : "absolute" , top : 0 , left : "50%" , transform : "translateX(-50%)" , background : "linear-gradient(90deg, #5635fa, #fd086a, #00ffd9)" , fontWeight : "bold" , backgroundClip : "text" , color : "transparent" , textShadow : "1px 1px 3px rgba(0,0,0,0.6)" }}>{item.vite}</Typography>
+                                <Typography sx={{ position : "absolute" , top : 0 , left : "50%" , transform : "translateX(-50%)" , background : "linear-gradient(90deg, #5635fa, #fd086a, #00ffd9)" , fontWeight : "bold" , backgroundClip : "text" , color : "transparent" , textShadow : "1px 1px 3px rgba(0,0,0,0.6)" , textAlign : "center" }}>{item.vite}</Typography>
                                 <Image alt='Room Image' src={item.bgImageUrl} width={500} height={500} style={{ display : "block" , width : "100%" , height : "auto" , borderRadius : "10px"}} />
                             </Box>
                         ))}

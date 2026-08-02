@@ -29,9 +29,9 @@ const RoomImagePage = () => {
             </Box>
             <Box sx={{ display : "flex" , gap : "20px" , flexWrap : "wrap" , alignContent : "start" , overflowY : "auto" , height : "calc(100vh - 90px)", p : "5px 10px" , mt : "10px" }}>
                 {roomImages.map(item => (
-                    <Box key={item.id} sx={{ height : "200px" , display : "flex" , flexDirection : "column" , alignItems : "center" }}>
-                        <Box sx={{ bgcolor : "primary.main" , p : "2px 10px" , border : "1px solid #1b383b" , borderBottom : "none" , borderRadius : "15px 15px 0px 0px"}}>
-                            <Typography>{item.vite}</Typography>
+                    <Box key={item.id} sx={{ height : "230px" , display : "flex" , flexDirection : "column" , alignItems : "center" }}>
+                        <Box sx={{ bgcolor : "primary.main" , maxWidth : "260px"  , p : "2px 10px" , border : "1px solid #1b383b" , borderBottom : "none" , borderRadius : "15px 15px 0px 0px"}}>
+                            <Typography sx={{ overflowX : "auto" , textWrap : "nowrap" }} >{item.vite}</Typography>
                         </Box>
                         <Box sx={{ bgcolor : "primary.main" , border : "3px solid #3e648c" , borderRadius : "8px" , display : "flex" , justifyContent : "center" , alignItems : "center" ,  overflowY : "hidden" }}>
                             <Image alt="Room Image" src={item.bgImageUrl} width={1000} height={1000} style={{ height : "150px" , width : "auto" , borderRadius : "5px"}} />

@@ -46,6 +46,7 @@ roomMateRouter.put("/acceptOrReject" , (req : Request , res : Response , next) =
             // sent to the user that request using socket
             req.io.to(String(updatedRoom.id)).emit("accept_or_reject_from_owner" , { updatedRoom , updatedRoomMate , isAccept , isRoomImage })
             req.io.emit("accept_or_reject_by_owner_check_from_outside_and_other_rooms" , { updatedRoom })
+            req.io.emit("accpet_or_reject_by_owner_check_by_admin" , {updatedRoom , updatedRoomMate})
             res.status(200).json({ updatedRoom , updatedRoomMate })
         } else {
             const updatedRoom = await prisma.room.update({ where : { id : isExit.roomId } , data : { playingMusicId : (isExit.requestMusicId as number) } });
@@ -53,6 +54,7 @@ roomMateRouter.put("/acceptOrReject" , (req : Request , res : Response , next) =
             // sent to the user that request using socket
             req.io.to(String(updatedRoom.id)).emit("accept_or_reject_from_owner" , { updatedRoom , updatedRoomMate , isAccept , isRoomImage })
             req.io.emit("accept_or_reject_by_owner_check_from_outside_and_other_rooms" , { updatedRoom })
+            req.io.emit("accpet_or_reject_by_owner_check_by_admin" , {updatedRoom , updatedRoomMate})
             res.status(200).json({ updatedRoom , updatedRoomMate })
         }
     } else {
@@ -60,11 +62,13 @@ roomMateRouter.put("/acceptOrReject" , (req : Request , res : Response , next) =
             const updatedRoomMate = await prisma.roommates.update({ where : { id : roomMateId } , data : { requestRoomImageId : null } })
             // sent to the user that request using socket
             req.io.to(String(updatedRoomMate.roomId)).emit("accept_or_reject_from_owner" , { updatedRoomMate , isAccept , isRoomImage })
+            req.io.emit("accpet_or_reject_by_owner_check_by_admin" , { updatedRoomMate})
             res.status(200).json({ updatedRoomMate })
         } else {
             const updatedRoomMate = await prisma.roommates.update({ where : { id : roomMateId } , data : { requestMusicId : null } })
             // sent to the user that request using socket
             req.io.to(String(updatedRoomMate.roomId)).emit("accept_or_reject_from_owner" , { updatedRoomMate , isAccept , isRoomImage })
+            req.io.emit("accpet_or_reject_by_owner_check_by_admin" , { updatedRoomMate})
             res.status(200).json({ updatedRoomMate })
         }
     }

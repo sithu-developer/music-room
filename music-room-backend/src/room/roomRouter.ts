@@ -42,6 +42,7 @@ roomRouter.put("/" , (req : Request , res : Response , next) => {
         const updatedRoomMate = await prisma.roommates.update({ where : { userId } , data : { requestRoomImageId : currentRoomImageId , requestMusicId : playingMusicId } })
         // request to owner using socket
         req.io.to(String(updatedRoomMate.roomId)).emit("request_to_owner" , { updatedRoomMate })
+        req.io.emit("request_in_room_check_by_admin" , { updatedRoomMate })
         res.status(200).json({ updatedRoomMate })
     }
 

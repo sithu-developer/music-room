@@ -90,7 +90,7 @@ const NewRoomImage = ({ openNewRoomImageDialog , setOpenNewRoomImageDialog } : P
                         <TextField value={newRoomImage.vite} color="secondary" sx={{ input : { color : "white" }}} variant="outlined" label="Vite Name" onChange={(e) => setNewRoomImage({...newRoomImage , vite : e.target.value }) } />
                         <Box sx={{ display : "flex" , flexDirection :"column" , gap : "5px" , alignItems : "start"}}>
                             <Button {...backgroundImageDropItems.getRootProps()}  variant="outlined" sx={{ width : "100%" , borderRadius : "25px" , color : "white" , borderColor : "primary.main" , textTransform : "none" , py : "12px" , display : 'flex' , justifyContent : "space-between"}} >
-                                <input {...backgroundImageDropItems.getInputProps()}  />
+                                <input {...backgroundImageDropItems.getInputProps()} accept="image/*" />
                                 <Typography>{backgroundImageDropItems.isDragActive ? "Drag here..." :"Background Image"} </Typography>
                                 <AddPhotoAlternateIcon />
                             </Button>
@@ -99,7 +99,7 @@ const NewRoomImage = ({ openNewRoomImageDialog , setOpenNewRoomImageDialog } : P
                         <Box sx={{ display : "flex" , flexDirection : "column" , alignItems : "start" , gap : "5px"}}>
                             <Typography sx={{ fontSize : "12px" }}>Optional</Typography>
                             <Button  {...extraImagesDropItems.getRootProps()} variant="outlined" sx={{ width : "100%" , borderRadius : "25px" , color : "white" , borderColor : "primary.main" , textTransform : "none" , py : "12px" , display : 'flex' , justifyContent : "space-between"}} >
-                                <input {...extraImagesDropItems.getInputProps()}  />
+                                <input {...extraImagesDropItems.getInputProps()} accept="audio/*"  />
                                 <Typography>{extraImagesDropItems.isDragActive ? "Drag here..." :"Add Extra Images"} </Typography>
                                 <AddPhotoAlternateIcon />
                             </Button>

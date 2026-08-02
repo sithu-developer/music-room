@@ -3,6 +3,10 @@ import AdminSideBar from "@/components/AdminSideBar";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { adminSignIn } from "@/store/slices/adminSlice";
 import { changeIsLoading } from "@/store/slices/generalSlice";
+import { addRoomMates, replaceRoomMate } from "@/store/slices/roomMateSlice";
+import { addNewRoom, replaceRoom } from "@/store/slices/roomSlice";
+import { Room, Roommates } from "@/type/prisma";
+import { socket } from "@/util/socket";
 import { Box, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -32,6 +36,49 @@ const AdminLayout = ( { children } : Props) => {
             } }))
         }
     } , [ data ]);
+
+    useEffect(() => {
+        if(admin) {
+            const handleSocketUserJoinRoom = ({ updatedRoomMate } : {  updatedRoomMate : Roommates }) => {
+                dispatch(replaceRoomMate(updatedRoomMate))
+            }
+            socket.on("a_user_joined_a_room" , handleSocketUserJoinRoom )
+
+            const handleSocketCreateNewRoom = ({ newRoom , newRoomMates } : { newRoom : Room , newRoomMates : Roommates[] }) => {
+                dispatch(addNewRoom(newRoom));
+                dispatch(addRoomMates(newRoomMates))
+            }
+            socket.on("created_new_room" , handleSocketCreateNewRoom )
+
+            const handleSocketUpdateRoom = ({ updatedRoom } : { updatedRoom : Room }) => {
+                dispatch(replaceRoom(updatedRoom));
+            }
+            socket.on("update_room" , handleSocketUpdateRoom )
+
+            const handleSocketRequestInRoom = ({ updatedRoomMate } : { updatedRoomMate : Roommates }) => {
+                dispatch(replaceRoomMate(updatedRoomMate));
+            }
+            socket.on("request_in_room_check_by_admin" , handleSocketRequestInRoom )
+
+            const handleSocketAcceptOrRejectByOwner = ( {updatedRoom , updatedRoomMate} : {updatedRoom : Room | undefined , updatedRoomMate : Roommates }) => {
+                if(updatedRoom) dispatch(replaceRoom(updatedRoom))
+                dispatch(replaceRoomMate(updatedRoomMate));
+            }
+            socket.on("accpet_or_reject_by_owner_check_by_admin" , handleSocketAcceptOrRejectByOwner )
+
+            console.log("In")
+            return () => {
+                socket.off("a_user_joined_a_room" , handleSocketUserJoinRoom)
+                socket.off("created_new_room" , handleSocketCreateNewRoom )
+                socket.off("update_room" , handleSocketUpdateRoom )
+                socket.off("request_in_room_check_by_admin" , handleSocketRequestInRoom )
+                socket.off("accpet_or_reject_by_owner_check_by_admin" , handleSocketAcceptOrRejectByOwner )
+                
+
+                console.log("out")
+            }
+        }
+    } , [ admin ])
 
     useEffect(() => {
         setIsMounted(true)

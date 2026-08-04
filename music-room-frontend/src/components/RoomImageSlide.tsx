@@ -1,12 +1,14 @@
 "use client"
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Room, RoomImage } from "@/type/prisma";
-import { Box, Button, CircularProgress, FormControlLabel, Paper, Slide, Switch, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, FormControlLabel, IconButton, Paper, Slide, Switch, TextField, Typography } from "@mui/material"
 import Image from "next/image";
 import { useState } from "react";
 import NewRoomImage from "./NewRoomImage";
 import { updateRoom } from "@/store/slices/roomSlice";
 import { changeSnackBarItems } from "@/store/slices/generalSlice";
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import SearchOffRoundedIcon from '@mui/icons-material/SearchOffRounded';
 
 interface Props {
     currentRoomImage : RoomImage
@@ -22,6 +24,8 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , openedSlideNa
     const [ openNewRoomImageDialog , setOpenNewRoomImageDialog ] = useState(false);
     const [ isLoading , setIsLoading ] = useState(false);
     const [ isMineRoomImages , setIsMineRoomImages ] = useState(false);
+    const [ searchViteName , setSearchViteName ] = useState<string>("");
+    const [ openSearch , setOpenSearch ] = useState(false);
     const dispatch = useAppDispatch();
     
     if(!user) return null;
@@ -39,14 +43,29 @@ const RoomImageSlide = ({ currentRoomImage , setCurrentRoomImage , openedSlideNa
     return (
         <Slide direction="left" in={openedSlideName === "roomImageSlide"} mountOnEnter unmountOnExit >
             <Paper sx={{ zIndex : 3 , position : "fixed" , right : 20 , top : 80 , bgcolor : "transparent", borderRadius : "10px" }}>
-                <Box sx={{ position : "relative" , zIndex : 10 , display : 'flex' , flexDirection : "column" , width : "300px" , maxHeight : "70vh" , background : "rgba(75, 110, 113, 0.1)" , backdropFilter : "blur(10px)" , WebkitBackdropFilter : "blur(10px)" , border : "1px solid white" , borderRadius : "10px" , overflowY : "auto"  }}>
+                <Box sx={{ position : "relative" , zIndex : 10 , display : 'flex' , flexDirection : "column" , width : "300px" , maxHeight : "75vh" , background : "rgba(75, 110, 113, 0.1)" , backdropFilter : "blur(10px)" , WebkitBackdropFilter : "blur(10px)" , border : "1px solid white" , borderRadius : "10px" , overflowY : "auto"  }}>
                     <Box sx={{ display : "flex" , justifyContent : "space-between" , p : "10px" }}>
-                        <Typography variant='h6' >Room Images</Typography>
+                        <Box sx={{ display : 'flex' , alignItems : "center" , gap : "3px"}}>
+                            <Typography variant='h6' >Room Images</Typography>
+                            {(openSearch ? 
+                            <IconButton onClick={() => {
+                                setOpenSearch(false);
+                                setSearchViteName("")
+                            }}>
+                                <SearchOffRoundedIcon color="secondary" sx={{ fontSize : "20px"}} />
+                            </IconButton>
+                            :<IconButton onClick={() => setOpenSearch(true)}>
+                                <SearchRoundedIcon color="secondary"  sx={{ fontSize : "20px"}}  />
+                            </IconButton>)}
+                        </Box>
                         {roomImages.filter(item => item.userId === user.id ).length ? <FormControlLabel control={<Switch checked={isMineRoomImages} onChange={e => setIsMineRoomImages(e.target.checked)} />} label="Mine" slotProps={{ typography : { sx : { fontSize : "13px" , ml : "-5px" }}}} />
                         :undefined}
                     </Box>
+                    {openSearch && <Box sx={{ px : "15px" , mb : "10px"}}>
+                        <TextField value={searchViteName} variant="standard" color="secondary" autoComplete="off" placeholder="Search..." onChange={e => setSearchViteName(e.target.value)} sx={{ width :  "95%" }} />
+                    </Box>}
                     <Box sx={{ display : "flex" , flexDirection : "column" , alignItems : "center" , gap : "10px" , overflowY : "auto" , p : "10px" }}>
-                        {roomImages.filter(item => (isMineRoomImages ? item.userId === user.id : !item.userId)).map(item => (
+                        {roomImages.filter(item => (isMineRoomImages ? item.userId === user.id : !item.userId)).filter(item => searchViteName ? (item.vite.toLowerCase().includes(searchViteName.toLowerCase())) : true ).map(item => (
                             <Box key={item.id} onClick={() => setCurrentRoomImage(item)} sx={{ position : "relative" , cursor : "pointer" , border : (currentRoomImage.id === item.id ? "2px solid white" : "") , borderRadius : "10px" }} >
                                 <Typography sx={{ position : "absolute" , top : 0 , left : "50%" , transform : "translateX(-50%)" , background : "linear-gradient(90deg, #5635fa, #fd086a, #00ffd9)" , fontWeight : "bold" , backgroundClip : "text" , color : "transparent" , textShadow : "1px 1px 3px rgba(0,0,0,0.6)" , textAlign : "center" }}>{item.vite}</Typography>
                                 <Image alt='Room Image' src={item.bgImageUrl} width={500} height={500} style={{ display : "block" , width : "100%" , height : "auto" , borderRadius : "10px"}} />

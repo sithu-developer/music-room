@@ -1,5 +1,5 @@
 "use client"
-import { Box, Button, IconButton, Slider, Typography } from "@mui/material"
+import { Box, Button, IconButton, Slider, TextField, Typography } from "@mui/material"
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import NewMusicDialog from "@/components/NewMusic";
 import { useRef, useState } from "react";
@@ -18,19 +18,22 @@ const MusicPage = () => {
     const [ warnningItem , setWarnningItem ] = useState<WarnningItemType>({ open : false });
     const musics = useAppSelector(store => store.music.items);
     const [ currentPlayingMusicId , setCurrentPlayingMusicId ] = useState<number>(0);
+    const [ searchName , setSearchName ] = useState<string>("");
 
 
     return (
         <Box sx={{ bgcolor : "primary.light" , width : "calc(100vw - 250px)" , height : "100%" , p : "10px" , borderRadius : "7px" }}>
             <Box sx={{ display : "flex" , alignItems : 'center' , justifyContent : "space-between" , px : "10px"}}>
-                <span />
+                <Box sx={{ width : "10px"  , pl : "15px"}}>
+                    <TextField value={searchName} variant="standard" color="secondary" placeholder="Search..." sx={{ width : "200px" }} onChange={e => setSearchName(e.target.value)} />
+                </Box>
                 <Typography sx={{ textAlign : "center" , fontSize : "30px" }} >Music</Typography>
                 <IconButton sx={{ borderRadius : "11px" , border : "1px solid white"}} onClick={() => setNewMusicDialogOpen(true)} >
                     <AddRoundedIcon sx={{ color : "whitesmoke"}} />
                 </IconButton>
             </Box>
             <Box sx={{ display : "flex" , alignContent : "start"  , flexWrap : "wrap" , gap : "20px" , overflowY : "auto", height : "calc(100vh - 95px)" , p : "10px 20px" , mt : "10px" }} >
-                {musics.map(item => (
+                {musics.filter(item => searchName ? item.name.toLowerCase().includes(searchName.toLowerCase()): true).map(item => (
                     <Box key={item.id} sx={{ display : "flex" , flexDirection : 'column' , alignItems : "center" , gap : "10px"}} >
                         <MusicBox music={item} setWarnningItem={setWarnningItem} currentPlayingMusicId={currentPlayingMusicId} setCurrentPlayingMusicId={setCurrentPlayingMusicId} />
                         <Button variant="contained" sx={{ width : "100%"}} onClick={() => setUpdateMusicDialogItems({ open : true , selectedMusic : item })} >Update</Button>

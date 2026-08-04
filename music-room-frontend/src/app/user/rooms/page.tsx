@@ -73,13 +73,13 @@ const RoomsPage = () => {
                     }} label={item.name} clickable sx={{ color : "white" , boxShadow : (selectedCategory && item.id === selectedCategory.id ? "5px 5px 15px #374a5f" : "none") , borderTopRightRadius : "0" , borderTopLeftRadius : "0" , border : (selectedCategory && item.id === selectedCategory.id ? "1px solid white": "") , borderTop : (selectedCategory && item.id === selectedCategory.id ? "1px solid #3e648c": "") , bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "")  , ":hover" : { bgcolor : (selectedCategory && item.id === selectedCategory.id ? "primary.main": "") } }} />
                 )) }
             </Box>
-            <Box sx={{ width : "100%" , p : "10px 20px" , display : "flex" , gap : "20px" , flexWrap : "wrap" , overflowY : "auto"}}>
+            <Box sx={{ width : "100%" , p : "20px 20px" , height : "calc(100vh - 119px)" , display : "flex" , gap : "20px" , flexWrap : "wrap" , overflowY : "auto"}}>
                 {selectedCategory && rooms.filter(item => item.roomCategoryId === selectedCategory.id).map(item => {
                     const roomImage = roomImages.find(roomImg => roomImg.id === item.currentRoomImageId );
                     const joinedRoomMates = roomMates.filter(roomMate => roomMate.userId && roomMate.roomId === item.id )
                     if(roomImage)
                     return (
-                        <Box key={item.id} sx={{ position : "relative" , boxShadow : "10px 10px 30px #0c0b0b" , display : "flex" , flexDirection : "column" , alignItems : "center" , height : "250px" , borderRadius : "10px" , overflow : "hidden" }} >
+                        <Box key={item.id} sx={{ position : "relative" , boxShadow : "10px 10px 30px #0c0b0b" , display : "flex" , flexDirection : "column" , alignItems : "center" , height : "200px"  , borderRadius : "10px" , overflow : "hidden" }} >
                             <Box sx={{ position : "absolute" , p : "5px 8px" }}>
                                 <Typography sx={{ background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)", textShadow : "0px 0px 10px #ffffff" , fontWeight : "bold" , backgroundClip : "text" , color : "transparent" }} >{item.name}</Typography>
                             </Box>

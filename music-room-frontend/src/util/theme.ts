@@ -15,4 +15,13 @@ export const theme = createTheme({
         },
         fontFamily : "cursive"
     },
+    components : {
+        MuiInputBase : {
+            styleOverrides : {
+                input : {
+                    color : "#fff"
+                }
+            }
+        }
+    }
 })

@@ -213,7 +213,7 @@ const InRoomPage = () => {
             </Box>
             {currentRoom.ownerUserId === user.id && <RequestsInOwner openedSlideName={openedSlideName} currentRoomMates={currentRoomMates} />}
             <RoomImageSlide currentRoomImage={currentRoomImage} setCurrentRoomImage={setCurrentRoomImage} openedSlideName={openedSlideName} setOpenedSlideName={setOpenedSlideName} currentRoom={currentRoom} />
-            <MusicSlide openedSlideName={openedSlideName} setOpenedSlideName={setOpenedSlideName} playingMusic={playingMusic} currentRoom={currentRoom} />
+            <MusicSlide openedSlideName={openedSlideName} playingMusic={playingMusic} currentRoom={currentRoom} />
         </Box>
     )
 

@@ -1,5 +1,5 @@
 "use client"
-import { Box, Button, IconButton, Typography } from "@mui/material"
+import { Box, Button, IconButton, TextField, Typography } from "@mui/material"
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import NewCategory from "@/components/NewCategory";
 import { useState } from "react";
@@ -16,18 +16,21 @@ const ModificationPage = () => {
     const [ warnningItem , setWarnningItem ] = useState<WarnningItemType>({ open : false });
     const [ categoryToUpdate , setCategoryToUpdate ] = useState<RoomCategory>();
     const categories = useAppSelector(store => store.category.items);
+    const [ searchName , setSearchName ] = useState<string>("");
     
     return (
         <Box sx={{ bgcolor : "primary.light" , width : "calc(100vw - 250px)" , height : "100%" , p : "10px", borderRadius : "7px"}} >
             <Box sx={{ display : "flex" , alignItems : 'center' , justifyContent : "space-between" , px : "10px"}}>
-                <span />
+                <Box sx={{ width : "10px"  , pl : "15px"}}>
+                    <TextField value={searchName} variant="standard" color="secondary" placeholder="Search..." sx={{ width : "200px" }} onChange={e => setSearchName(e.target.value)} />
+                </Box>
                 <Typography sx={{ textAlign : "center" , fontSize : "30px" }} >Category</Typography>
                 <IconButton sx={{ borderRadius : "11px" , border : "1px solid white"}} onClick={() => setOpenNewCategory(true)} >
                     <AddRoundedIcon sx={{ color : "whitesmoke"}} />
                 </IconButton>
             </Box>
             <Box sx={{ display : "flex" , flexWrap : "wrap", alignContent : "start"  , gap : "20px" , overflowY : "auto", height : "calc(100vh - 95px)" , p : "10px 20px" , mt : "10px"  }} >
-                {categories.map(item => (
+                {categories.filter(item => searchName ? item.name.toLowerCase().includes(searchName.toLowerCase()): true).map(item => (
                     <Box key={item.id} sx={{ display : "flex" , flexDirection : 'column' , alignItems : "center" , width : "150px" , gap : "10px"}} >
                         <Box sx={{ position : "relative" , bgcolor : "primary.dark" , width : "100%" , height : "80px"  , borderRadius : "5px" , display : "flex" , justifyContent : "center" , alignItems : "center" }}>
                             <Typography>{item.name}</Typography>

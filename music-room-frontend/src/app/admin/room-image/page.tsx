@@ -2,7 +2,7 @@
 import NewRoomImage from '@/components/NewRoomImage';
 import { useAppSelector } from '@/store/hooks';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import { Box, Divider, IconButton, Paper, Typography } from "@mui/material";
+import { Box, Divider, IconButton, Paper, TextField, Typography } from "@mui/material";
 import Image from 'next/image';
 import { useState } from 'react';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -17,18 +17,21 @@ const RoomImagePage = () => {
     const [ updateRoomImageItems , setUpdateRoomImageItems ] = useState<UpdateRoomImageItemsType>({ open : false });
     const roomImages = useAppSelector(store => store.roomImage.items);
     const [ warnningItem , setWarnningItem ] = useState<WarnningItemType>({ open : false });
+    const [ searchName , setSearchName ] = useState<string>("");
 
     return (
         <Box sx={{ bgcolor : "primary.light" , width : "calc(100vw - 250px)" , height : "100%" , p : "10px", borderRadius : "7px"}} >
             <Box sx={{ display : "flex" , alignItems : 'center' , justifyContent : "space-between" , px : "10px"}}>
-                <span />
+                <Box sx={{ width : "10px"  , pl : "15px"}}>
+                    <TextField value={searchName} variant="standard" color="secondary" placeholder="Search..." sx={{ width : "200px" }} onChange={e => setSearchName(e.target.value)} />
+                </Box>
                 <Typography sx={{ textAlign : "center" , fontSize : "30px" }} >Room Images</Typography>
                 <IconButton sx={{ borderRadius : "11px" , border : "1px solid white"}} onClick={() => setOpenNewRoomImageDialog(true)} >
                     <AddRoundedIcon sx={{ color : "whitesmoke"}} />
                 </IconButton>
             </Box>
             <Box sx={{ display : "flex" , gap : "20px" , flexWrap : "wrap" , alignContent : "start" , overflowY : "auto" , height : "calc(100vh - 90px)", p : "5px 10px" , mt : "10px" }}>
-                {roomImages.map(item => (
+                {roomImages.filter(item => searchName ? item.vite.toLowerCase().includes(searchName.toLowerCase()): true).map(item => (
                     <Box key={item.id} sx={{ height : "230px" , display : "flex" , flexDirection : "column" , alignItems : "center" }}>
                         <Box sx={{ bgcolor : "primary.main" , maxWidth : "260px"  , p : "2px 10px" , border : "1px solid #1b383b" , borderBottom : "none" , borderRadius : "15px 15px 0px 0px"}}>
                             <Typography sx={{ overflowX : "auto" , textWrap : "nowrap" }} >{item.vite}</Typography>

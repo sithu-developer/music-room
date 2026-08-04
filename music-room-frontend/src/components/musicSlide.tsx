@@ -97,3 +97,6 @@ const MusicSlide = ({ openedSlideName , setOpenedSlideName , playingMusic , curr
 }
 
 export default MusicSlide;
+
+
+// testing branch in git

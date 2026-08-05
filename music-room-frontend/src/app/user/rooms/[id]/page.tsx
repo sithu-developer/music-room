@@ -4,7 +4,7 @@ import RoomImageSlide from "@/components/RoomImageSlide";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { changeSnackBarItems } from "@/store/slices/generalSlice";
 import { ExtraImage, Music, Room, RoomImage, Roommates } from "@/type/prisma";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -18,9 +18,7 @@ import { addNewRoom, replaceRoom } from "@/store/slices/roomSlice";
 import { addRoomMates, replaceRoomMate } from "@/store/slices/roomMateSlice";
 import Link from "next/link";
 import MusicSlide from "@/components/musicSlide";
-import { addMusic } from "@/store/slices/musicSlice";
-import { addRoomImage } from "@/store/slices/roomImageSlice";
-import { addExtraImages } from "@/store/slices/extraImagesSlice";
+import QuitRoomDialog from "@/components/QuitRoom";
 
 const InRoomPage = () => {
     const param = useParams();
@@ -39,12 +37,13 @@ const InRoomPage = () => {
     const [ currentRoomMates , setCurrentRoomMates ] = useState<Roommates[]>([]);
     const [ myRoomMateRole , setMyRoomMateRole ] = useState<Roommates | null>(null);
     const [ openedSlideName , setOpenedSlideName  ] = useState<string>("");
+    const [ openQuitRoomDialog , setOpenQuitRoomDialog ] = useState<boolean>(false);
     const dispatch = useAppDispatch();
     const router = useRouter();
     const path = usePathname();
 
     useEffect(() => {
-        if(rooms.length && roomImages.length && musics.length && roomMates.length && roomId) {
+        if(roomId) {
             const foundRoom = rooms.find(item => item.id === roomId);
             setCurrentRoom(foundRoom);
             if(foundRoom) {
@@ -55,6 +54,11 @@ const InRoomPage = () => {
                 const foundRoomMates = roomMates.filter(item => item.roomId === foundRoom.id);
                 setCurrentRoomMates(foundRoomMates);
             }
+        } else {
+            setCurrentRoom(undefined);
+            setCurrentRoomImage(undefined);
+            setPlayingMusic(undefined);
+            setCurrentRoomMates([])
         }
     } , [rooms , roomId , roomImages , musics , roomMates])
 
@@ -66,7 +70,7 @@ const InRoomPage = () => {
     } , [ currentRoomImage , extraImages ])
 
     useEffect(() => {
-        if(roomMates.length && user && currentRoom) {
+        if( user && currentRoom) {
             const foundRoomMate = roomMates.find(item => item.userId === user.id);
             if(foundRoomMate && foundRoomMate.roomId === currentRoom.id) {
                 setMyRoomMateRole(foundRoomMate)
@@ -163,7 +167,6 @@ const InRoomPage = () => {
         </Box>
     );
 
-
     return (
         <Box sx={{ position : "relative", height : "100vh" , background : `url(${currentRoomImage.bgImageUrl})` , backgroundSize : "cover" , backgroundPosition : "center" , backgroundRepeat : "no-repeat"  , overflow : "hidden" }} >
             <Typography sx={{ zIndex : 5 , position : "relative" , p : "21px 0 0 24px" , textAlign : "center" , fontSize : "27px" , fontWeight : "bold" , background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)" , textShadow : "1px 1px 25px #b5b2b2" , backgroundClip : "text" , WebkitBackgroundClip : "text"  , width : "fit-content" , color : "transparent"  }} >{currentRoom.name}</Typography>
@@ -207,10 +210,14 @@ const InRoomPage = () => {
                 )
                 })}
             </Box>
-            <Box sx={{ position : "absolute" , bottom : "0px" , right : "0px" , p : "20px" , display : "flex" , flexDirection : "column" , gap : "10px" }}>
-                {myRoomMateRole.requestRoomImageId && <TypographyWithWaveAnimation text={("You are requesting the owner to set background Image (" + roomImages.find(roomImg => roomImg.id === myRoomMateRole.requestRoomImageId)?.vite + ") .....")} />}
-                {myRoomMateRole.requestMusicId && <TypographyWithWaveAnimation text={("You are requesting the owner to change the music (" + musics.find(eachMusic => eachMusic.id === myRoomMateRole.requestMusicId)?.name + ") .....")} />}
+            <Box sx={{ position : "absolute" , bottom : "0px" , right : "0px" , p : "20px" , display : "flex"  , gap : "10px" }}>
+                <Box>
+                    {myRoomMateRole.requestRoomImageId && <TypographyWithWaveAnimation text={("You are requesting the owner to set background Image (" + roomImages.find(roomImg => roomImg.id === myRoomMateRole.requestRoomImageId)?.vite + ") .....")} />}
+                    {myRoomMateRole.requestMusicId && <TypographyWithWaveAnimation text={("You are requesting the owner to change the music (" + musics.find(eachMusic => eachMusic.id === myRoomMateRole.requestMusicId)?.name + ") .....")} />}
+                </Box>
+                <Button onClick={() => setOpenQuitRoomDialog(true)} variant="contained" color="error" sx={{ alignSelf : "end" }}>Quit</Button>
             </Box>
+            <QuitRoomDialog room={currentRoom} openQuitRoomDialog={openQuitRoomDialog} setOpenQuitRoomDialog={setOpenQuitRoomDialog} />
             {currentRoom.ownerUserId === user.id && <RequestsInOwner openedSlideName={openedSlideName} currentRoomMates={currentRoomMates} />}
             <RoomImageSlide currentRoomImage={currentRoomImage} setCurrentRoomImage={setCurrentRoomImage} openedSlideName={openedSlideName} setOpenedSlideName={setOpenedSlideName} currentRoom={currentRoom} />
             <MusicSlide openedSlideName={openedSlideName} playingMusic={playingMusic} currentRoom={currentRoom} />

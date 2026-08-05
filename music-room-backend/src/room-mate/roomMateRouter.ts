@@ -74,5 +74,27 @@ roomMateRouter.put("/acceptOrReject" , (req : Request , res : Response , next) =
     }
 })
 
+roomMateRouter.delete("/quit-room" , (req : Request , res : Response , next) => {
+    const { userId } = req.query;
+    if(!Number(userId)) return res.status(400).send("Bad request");
+    next();
+
+} , async(req : Request , res : Response ) => {
+    const userId = Number(req.query.userId);
+    const isExit = await prisma.roommates.findUnique({ where : { userId }});
+    if(!isExit) return res.status(400).send("Bad request");
+    const room = await prisma.room.findUnique({ where : { id : isExit.roomId }});
+    if(!room) return res.status(400).send("Bad request");
+    if(room.ownerUserId === userId) {
+        await prisma.roommates.deleteMany({ where : { roomId : room.id }});
+        await prisma.room.delete({ where : { id : room.id }});
+        req.io.emit("quit_room" , { deletedRoomId : room.id , userId });
+        res.status(200).json({ deletedRoomId : room.id })
+    } else {
+        const updatedRoomMate = await prisma.roommates.update({ where : { userId } , data : { userId : null , requestMusicId : null , requestRoomImageId : null }})
+        req.io.emit("quit_room" , { updatedRoomMate , userId });
+        res.status(200).json({ updatedRoomMate })
+    }
+})
 
 export default roomMateRouter;

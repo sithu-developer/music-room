@@ -32,9 +32,13 @@ const RoomsPage = () => {
             const isExitId = localStorage.getItem("selectedCategoryId");
             if(isExitId) {
                 const foundCategory = categories.find(item => item.id === Number(isExitId))
-                setSelectedCategory(foundCategory);
+                if(foundCategory) {
+                    setSelectedCategory(foundCategory);
+                } else {
+                    setSelectedCategory({ id : 0 , adminId : 0 , iconUrl : "" , name : "All" });
+                }
             } else {
-                setSelectedCategory(categories[0]);
+                setSelectedCategory({ id : 0 , adminId : 0 , iconUrl : "" , name : "All" });
             }
             
         }
@@ -66,6 +70,10 @@ const RoomsPage = () => {
                 </IconButton>
             </Box>
             <Box sx={{ display : "flex" , gap : "20px" , width : "100vw" , p : "0 30px 20px 105px" , overflowX : "auto"  , mt : "-1px"  }} >
+                <Chip onClick={() => {
+                        setSelectedCategory({ id : 0 , adminId : 0 , iconUrl : "" , name : "All" });
+                        localStorage.setItem("selectedCategoryId" , String(0));
+                }} label={"All"} clickable sx={{ color : "white" , boxShadow : (selectedCategory && 0 === selectedCategory.id ? "5px 5px 15px #374a5f" : "none") , borderTopRightRadius : "0" , borderTopLeftRadius : "0" , border : (selectedCategory && 0 === selectedCategory.id ? "1px solid white": "") , borderTop : (selectedCategory && 0 === selectedCategory.id ? "1px solid #3e648c": "") , bgcolor : (selectedCategory && 0 === selectedCategory.id ? "primary.main": "")  , ":hover" : { bgcolor : (selectedCategory && 0 === selectedCategory.id ? "primary.main": "") } }} />
                 {categories.map(item => (
                     <Chip key={item.id} onClick={() => {
                         setSelectedCategory(item);
@@ -74,7 +82,7 @@ const RoomsPage = () => {
                 )) }
             </Box>
             <Box sx={{ width : "100%" , p : "20px 20px" , height : "calc(100vh - 119px)" , display : "flex" , gap : "20px" , flexWrap : "wrap" , overflowY : "auto"}}>
-                {selectedCategory && rooms.filter(item => item.roomCategoryId === selectedCategory.id).map(item => {
+                {selectedCategory && rooms.filter(item => (selectedCategory.id === 0 ? true : item.roomCategoryId === selectedCategory.id)).map(item => {
                     const roomImage = roomImages.find(roomImg => roomImg.id === item.currentRoomImageId );
                     const joinedRoomMates = roomMates.filter(roomMate => roomMate.userId && roomMate.roomId === item.id )
                     if(roomImage)

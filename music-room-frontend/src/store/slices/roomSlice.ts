@@ -55,8 +55,8 @@ export const updateRoom = createAsyncThunk("roomSlice/updateRoom" , async( para 
     } catch(err) {
         console.log(err)
     }
-
 })
+
 
 const roomSlice = createSlice({
     name : "room slice",
@@ -70,11 +70,14 @@ const roomSlice = createSlice({
         },
         replaceRoom : ( state , action : PayloadAction<Room> ) => {
             state.items = state.items.map(item => item.id === action.payload.id ? action.payload : item )
+        },
+        removeRoom : ( state , action : PayloadAction<number> ) => {
+            state.items = state.items.filter(item => item.id !== action.payload )
         }
     }
 });
 
-export const { addNewRoom , setRooms , replaceRoom } = roomSlice.actions;
+export const { addNewRoom , setRooms , replaceRoom , removeRoom } = roomSlice.actions;
 
 
 export default roomSlice.reducer;

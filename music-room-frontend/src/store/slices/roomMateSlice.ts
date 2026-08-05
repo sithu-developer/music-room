@@ -1,7 +1,8 @@
 import { Roommates } from "@/type/prisma";
-import { JoinRoomParaType } from "@/type/roomMate";
+import { JoinRoomParaType, QuitRoomParaType } from "@/type/roomMate";
 import { envValues } from "@/util/envValues";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { removeRoom } from "./roomSlice";
 
 interface RoomMateInitialStateType {
     items : Roommates[]
@@ -38,6 +39,27 @@ export const joinRoom = createAsyncThunk("roomMateSlice/joinRoom" , async( para 
 
 })
 
+export const quitRoom = createAsyncThunk("roomMateSlice/joinRoom" , async( data : QuitRoomParaType , thunkApi) => {
+    const { userId , onFail , onSuccess } = data;
+    try {
+        const response = await fetch(`${envValues.apiUrl}/room-mate/quit-room?userId=${userId}` , {
+            method : "DELETE"
+        })
+        const { updatedRoomMate , deletedRoomId } = await response.json();
+        if(updatedRoomMate) thunkApi.dispatch(replaceRoomMate(updatedRoomMate))
+        else if(deletedRoomId) {
+            thunkApi.dispatch(removeRoomMatesFromQuit(deletedRoomId));
+            thunkApi.dispatch(removeRoom(deletedRoomId))
+        }
+        if(onSuccess) {
+            onSuccess();
+        }
+        
+    } catch(err) {
+        console.log(err)
+    }
+})
+
 export const roomMateSlice = createSlice({
     name : "Room Mate Slice",
     initialState,
@@ -50,10 +72,13 @@ export const roomMateSlice = createSlice({
         },
         replaceRoomMate : ( state , action : PayloadAction<Roommates> ) => {
             state.items = state.items.map(item => item.id === action.payload.id ? action.payload : item)
+        },
+        removeRoomMatesFromQuit : ( state , action : PayloadAction<number> ) => {
+            state.items = state.items.filter(item => item.roomId !== action.payload )
         }
     }
 })
 
-export const { addRoomMates , setRoomMates , replaceRoomMate } = roomMateSlice.actions;
+export const { addRoomMates , setRoomMates , replaceRoomMate , removeRoomMatesFromQuit } = roomMateSlice.actions;
 
 export default roomMateSlice.reducer;

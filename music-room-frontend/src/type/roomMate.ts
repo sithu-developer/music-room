@@ -28,3 +28,8 @@ export interface HandleAcceptOrRejectParaType {
 export interface LoadingItemType extends HandleAcceptOrRejectParaType  {
     roomMateOrMusic : string
 }
+
+
+export interface QuitRoomParaType extends IsSuccessOrFailType {
+    userId : number
+}

@@ -10,9 +10,9 @@ import Link from "next/link"
 import { useParams, usePathname, useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { socket } from "@/util/socket";
-import { addRoomMates, replaceRoomMate } from "@/store/slices/roomMateSlice"
+import { addRoomMates, removeRoomMatesFromQuit, replaceRoomMate } from "@/store/slices/roomMateSlice"
 import { ExtraImage, Music, Room, RoomImage, Roommates } from "@/type/prisma"
-import { addNewRoom, replaceRoom } from "@/store/slices/roomSlice"
+import { addNewRoom, removeRoom, replaceRoom } from "@/store/slices/roomSlice"
 import { addMusic, removeMusic, replaceMusic } from "@/store/slices/musicSlice"
 import { addRoomImage, removeRoomImage, replaceRoomImage, updateRoomImage } from "@/store/slices/roomImageSlice"
 import { addExtraImages, removeAllExtraImagesUnderOneRoomImage } from "@/store/slices/extraImagesSlice"
@@ -131,6 +131,24 @@ const UserLayout = ({ children } : Props ) => {
                 }
             }
             socket.on("delete_roomImage" , handleSocketDeleteRoomImage)
+
+            const handleQuitRoom = ({ updatedRoomMate , deletedRoomId , userId } : {  updatedRoomMate : Roommates | undefined , deletedRoomId : number | undefined , userId  : number }) => {
+                if(user.id !== userId ) {
+                    if(updatedRoomMate) {
+                        dispatch(replaceRoomMate(updatedRoomMate))
+                        if(id) {
+                            dispatch(changeSnackBarItems({ open : true , message : "A roommate leaved the room !" , severity : "info" }))
+                        }
+                    } else if(deletedRoomId) {
+                        dispatch(removeRoomMatesFromQuit(deletedRoomId));
+                        dispatch(removeRoom(deletedRoomId))
+                        if(id) {
+                            dispatch(changeSnackBarItems({ open : true , message : "Owner leaved the room & room is deleted !" , severity : "info" }))
+                        }
+                    }
+                }
+            }
+            socket.on("quit_room" , handleQuitRoom);
             
             console.log("in")
             return () => {
@@ -144,6 +162,7 @@ const UserLayout = ({ children } : Props ) => {
                 socket.off("new_roomImage_created" , handleSocketNewRoomImageCreated )
                 socket.off("update_roomImage" , handleSocketUpdateRoomImage)
                 socket.off("delete_roomImage" , handleSocketDeleteRoomImage)
+                socket.off("quit_room" , handleQuitRoom);
                 console.log("out")
             }
         }

@@ -58,6 +58,10 @@ io.on("connection" , (socket) => {
         socket.to(String(roomId)).emit("play_or_pause_music_musicTime_to_roommate" , { isPlaying , currentTime })
     })
     
+
+    socket.on("disconnect" , (reason) => {
+        console.log("disconnected " + socket.id + reason)
+    })
 })
 
 // attach io to req

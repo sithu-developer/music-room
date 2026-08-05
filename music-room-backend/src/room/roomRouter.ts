@@ -45,7 +45,6 @@ roomRouter.put("/" , (req : Request , res : Response , next) => {
         req.io.emit("request_in_room_check_by_admin" , { updatedRoomMate })
         res.status(200).json({ updatedRoomMate })
     }
-
 })
 
 export default roomRouter;

@@ -70,7 +70,9 @@ const NewRoom = ({ openNewRoom , setOpenNewRoom } : Props ) => {
         <Dialog open={openNewRoom} fullScreen>
             <DialogContent sx={{ position : "relative" ,  bgcolor : "primary.light" , background : ( newRoom.currentRoomImage ? `url(${newRoom.currentRoomImage.bgImageUrl})` : "" ) , backgroundSize : "cover" , backgroundPosition : "center" , backgroundRepeat : "no-repeat", overflow : "hidden" }} >
                 <Box sx={{ display : "flex" , justifyContent : "space-between" , alignItems : "center" }}>
-                    <Typography sx={{  zIndex : 5 , position : "relative" , userSelect : "none" , textAlign : "center" , fontSize : "27px" , fontWeight : "bold" , background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)" , textShadow : "1px 1px 25px #b5b2b2" , backgroundClip : "text" , WebkitBackgroundClip : "text"  , width : "fit-content" , color : "transparent"  }} >{newRoom.name ? newRoom.name : "Your Own Room"}</Typography>
+                    <Box sx={{ display : "flex" , justifyContent : { xs : "start" , sm : "center"  } , width : "100vw" , pl : { xs : "0" , sm : "100px"}}}>
+                        <Typography sx={{  zIndex : 5 , position : "relative" , userSelect : "none" , textAlign : "center" , fontSize : "27px" , fontWeight : "bold" , background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)" , textShadow : "1px 1px 25px #b5b2b2" , backgroundClip : "text" , WebkitBackgroundClip : "text"  , width : "fit-content" , color : "transparent"  }} >{newRoom.name ? newRoom.name : "Your Own Room"}</Typography>
+                    </Box>
                     <Box sx={{ zIndex : 5 , display : "flex" , gap : "20px" }}>
                         <IconButton sx={{  border : "1px solid white"}} onClick={() => {
                             setIsShown(!isShown)

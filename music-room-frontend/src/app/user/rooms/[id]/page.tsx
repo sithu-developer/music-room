@@ -19,6 +19,8 @@ import { addRoomMates, replaceRoomMate } from "@/store/slices/roomMateSlice";
 import Link from "next/link";
 import MusicSlide from "@/components/musicSlide";
 import QuitRoomDialog from "@/components/QuitRoom";
+import MailOutlineRoundedIcon from '@mui/icons-material/MailOutlineRounded';
+import ChattingBox from "@/components/ChattingBox";
 
 const InRoomPage = () => {
     const param = useParams();
@@ -38,6 +40,7 @@ const InRoomPage = () => {
     const [ myRoomMateRole , setMyRoomMateRole ] = useState<Roommates | null>(null);
     const [ openedSlideName , setOpenedSlideName  ] = useState<string>("");
     const [ openQuitRoomDialog , setOpenQuitRoomDialog ] = useState<boolean>(false);
+    const [ messageOpen , setMessageOpen ] = useState<boolean>(false);
     const dispatch = useAppDispatch();
     const router = useRouter();
     const path = usePathname();
@@ -169,23 +172,25 @@ const InRoomPage = () => {
 
     return (
         <Box sx={{ position : "relative", height : "100vh" , background : `url(${currentRoomImage.bgImageUrl})` , backgroundSize : "cover" , backgroundPosition : "center" , backgroundRepeat : "no-repeat"  , overflow : "hidden" }} >
-            <Typography sx={{ zIndex : 5 , position : "relative" , p : "21px 0 0 24px" , textAlign : "center" , fontSize : "27px" , fontWeight : "bold" , background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)" , textShadow : "1px 1px 25px #b5b2b2" , backgroundClip : "text" , WebkitBackgroundClip : "text"  , width : "fit-content" , color : "transparent"  }} >{currentRoom.name}</Typography>
+            <Box sx={{ display : "flex" , justifyContent : { xs : "start" , sm : "center"  } }}>
+                <Typography sx={{ zIndex : 5 , position : "relative" , p : { xs : "21px 0 0 24px" , sm : "21px 0 0 0"} , textAlign : "center" , fontSize : "27px" , fontWeight : "bold" , background : "linear-gradient( 45deg  , #0c0b0b , #0c0b0b, #0c0b0b , #fff , #fff , #fff)" , textShadow : "1px 1px 25px #b2b5b5" , backgroundClip : "text" , WebkitBackgroundClip : "text"  , width : "fit-content" , color : "transparent"   }} >{currentRoom.name}</Typography>
+            </Box>
             <PlayMusic  playingMusic={playingMusic} setPlayingMusic={setPlayingMusic} currentRoom={currentRoom} />
             <Box sx={{ position : "absolute", zIndex : 5 , top : "21px" , right : "24px" , display : "flex" , gap : "15px"}} >
-                {currentRoom.ownerUserId === user.id && <IconButton onClick={() => setOpenedSlideName(prev => (prev === "requestSlide" ? "" : "requestSlide"))} sx={{ position : "relative" , border : "1px solid white"}}>
+                {currentRoom.ownerUserId === user.id && <IconButton color="secondary" onClick={() => setOpenedSlideName(prev => (prev === "requestSlide" ? "" : "requestSlide"))} sx={{ position : "relative" , border : "1px solid white"}}>
                     <NotificationsActiveRoundedIcon color="secondary" />
                     {currentRoomMates.filter(item => item.requestRoomImageId || item.requestMusicId).length ? 
                     <Box sx={{ position : "absolute" , top : "2px" , right : "0px" , bgcolor : "#ff0202" , width : "8px" , height : "8px" , borderRadius : "5px"}} />
                     :undefined}
                 </IconButton>}
-                <IconButton sx={{  border : "1px solid white"}} 
+                <IconButton color="secondary" sx={{  border : "1px solid white"}} 
                     onClick={() => {
                         setOpenedSlideName(prev => (prev === "roomImageSlide" ? "" : "roomImageSlide"))
                     }}
                 >
                     <ImagesearchRollerRoundedIcon color="secondary" />
                 </IconButton>
-                <IconButton sx={{  border : "1px solid white"}} onClick={() => setOpenedSlideName(prev => (prev === "musicSlide" ? "" : "musicSlide"))} >
+                <IconButton color="secondary" sx={{ border : "1px solid white"}} onClick={() => setOpenedSlideName(prev => (prev === "musicSlide" ? "" : "musicSlide"))} >
                     <MusicNoteRoundedIcon color="secondary" />
                 </IconButton>
             </Box>
@@ -210,13 +215,19 @@ const InRoomPage = () => {
                 )
                 })}
             </Box>
-            <Box sx={{ position : "absolute" , bottom : "0px" , right : "0px" , p : "20px" , display : "flex"  , gap : "10px" }}>
+            <Box sx={{ position : "absolute", zIndex : 5  , bottom : "0px" , left : "0px" , p : "13px" }}>
+                <IconButton color="secondary" onClick={() => setMessageOpen(prev => !prev)}>
+                    <MailOutlineRoundedIcon  sx={{ fontSize : "30px" , color : "secondary.dark"}} />
+                </IconButton>
+            </Box>
+            <Box sx={{ position : "absolute", zIndex : 5  , bottom : "0px" , right : "0px" , p : "20px" , display : "flex"  , gap : "10px" }}>
                 <Box>
                     {myRoomMateRole.requestRoomImageId && <TypographyWithWaveAnimation text={("You are requesting the owner to set background Image (" + roomImages.find(roomImg => roomImg.id === myRoomMateRole.requestRoomImageId)?.vite + ") .....")} />}
                     {myRoomMateRole.requestMusicId && <TypographyWithWaveAnimation text={("You are requesting the owner to change the music (" + musics.find(eachMusic => eachMusic.id === myRoomMateRole.requestMusicId)?.name + ") .....")} />}
                 </Box>
-                <Button onClick={() => setOpenQuitRoomDialog(true)} variant="contained" color="error" sx={{ alignSelf : "end" }}>Quit</Button>
+                <Button onClick={() => setOpenQuitRoomDialog(true)} variant="contained" color="error" sx={{ alignSelf : "end" , textTransform : "none" }}>Quit</Button>
             </Box>
+            <ChattingBox messageOpen={messageOpen} setMessageOpen={setMessageOpen} />
             <QuitRoomDialog room={currentRoom} openQuitRoomDialog={openQuitRoomDialog} setOpenQuitRoomDialog={setOpenQuitRoomDialog} />
             {currentRoom.ownerUserId === user.id && <RequestsInOwner openedSlideName={openedSlideName} currentRoomMates={currentRoomMates} />}
             <RoomImageSlide currentRoomImage={currentRoomImage} setCurrentRoomImage={setCurrentRoomImage} openedSlideName={openedSlideName} setOpenedSlideName={setOpenedSlideName} currentRoom={currentRoom} />

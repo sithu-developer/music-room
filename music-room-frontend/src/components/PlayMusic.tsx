@@ -183,7 +183,9 @@ const PlayMusic = ({ playingMusic, setNewRoom , setPlayingMusic , currentRoom } 
                         setIsPlayingMusic(false)
                     }}
                     onTimeUpdate={() => setCurrentMusicTime(audioRef.current ? audioRef.current.currentTime : 0)}
-                    onEnded={() => setIsPlayingMusic(false)}
+                    onEnded={() => {
+                        setIsPlayingMusic(false)
+                    }}
                 />
                 <Box sx={{ width : "100%" ,  py : "5px" , display : "flex" , gap : "10px" }}>
                     {playingMusic.musicImgUrl && (

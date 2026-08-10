@@ -58,17 +58,17 @@ model ExtraImage {
 }
 
 model Music {
-  id        Int         @id @default(autoincrement())
-  name      String
-  musicUrl  String
-  artist    String      @default("Unknown artist")
+  id          Int         @id @default(autoincrement())
+  name        String
+  musicUrl    String
+  artist      String      @default("Unknown artist")
   musicImgUrl String?
-  adminId   Int?
-  userId    Int?
-  Admin     Admin?      @relation(fields: [adminId], references: [id])
-  User      User?       @relation(fields: [userId], references: [id])
-  Rooms     Room[]
-  Roommates Roommates[]
+  adminId     Int?
+  userId      Int?
+  Admin       Admin?      @relation(fields: [adminId], references: [id])
+  User        User?       @relation(fields: [userId], references: [id])
+  Rooms       Room[]
+  Roommates   Roommates[]
 }
 
 model User {
@@ -77,11 +77,12 @@ model User {
   name       String
   url        String
   adminId    Int
-  Admin      Admin       @relation(fields: [adminId] , references: [id])
+  Admin      Admin       @relation(fields: [adminId], references: [id])
   Rooms      Room[]
   Musics     Music[]
   RoomImages RoomImage[]
   Roommates  Roommates[]
+  chats      Chats[]
 }
 
 model Room {
@@ -98,6 +99,7 @@ model Room {
   Music              Music        @relation(fields: [playingMusicId], references: [id])
   User               User         @relation(fields: [ownerUserId], references: [id])
   Roommates          Roommates[]
+  chats              Chats[]
 }
 
 model Roommates {
@@ -111,7 +113,21 @@ model Roommates {
   requestMusicId     Int?
   requestRoomImageId Int?
   Room               Room       @relation(fields: [roomId], references: [id])
-  User               User?       @relation(fields: [userId], references: [id])
+  User               User?      @relation(fields: [userId], references: [id])
   Music              Music?     @relation(fields: [requestMusicId], references: [id])
   RoomImage          RoomImage? @relation(fields: [requestRoomImageId], references: [id])
+}
+
+model Chats {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  roomId     Int
+  message    String
+  replyId    Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  User       User     @relation(fields: [userId], references: [id])
+  Room       Room     @relation(fields: [roomId], references: [id])
+  Chats      Chats[]  @relation("forReplyId")
+  ForReplyId Chats?   @relation("forReplyId", fields: [replyId], references: [id])
 }

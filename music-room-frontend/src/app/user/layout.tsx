@@ -11,11 +11,12 @@ import { useParams, usePathname, useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { socket } from "@/util/socket";
 import { addRoomMates, removeRoomMatesFromQuit, replaceRoomMate } from "@/store/slices/roomMateSlice"
-import { ExtraImage, Music, Room, RoomImage, Roommates } from "@/type/prisma"
+import { Chats, ExtraImage, Music, Room, RoomImage, Roommates } from "@/type/prisma"
 import { addNewRoom, removeRoom, replaceRoom } from "@/store/slices/roomSlice"
 import { addMusic, removeMusic, replaceMusic } from "@/store/slices/musicSlice"
 import { addRoomImage, removeRoomImage, replaceRoomImage, updateRoomImage } from "@/store/slices/roomImageSlice"
 import { addExtraImages, removeAllExtraImagesUnderOneRoomImage } from "@/store/slices/extraImagesSlice"
+import { addNewChat } from "@/store/slices/chatSlice"
 
 interface Props {
     children : React.ReactNode
@@ -149,6 +150,15 @@ const UserLayout = ({ children } : Props ) => {
                 }
             }
             socket.on("quit_room" , handleQuitRoom);
+
+
+            const handleSocketNewChatCreated = ( { newChat } :  { newChat : Chats }) => {
+                if(newChat.userId !== user.id) {
+                    dispatch(addNewChat(newChat))
+                }
+            }
+            socket.on("new_chat_created" , handleSocketNewChatCreated)
+
             
             console.log("in")
             return () => {
@@ -163,6 +173,7 @@ const UserLayout = ({ children } : Props ) => {
                 socket.off("update_roomImage" , handleSocketUpdateRoomImage)
                 socket.off("delete_roomImage" , handleSocketDeleteRoomImage)
                 socket.off("quit_room" , handleQuitRoom);
+                socket.off("new_chat_created" , handleSocketNewChatCreated)
                 console.log("out")
             }
         }

@@ -10,6 +10,7 @@ import roomRouter from "./src/room/roomRouter";
 import roomMateRouter from "./src/room-mate/roomMateRouter";
 import { createServer } from "http";
 import { Server } from "socket.io"
+import chatRouter from "./src/chat/chatRouter";
 
 const app = express();
 const port = 5000;
@@ -77,5 +78,6 @@ app.use("/music" , musicRouter )
 app.use("/user" , userRouter )
 app.use("/room" , roomRouter);
 app.use("/room-mate" , roomMateRouter)
+app.use("/chat" , chatRouter)
 
 httpServer.listen(port , () => console.log(`music-room-server is running on ${port}`))

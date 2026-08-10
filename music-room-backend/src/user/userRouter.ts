@@ -24,12 +24,13 @@ userRouter.post("/" , ( req : Request , res : Response , next) => {
     const roomImages = await prisma.roomImage.findMany({ where : { OR : [ {adminId : admin?.id} , {userId : { in : allUsersIds}} ] } , orderBy : { id : "asc" }});
     const roomImageIds = roomImages.map(item => item.id)
     const extraImages = await prisma.extraImage.findMany({ where : { roomImageId : { in : roomImageIds } } , orderBy : { id : "asc" }})
-    const musics = await prisma.music.findMany({ where : { OR : [ {adminId : admin?.id} , { userId : { in : allUsersIds}}] } , orderBy : { id : "asc" }})
+    const musics = await prisma.music.findMany({ where : { OR : [ {adminId : admin?.id} , { userId : { in : allUsersIds}}] } , orderBy : { id : "asc" }});
+    const chats = await prisma.chats.findMany({ where : { userId : { in : allUsersIds } } , orderBy : { id : "asc" }})
     if(isExit) {
-        return res.status(200).json({ user : isExit , admin : {...admin , email : "" , id : 0} , roomCategories , roomImages , extraImages , musics , rooms : roomsWithoutShowingPasswords , roomMates , otherUsers })
+        return res.status(200).json({ user : isExit , admin : {...admin , email : "" , id : 0} , roomCategories , roomImages , extraImages , musics , rooms : roomsWithoutShowingPasswords , roomMates , otherUsers , chats })
     } else {
         const newUser = await prisma.user.create({ data : { email , name , url , adminId : admin.id } })
-        res.status(200).json({ user : newUser , admin : {...admin , email : "" , id : 0} , roomCategories , roomImages , extraImages , musics , rooms : roomsWithoutShowingPasswords , roomMates , otherUsers})
+        res.status(200).json({ user : newUser , admin : {...admin , email : "" , id : 0} , roomCategories , roomImages , extraImages , musics , rooms : roomsWithoutShowingPasswords , roomMates , otherUsers , chats })
     }
 })
 

@@ -74,3 +74,13 @@ export interface Roommates {
   requestMusicId        ?: number
   requestRoomImageId    ?: number
 }
+
+export interface Chats {
+    id      :   number
+    userId    : number
+    roomId    : number
+    message   : String
+    replyId   ?: number
+    createdAt : Date
+    updatedAt : Date
+}

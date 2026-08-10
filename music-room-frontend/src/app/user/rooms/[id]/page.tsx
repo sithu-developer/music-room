@@ -227,7 +227,7 @@ const InRoomPage = () => {
                 </Box>
                 <Button onClick={() => setOpenQuitRoomDialog(true)} variant="contained" color="error" sx={{ alignSelf : "end" , textTransform : "none" }}>Quit</Button>
             </Box>
-            <ChattingBox messageOpen={messageOpen} setMessageOpen={setMessageOpen} />
+            <ChattingBox messageOpen={messageOpen} setMessageOpen={setMessageOpen} currentRoom={currentRoom} />
             <QuitRoomDialog room={currentRoom} openQuitRoomDialog={openQuitRoomDialog} setOpenQuitRoomDialog={setOpenQuitRoomDialog} />
             {currentRoom.ownerUserId === user.id && <RequestsInOwner openedSlideName={openedSlideName} currentRoomMates={currentRoomMates} />}
             <RoomImageSlide currentRoomImage={currentRoomImage} setCurrentRoomImage={setCurrentRoomImage} openedSlideName={openedSlideName} setOpenedSlideName={setOpenedSlideName} currentRoom={currentRoom} />

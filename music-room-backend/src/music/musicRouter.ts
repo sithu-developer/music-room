@@ -24,7 +24,6 @@ musicRouter.put("/" , async( req : Request , res : Response , next ) => {
     next();
 } , async( req : Request , res : Response ) => {
     const { id , name , musicUrl  , artist , musicImgUrl } = req.body;
-    console.log(musicImgUrl)
     const updatedMusic = await prisma.music.update({ where : { id } , data : { name , musicUrl , artist : artist ? artist : undefined , musicImgUrl : musicImgUrl ? musicImgUrl : null }});
     req.io.emit("update_music" , { updatedMusic });
     return res.status(200).json({ updatedMusic });

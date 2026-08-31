@@ -75,7 +75,7 @@ model User {
   id         Int         @id @default(autoincrement())
   email      String      @unique
   name       String
-  url        String
+  url        String?
   adminId    Int
   Admin      Admin       @relation(fields: [adminId], references: [id])
   Rooms      Room[]

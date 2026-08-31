@@ -10,6 +10,7 @@ import Image from "next/image";
 import { formatChatTime } from "@/util/general";
 import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import EmojiBox from "./EmojiBox";
 
 interface Props {
     messageOpen : boolean;
@@ -27,6 +28,8 @@ const ChattingBox = ({ messageOpen , setMessageOpen , currentRoom } : Props) => 
     const spanRef = useRef< HTMLSpanElement | null >(null);
     const [ replyChat , setReplyChat ] = useState<Chats>();
     const [ currentRoomChats , setCurrentRoomChats ] = useState<Chats[]>([]);
+    const [ openEmojiBox , setOpenEmojiBox ] = useState(false);
+    const [ cursorPosition , setCursorPosition ] = useState<number>(0);
 
     useEffect(() => {
         if(chats.length && currentRoom) {
@@ -65,8 +68,8 @@ const ChattingBox = ({ messageOpen , setMessageOpen , currentRoom } : Props) => 
 
     return (
         <Fade in={messageOpen} mountOnEnter unmountOnExit>
-            <Paper sx={{ zIndex : 3 , position : "fixed" , left : 20 , bottom : 70 , bgcolor : "transparent", borderRadius : "10px" }}>
-                <Box sx={{ position : "relative" , zIndex : 10 , display : 'flex' , flexDirection : "column" , justifyContent : "space-between" , gap : "5px" , width : "300px" , p : "10px" , height : "55vh" , background : "rgba(75, 110, 113, 0.1)" , backdropFilter : "blur(10px)" , WebkitBackdropFilter : "blur(10px)" , border : "1px solid white" , borderRadius : "10px"   }}>
+            <Paper sx={{ zIndex : 3 , position : "fixed" , left : "20px" , bottom : 70 , bgcolor : "transparent", borderRadius : "10px" }}>
+                <Box sx={{ position : "relative" , zIndex : 10 , display : 'flex' , flexDirection : "column" , justifyContent : "space-between" , gap : "5px" , width : { xs : "calc(100vw - 40px)" , sm : "330px" } , p : "10px" , height : { xs : (openEmojiBox ? "45vh" : "55vh") , sm : "55vh"} , background : "rgba(75, 110, 113, 0.1)" , backdropFilter : "blur(10px)" , WebkitBackdropFilter : "blur(10px)" , border : "1px solid white" , borderRadius : "10px"   }}>
                     <Box sx={{ height : "35px" , display : "flex" , justifyContent : "space-between" , alignItems : "center"}}>
                         <Typography sx={{ textShadow : "1px 1px 5px black" , fontWeight : "bold" , fontSize : "17px"}} >Messages</Typography>
                         <IconButton color="secondary" sx={{ p : "5px"}} onClick={() => setMessageOpen(false)}>
@@ -122,16 +125,25 @@ const ChattingBox = ({ messageOpen , setMessageOpen , currentRoom } : Props) => 
                         }
                     )()}
                     <Box sx={{ bgcolor : "primary.dark" , display : "flex" , alignItems : "center" , justifyContent : "space-between" , borderRadius : "20px"}}>
-                        <IconButton color="secondary" >
+                        <IconButton color="secondary" onClick={() => setOpenEmojiBox(prev => !prev)} >
                             <EmojiEmotionsOutlinedIcon  />
                         </IconButton>
-                        <TextField multiline maxRows={3} variant="standard" color="secondary" value={message} onChange={(e) => setMessage(e.target.value)} />
+                        <TextField multiline maxRows={3} variant="standard" color="secondary" value={message} sx={{ flexGrow : 1}} onChange={(e) => {
+                            setMessage(e.target.value);
+                            setCursorPosition(e.target.selectionStart ?? 0)
+                        }}
+                            onSelect={(e) => {
+                                const input = e.target as HTMLInputElement;
+                                setCursorPosition(input.selectionStart ?? 0);
+                            }}
+                        />
                         {isLoading ? 
                         <CircularProgress color="inherit" size={35} sx={{ color : "secondary.main" , p : "5px" , ml : "5px"}} />
                         :<IconButton color="secondary" disabled={!message} onClick={handleSendMessage} >
                             <SendRoundedIcon  />
                         </IconButton>}
                     </Box>
+                    <EmojiBox openEmojiBox={openEmojiBox} cursorPosition={cursorPosition} setCursorPosition={setCursorPosition} setMessage={setMessage} />
                 </Box>
             </Paper>
         </Fade>
